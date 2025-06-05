@@ -12,7 +12,7 @@ jobs:
           go-version: 1.18
       - uses: actions/checkout@v3
       - run: |
-          release_url=$(curl -s https://api.github.com/repos/eryajf/go-ldap-admin-ui/releases/latest | grep "browser_download_url" | grep -v 'dist.zip.md5' | cut -d '"' -f 4); wget $release_url && unzip dist.zip && rm dist.zip && mv dist public/static
+          release_url=$(curl -s https://api.github.com/repos/opsre/go-ldap-admin-ui/releases/latest | grep "browser_download_url" | grep -v 'dist.zip.md5' | cut -d '"' -f 4); wget $release_url && unzip dist.zip && rm dist.zip && mv dist public/static
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - run: |
-          release_url=$(curl -s https://api.github.com/repos/eryajf/go-ldap-admin-ui/releases/latest | grep "browser_download_url" | grep -v 'dist.zip.md5' | cut -d '"' -f 4); wget $release_url && unzip dist.zip && rm dist.zip && mv dist public/static
+          release_url=$(curl -s https://api.github.com/repos/opsre/go-ldap-admin-ui/releases/latest | grep "browser_download_url" | grep -v 'dist.zip.md5' | cut -d '"' -f 4); wget $release_url && unzip dist.zip && rm dist.zip && mv dist public/static
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
