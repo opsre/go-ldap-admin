@@ -6,7 +6,7 @@ import (
 
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/public/client/openldap"
-
+	"github.com/eryajf/go-ldap-admin/public/common"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/isql"
 	"github.com/gin-gonic/gin"
@@ -20,7 +20,9 @@ func (d *OpenLdapLogic) SyncOpenLdapDepts(c *gin.Context, req interface{}) (data
 	// 1.获取所有部门
 	depts, err := openldap.GetAllDepts()
 	if err != nil {
-		return nil, tools.NewOperationError(fmt.Errorf("获取ldap部门列表失败：%s", err.Error()))
+		errMsg := fmt.Sprintf("获取OpenLDAP部门列表失败：%s", err.Error())
+		common.Log.Errorf("SyncOpenLdapDepts: %s", errMsg)
+		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
 	}
 	groups := make([]*model.Group, 0)
 	for _, dept := range depts {
@@ -37,7 +39,13 @@ func (d *OpenLdapLogic) SyncOpenLdapDepts(c *gin.Context, req interface{}) (data
 
 	// 3.根据树进行创建
 	err = d.addDepts(deptTree.Children)
+	if err != nil {
+		errMsg := fmt.Sprintf("创建OpenLDAP部门失败：%s", err.Error())
+		common.Log.Errorf("SyncOpenLdapDepts: %s", errMsg)
+		return nil, err
+	}
 
+	common.Log.Infof("SyncOpenLdapDepts: OpenLDAP部门同步成功")
 	return nil, err
 }
 
@@ -46,12 +54,16 @@ func (d OpenLdapLogic) addDepts(depts []*model.Group) error {
 	for _, dept := range depts {
 		err := d.AddDepts(dept)
 		if err != nil {
-			return tools.NewOperationError(fmt.Errorf("DsyncOpenLdapDepts添加部门失败: %s", err.Error()))
+			errMsg := fmt.Sprintf("DsyncOpenLdapDepts添加部门[%s]失败: %s", dept.GroupName, err.Error())
+			common.Log.Errorf("%s", errMsg)
+			return tools.NewOperationError(fmt.Errorf(errMsg))
 		}
 		if len(dept.Children) != 0 {
 			err = d.addDepts(dept.Children)
 			if err != nil {
-				return tools.NewOperationError(fmt.Errorf("DsyncOpenLdapDepts添加部门失败: %s", err.Error()))
+				errMsg := fmt.Sprintf("DsyncOpenLdapDepts添加子部门失败: %s", err.Error())
+				common.Log.Errorf("%s", errMsg)
+				return tools.NewOperationError(fmt.Errorf(errMsg))
 			}
 		}
 	}
@@ -103,18 +115,24 @@ func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req interface{}) (data 
 	// 1.获取ldap用户列表
 	staffs, err := openldap.GetAllUsers()
 	if err != nil {
-		return nil, tools.NewOperationError(fmt.Errorf("获取ldap用户列表失败：%s", err.Error()))
+		errMsg := fmt.Sprintf("获取OpenLDAP用户列表失败：%s", err.Error())
+		common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
+		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
 	}
 	// 2.遍历用户，开始写入
-	for _, staff := range staffs {
+	for i, staff := range staffs {
 		groupIds, err := isql.Group.DeptIdsToGroupIds(staff.DepartmentIds)
 		if err != nil {
-			return nil, tools.NewMySqlError(fmt.Errorf("将部门ids转换为内部部门id失败：%s", err.Error()))
+			errMsg := fmt.Sprintf("将用户[%s]的部门ids转换为内部部门id失败：%s", staff.Name, err.Error())
+			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
+			return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
 		}
 		// 根据角色id获取角色
 		roles, err := isql.Role.GetRolesByIds([]uint{2})
 		if err != nil {
-			return nil, tools.NewValidatorError(fmt.Errorf("根据角色ID获取角色信息失败:%s", err.Error()))
+			errMsg := fmt.Sprintf("获取用户[%s]的角色信息失败：%s", staff.Name, err.Error())
+			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
+			return nil, tools.NewValidatorError(fmt.Errorf(errMsg))
 		}
 		// 入库
 		err = d.AddUsers(&model.User{
@@ -137,9 +155,14 @@ func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req interface{}) (data 
 			UserDN:        staff.DN,
 		})
 		if err != nil {
-			return nil, tools.NewOperationError(fmt.Errorf("SyncOpenLdapUsers写入用户失败：%s", err.Error()))
+			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Name, err.Error())
+			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
+			return nil, tools.NewOperationError(fmt.Errorf(errMsg))
 		}
+		common.Log.Infof("SyncOpenLdapUsers: 成功同步用户[%s] (%d/%d)", staff.Name, i+1, len(staffs))
 	}
+	
+	common.Log.Infof("SyncOpenLdapUsers: OpenLDAP用户同步完成，共同步%d个用户", len(staffs))
 	return nil, nil
 }
 
