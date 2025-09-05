@@ -15,7 +15,7 @@ jobs:
           - goarch: arm64
             goos: windows
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           release_url=$(curl -s https://api.github.com/repos/opsre/go-ldap-admin-ui/releases/latest | grep "browser_download_url" | grep -v 'dist.zip.md5' | cut -d '"' -f 4); wget $release_url && unzip dist.zip && rm dist.zip && mv dist public/static
       - uses: wangyoucao577/go-release-action@v1
