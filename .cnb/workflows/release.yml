@@ -1,0 +1,31 @@
+$:
+  tag_push:
+    - runner:
+        cpus: 8
+      services:
+        - docker
+        - git-clone-yyds
+      stages:
+        - name: 📦 构建制品
+          image: docker.cnb.cool/znb/images/debian:all
+          script: |
+            make gox-all
+        - name: 🐋 推送镜像
+          script: |
+            docker run -d --name buildkitd \
+              --security-opt seccomp=unconfined \
+              --security-opt apparmor=unconfined \
+              --security-opt systempaths=unconfined \
+              moby/buildkit:rootless
+            docker buildx create --use \
+              --name mybuilder \
+              --driver remote docker-container://buildkitd
+            docker buildx build \
+              -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH} \
+              -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE} \
+              --platform=linux/arm64,linux/amd64 . --push
+        - name: release upload attachments
+          image: cnbcool/attachments:latest
+          settings:
+            attachments:
+              - ./bin/*

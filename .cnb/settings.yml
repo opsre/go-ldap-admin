@@ -1,0 +1,19 @@
+workspace:
+  launch:
+    button:
+      name: 🛫 起飞
+      description: 💪 逐步迈向运维的四个现代化：规范化，标准化，高效化，优雅化
+      hoverImage: .cnb/src/qifei.gif
+    cpus: 8
+    disabled: false
+    autoOpenWebIDE: false
+
+issue:
+  button:
+    description: 🙋🏻‍♀️ I Have A Question
+    hoverImage: ".cnb/src/jushou.jpg"
+
+fork:
+  button:
+    description: 🫵 年轻人，你很眼光
+    hoverImage: ".cnb/src/trump.gif"
