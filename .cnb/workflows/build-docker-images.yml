@@ -17,7 +17,6 @@ main:
         - name: 🐋 推送镜像
           timeout: 3h
           script: |
-            echo ${DOCKERHUB_TOKEN} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin
             echo ${ALIHUB_TOKEN} | docker login -u ${ALIHUB_USERNAME} --password-stdin ${ALIHUB_URL}
             docker run -d --name buildkitd \
               --security-opt seccomp=unconfined \
@@ -28,8 +27,6 @@ main:
               --name mybuilder \
               --driver remote docker-container://buildkitd
             docker buildx build \
-              -t ${DOCKERHUB_USERNAME}/${IMAGE_NAME} \
-              -t ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
               -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME} \
               -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
               -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE} \
