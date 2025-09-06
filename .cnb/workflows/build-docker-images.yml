@@ -5,6 +5,8 @@ main:
       services:
         - docker
         - git-clone-yyds
+      imports:
+        - https://cnb.cool/eryajf/build-env/-/blob/main/env.yaml
       env:
         IMAGE_NAME: "go-ldap-admin"
         DOCKERHUB_USERNAME: eryajf
