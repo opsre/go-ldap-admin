@@ -14,7 +14,7 @@ jobs:
           go-version-file: "go.mod"
           cache-dependency-path: "go.sum"
       - run: |
-          release_url=$(curl -s https://api.github.com/repos/opsre/go-ldap-admin-ui/releases/latest | grep "browser_download_url" | grep -v 'dist.zip.md5' | cut -d '"' -f 4); wget $release_url && unzip dist.zip && rm dist.zip && mv dist public/static
+          docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
@@ -26,7 +26,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - run: |
-          release_url=$(curl -s https://api.github.com/repos/opsre/go-ldap-admin-ui/releases/latest | grep "browser_download_url" | grep -v 'dist.zip.md5' | cut -d '"' -f 4); wget $release_url && unzip dist.zip && rm dist.zip && mv dist public/static
+          docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
     - name: 设置go环境
       uses: actions/setup-go@v5
       with:

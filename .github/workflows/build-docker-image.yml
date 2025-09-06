@@ -50,24 +50,20 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Login to the Ali Registry
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: ${{ env.ALIHUB_URL }}
-      #     username: ${{ env.ALIHUB_USERNAME }}
-      #     password: ${{ secrets.ALIHUB_TOKEN }}
       
-      # - name: 设置go环境
-      #   uses: actions/setup-go@v5
-      #   with:
-      #     go-version-file: "go.mod"
-      #     cache-dependency-path: "go.sum"
-      # - name: 安装 UPX
-      #   uses: crazy-max/ghaction-upx@v3
-      #   with:
-      #     install-only: true
-      # - run: go install github.com/authelia/gox@latest # setup gox
-      # - run: make gox-linux
+      - name: 设置go环境
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+          cache-dependency-path: "go.sum"
+      - name: 安装 UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          install-only: true
+      - run: go install github.com/authelia/gox@latest # setup gox
+      - run: |
+          docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
+          make gox-linux
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -82,6 +78,6 @@ jobs:
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPONAME }}:latest
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPONAME }}:${{ env.GITHUB_REF_NAME }}
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPONAME }}:${{ steps.date.outputs.today }}
-            ghcr.io/${{ github.actor }}/${{ github.repository }}
-            ghcr.io/${{ github.actor }}/${{ github.repository }}:${{ env.GITHUB_REF_NAME }}
-            ghcr.io/${{ github.actor }}/${{ github.repository }}:${{ steps.date.outputs.today }}
+            ghcr.io/${{ github.repository }}
+            ghcr.io/${{ github.repository }}:${{ env.GITHUB_REF_NAME }}
+            ghcr.io/${{ github.repository }}:${{ steps.date.outputs.today }}

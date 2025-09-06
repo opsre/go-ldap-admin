@@ -12,6 +12,18 @@ $:
         ALIHUB_USERNAME: eryajf
         ALIHUB_IMAGE_REPONAME: eryajf
       stages:
+        - name: 📦 构建制品
+          timeout: 3h
+          image: docker.cnb.cool/znb/images/debian:new
+          script: |
+            docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
+            make gox-all
+        - name: release upload attachments
+          timeout: 3h
+          image: cnbcool/attachments:latest
+          settings:
+            attachments:
+              - ./bin/*
         - name: 🐋 推送镜像
           timeout: 3h
           script: |
@@ -30,15 +42,3 @@ $:
               -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE} \
               -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
               --platform=linux/arm64,linux/amd64 . --push
-        - name: 📦 构建制品
-          timeout: 3h
-          image: docker.cnb.cool/znb/images/debian:new
-          script: |
-            docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
-            make gox-all
-        - name: release upload attachments
-          timeout: 3h
-          image: cnbcool/attachments:latest
-          settings:
-            attachments:
-              - ./bin/*

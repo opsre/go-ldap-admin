@@ -14,6 +14,11 @@ main:
         ALIHUB_USERNAME: eryajf
         ALIHUB_IMAGE_REPONAME: eryajf
       stages:
+        - name: 📦 构建制品
+          image: docker.cnb.cool/znb/images/debian:all
+          script: |
+            docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
+            make gox-linux
         - name: 🐋 推送镜像
           timeout: 3h
           script: |
