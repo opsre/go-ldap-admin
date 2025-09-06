@@ -14,8 +14,8 @@ main:
       stages:
         - name: 🐋 推送镜像
           script: |
-            docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_TOKEN}
-            docker login -u ${ALIHUB_USERNAME} -p ${ALIHUB_TOKEN} ${ALIHUB_URL}
+            echo ${DOCKERHUB_TOKEN} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin
+            echo ${ALIHUB_TOKEN} | docker login -u ${ALIHUB_USERNAME} --password-stdin ${ALIHUB_URL}
             docker run -d --name buildkitd \
               --security-opt seccomp=unconfined \
               --security-opt apparmor=unconfined \
