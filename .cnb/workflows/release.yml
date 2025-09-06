@@ -5,13 +5,17 @@ $:
       services:
         - docker
         - git-clone-yyds
+      env:
+        IMAGE_NAME: "go-ldap-admin"
+        DOCKERHUB_USERNAME: eryajf
+        ALIHUB_URL: registry.cn-hangzhou.aliyuncs.com
+        ALIHUB_USERNAME: eryajf
+        ALIHUB_IMAGE_REPONAME: eryajf
       stages:
-        - name: 📦 构建制品
-          image: docker.cnb.cool/znb/images/debian:all
-          script: |
-            make gox-all
         - name: 🐋 推送镜像
           script: |
+            docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_TOKEN}
+            docker login -u ${ALIHUB_USERNAME} -p ${ALIHUB_TOKEN} ${ALIHUB_URL}
             docker run -d --name buildkitd \
               --security-opt seccomp=unconfined \
               --security-opt apparmor=unconfined \
@@ -21,9 +25,18 @@ $:
               --name mybuilder \
               --driver remote docker-container://buildkitd
             docker buildx build \
-              -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH} \
+              -t ${DOCKERHUB_USERNAME}/${IMAGE_NAME} \
+              -t ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
+              -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME} \
+              -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
               -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE} \
+              -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
               --platform=linux/arm64,linux/amd64 . --push
+        - name: 📦 构建制品
+          image: docker.cnb.cool/znb/images/debian:new
+          script: |
+            docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
+            make gox-all
         - name: release upload attachments
           image: cnbcool/attachments:latest
           settings:

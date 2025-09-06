@@ -14,5 +14,5 @@ main:
             auth_type: https
             username: ${GIT_USERNAME}
             password: ${GIT_ACCESS_TOKEN}
-            target_url: https://github.com/eryajf/glactl.git
+            target_url: https://github.com/opsre/go-ldap-admin.git
             git_email: 'github-actions[bot]@users.noreply.github.com'

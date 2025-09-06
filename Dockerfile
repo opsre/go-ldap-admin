@@ -1,8 +1,8 @@
-FROM registry.cn-hangzhou.aliyuncs.com/eryajf/golang:1.18.10-alpine3.17  AS builder
+FROM docker.cnb.cool/znb/images/golang:1.25.0-alpine3.22  AS builder
 
 WORKDIR /app
 
-ENV GOPROXY https://goproxy.io
+ENV GOPROXY=https://goproxy.io
 
 RUN sed -i "s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g" /etc/apk/repositories \
     && apk upgrade && apk add --no-cache --virtual .build-deps \
@@ -10,17 +10,16 @@ RUN sed -i "s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g" /etc/apk/repositories
 
 ADD . .
 
-COPY --from=registry.cn-hangzhou.aliyuncs.com/eryajf/docker-compose-wait /wait .
-
-RUN release_url=$(curl -s https://api.github.com/repos/opsre/go-ldap-admin-ui/releases/latest | grep "browser_download_url" | grep -v 'dist.zip.md5' | cut -d '"' -f 4); wget $release_url && unzip dist.zip && rm dist.zip && mv dist public/static
+COPY --from=docker.cnb.cool/znb/images/docker-compose-wait /wait .
+COPY --from=docker.cnb.cool/opsre/go-ldap-admin-ui /app/dist public/static/dist
 
 RUN sed -i 's@localhost:389@openldap:389@g' /app/config.yml \
     && sed -i 's@host: localhost@host: mysql@g'  /app/config.yml && go build -o go-ldap-admin . && upx -9 go-ldap-admin && upx -9 wait
 
 ### build final image
-FROM registry.cn-hangzhou.aliyuncs.com/eryajf/alpine:3.19
+FROM docker.cnb.cool/znb/images/alpine:latest
 
-LABEL maintainer eryajf@163.com
+LABEL maintainer=eryajf@163.com
 
 WORKDIR /app
 
