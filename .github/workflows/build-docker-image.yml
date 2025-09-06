@@ -1,37 +1,37 @@
-# name: build docker image
+name: build docker image
 
-# on:
-#   push:
-#     branches:
-#       - main
-#   release:
-#     types: [created, published] # 表示在创建新的 Release 时触发
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [created, published] # 表示在创建新的 Release 时触发
 
-#   # Allows you to run this workflow manually from the Actions tab
-#   # 可以手动触发
-#   workflow_dispatch:
-#     inputs:
-#       logLevel:
-#         description: "Log level"
-#         required: true
-#         default: "warning"
-#       tags:
-#         description: "Test scenario tags"
+  # Allows you to run this workflow manually from the Actions tab
+  # 可以手动触发
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+      tags:
+        description: "Test scenario tags"
 
-# env:
-#   DOCKERHUB_USERNAME: eryajf
-#   ALIHUB_URL: registry.cn-hangzhou.aliyuncs.com
-#   ALIHUB_USERNAME: eryajf
-#   ALIHUB_IMAGE_REPONAME: eryajf
-#   IMAGE_REPONAME: eryajfctl
+env:
+  DOCKERHUB_USERNAME: eryajf
+  ALIHUB_URL: registry.cn-hangzhou.aliyuncs.com
+  ALIHUB_USERNAME: eryajf
+  ALIHUB_IMAGE_REPONAME: eryajf
+  IMAGE_REPONAME: eryajfctl
 
-# jobs:
-#   buildImage:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-#       - name: Inject slug/short variables
-#         uses: rlespinasse/github-slug-action@v4
+jobs:
+  buildImage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # - name: Inject slug/short variables
+      #   uses: rlespinasse/github-slug-action@v4
 #       - name: Get current date
 #         id: date
 #         run: echo "today=$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT

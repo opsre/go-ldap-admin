@@ -28,9 +28,9 @@ jobs:
     - run: |
           release_url=$(curl -s https://api.github.com/repos/opsre/go-ldap-admin-ui/releases/latest | grep "browser_download_url" | grep -v 'dist.zip.md5' | cut -d '"' -f 4); wget $release_url && unzip dist.zip && rm dist.zip && mv dist public/static
     - name: 设置go环境
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: "go.mod"
-          cache-dependency-path: "go.sum"
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: "go.mod"
+        cache-dependency-path: "go.sum"
     - name: Build
       run: go build -v ./...
