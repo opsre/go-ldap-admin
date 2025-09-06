@@ -1,13 +1,11 @@
 # 更多部署方式详见：http://ldapdoc.eryajf.net/pages/f081dc/
-version: '3'
-
 networks:
   go-ldap-admin:
     driver: bridge
 
 services:
   go-ldap-admin:
-    image: registry.cn-hangzhou.aliyuncs.com/eryajf/go-ldap-admin
+    image: docker.cnb.cool/opsre/go-ldap-admin
     container_name: go-ldap-admin
     hostname: go-ldap-admin
     restart: always
@@ -28,7 +26,7 @@ services:
       - go-ldap-admin
 
   openldap:
-    image: registry.cn-hangzhou.aliyuncs.com/eryajf/openldap:1.4.1
+    image: docker.cnb.cool/znb/images/openldap:1.4.1
     container_name: go-ldap-admin-openldap
     hostname: go-ldap-admin-openldap
     restart: always
@@ -45,6 +43,27 @@ services:
       - 389:389
     networks:
       - go-ldap-admin
+
+  # 按需启用
+  # phpldapadmin:
+  #   image: docker.cnb.cool/znb/images/phpldapadmin:0.9.0
+  #   container_name: go-ldap-admin-phpldapadmin
+  #   hostname: go-ldap-admin-phpldapadmin
+  #   restart: always
+  #   environment:
+  #     TZ: Asia/Shanghai
+  #     PHPLDAPADMIN_HTTPS: "false"
+  #     PHPLDAPADMIN_LDAP_HOSTS: go-ldap-admin-openldap
+  #   ports:
+  #     - 8091:80
+  #   volumes:
+  #     - ./data/phpadmin:/var/www/phpldapadmin
+  #   depends_on:
+  #     - openldap
+  #   links:
+  #     - openldap:go-ldap-admin-openldap
+  #   networks:
+  #     - go-ldap-admin
 
 configs:
   go_ldap_admin_config:
