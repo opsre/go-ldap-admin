@@ -13,6 +13,7 @@ $:
         ALIHUB_IMAGE_REPONAME: eryajf
       stages:
         - name: 🐋 推送镜像
+          timeout: 3h
           script: |
             docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_TOKEN}
             docker login -u ${ALIHUB_USERNAME} -p ${ALIHUB_TOKEN} ${ALIHUB_URL}
@@ -33,11 +34,13 @@ $:
               -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
               --platform=linux/arm64,linux/amd64 . --push
         - name: 📦 构建制品
+          timeout: 3h
           image: docker.cnb.cool/znb/images/debian:new
           script: |
             docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
             make gox-all
         - name: release upload attachments
+          timeout: 3h
           image: cnbcool/attachments:latest
           settings:
             attachments:

@@ -15,6 +15,7 @@ main:
         ALIHUB_IMAGE_REPONAME: eryajf
       stages:
         - name: 🐋 推送镜像
+          timeout: 3h
           script: |
             echo ${DOCKERHUB_TOKEN} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin
             echo ${ALIHUB_TOKEN} | docker login -u ${ALIHUB_USERNAME} --password-stdin ${ALIHUB_URL}
