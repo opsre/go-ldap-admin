@@ -23,7 +23,7 @@ env:
   ALIHUB_URL: registry.cn-hangzhou.aliyuncs.com
   ALIHUB_USERNAME: eryajf
   ALIHUB_IMAGE_REPONAME: eryajf
-  IMAGE_REPONAME: eryajfctl
+  IMAGE_REPONAME: go-ldap-admin
 
 jobs:
   buildImage:
