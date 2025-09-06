@@ -65,10 +65,10 @@
 
 ## 👨‍💻 项目地址
 
-| 分类 |                     GitHub                     |                        Gitee                        |
-| :--: | :--------------------------------------------: | :-------------------------------------------------: |
-| 后端 |  https://github.com/eryajf/go-ldap-admin.git   |  https://gitee.com/eryajf-world/go-ldap-admin.git   |
-| 前端 | https://github.com/eryajf/go-ldap-admin-ui.git | https://gitee.com/eryajf-world/go-ldap-admin-ui.git |
+| 分类 |                     GitHub                     |   CNB |                     Gitee                        |
+| :--: | :--------------------------------------------: | :-------------------------------------------------:| :-------------------------------------------------: |
+| 后端 |  https://github.com/opsre/go-ldap-admin.git   | https://cnb.cool/opsre/go-ldap-admin.git | https://gitee.com/eryajf-world/go-ldap-admin.git   |
+| 前端 | https://github.com/opsre/go-ldap-admin-ui.git | https://cnb.cool/opsre/go-ldap-admin-ui.git | https://gitee.com/eryajf-world/go-ldap-admin-ui.git |
 
 ## 🔗 文档快链
 
