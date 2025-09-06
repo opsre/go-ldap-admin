@@ -114,6 +114,11 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rsp
 		common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
 		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
+	if len(staffs) == 0 {
+		errMsg := "获取到的用户数量为0"
+		common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
+		return nil, tools.NewOperationError(errors.New(errMsg))
+	}
 	// 2.遍历用户，开始写入
 	for i, staff := range staffs {
 		// 入库

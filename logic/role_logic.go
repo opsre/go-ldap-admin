@@ -115,7 +115,7 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	// 根据path中的角色ID获取该角色信息
 	roles, _ := isql.Role.GetRolesByIds([]uint{r.ID})
 	if len(roles) == 0 {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取角色信息失败: %s", err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("获取角色信息失败: 未找到对应角色"))
 	}
 
 	if minSort >= roles[0].Sort {

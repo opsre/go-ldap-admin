@@ -33,6 +33,11 @@ func (d *WeComLogic) SyncWeComDepts(c *gin.Context, req any) (data any, rspError
 		common.Log.Errorf("SyncWeComDepts: %s", errMsg)
 		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
+	if len(depts) == 0 {
+		errMsg := "获取到的部门数量为0"
+		common.Log.Errorf("SyncWeComDepts: %s", errMsg)
+		return nil, tools.NewOperationError(errors.New(errMsg))
+	}
 
 	// 2.将远程数据转换成树
 	deptTree := GroupListToTree(fmt.Sprintf("%s_1", config.Conf.WeCom.Flag), depts)
@@ -107,6 +112,11 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 	staffs, err := ConvertUserData(config.Conf.WeCom.Flag, staffSource)
 	if err != nil {
 		errMsg := fmt.Sprintf("转换企业微信用户数据失败：%s", err.Error())
+		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
+		return nil, tools.NewOperationError(errors.New(errMsg))
+	}
+	if len(staffs) == 0 {
+		errMsg := "获取到的用户数量为0"
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 		return nil, tools.NewOperationError(errors.New(errMsg))
 	}

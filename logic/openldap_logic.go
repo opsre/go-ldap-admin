@@ -25,6 +25,11 @@ func (d *OpenLdapLogic) SyncOpenLdapDepts(c *gin.Context, req any) (data any, rs
 		common.Log.Errorf("SyncOpenLdapDepts: %s", errMsg)
 		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
+	if len(depts) == 0 {
+		errMsg := "获取到的部门数量为0"
+		common.Log.Errorf("SyncOpenLdapDepts: %s", errMsg)
+		return nil, tools.NewOperationError(errors.New(errMsg))
+	}
 	groups := make([]*model.Group, 0)
 	for _, dept := range depts {
 		groups = append(groups, &model.Group{
@@ -117,6 +122,11 @@ func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req any) (data any, rsp
 	staffs, err := openldap.GetAllUsers()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取OpenLDAP用户列表失败：%s", err.Error())
+		common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
+		return nil, tools.NewOperationError(errors.New(errMsg))
+	}
+	if len(staffs) == 0 {
+		errMsg := "获取到的用户数量为0"
 		common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
 		return nil, tools.NewOperationError(errors.New(errMsg))
 	}

@@ -33,6 +33,11 @@ func (d *FeiShuLogic) SyncFeiShuDepts(c *gin.Context, req any) (data any, rspErr
 		common.Log.Errorf("SyncFeiShuDepts: %s", errMsg)
 		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
+	if len(depts) == 0 {
+		errMsg := "获取到的部门数量为0"
+		common.Log.Errorf("SyncFeiShuDepts: %s", errMsg)
+		return nil, tools.NewOperationError(errors.New(errMsg))
+	}
 
 	// 2.将远程数据转换成树
 	deptTree := GroupListToTree(fmt.Sprintf("%s_0", config.Conf.FeiShu.Flag), depts)
@@ -107,6 +112,11 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req any) (data any, rspErro
 	staffs, err := ConvertUserData(config.Conf.FeiShu.Flag, staffSource)
 	if err != nil {
 		errMsg := fmt.Sprintf("转换飞书用户数据失败：%s", err.Error())
+		common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
+		return nil, tools.NewOperationError(errors.New(errMsg))
+	}
+	if len(staffs) == 0 {
+		errMsg := "获取到的用户数量为0"
 		common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
