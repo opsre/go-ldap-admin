@@ -32,6 +32,11 @@ func (d *DingTalkLogic) SyncDingTalkDepts(c *gin.Context, req interface{}) (data
 		common.Log.Errorf("SyncDingTalkDepts: %s", errMsg)
 		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
 	}
+	if len(depts) == 0 {
+		errMsg := "获取到的部门数量为0"
+		common.Log.Errorf("SyncDingTalkDepts: %s", errMsg)
+		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+	}
 
 	// 2.将远程数据转换成树
 	deptTree := GroupListToTree(fmt.Sprintf("%s_1", config.Conf.DingTalk.Flag), depts)
@@ -133,7 +138,7 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req interface{}) (data 
 		common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
 		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
 	}
-	
+
 	// 4.遍历id，开始处理
 	processedCount := 0
 	for _, uid := range userIds {

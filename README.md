@@ -67,8 +67,8 @@
 
 | 分类 |                     GitHub                     |   CNB |                     Gitee                        |
 | :--: | :--------------------------------------------: | :-------------------------------------------------:| :-------------------------------------------------: |
-| 后端 |  https://github.com/opsre/go-ldap-admin.git   | https://cnb.cool/opsre/go-ldap-admin.git | https://gitee.com/eryajf-world/go-ldap-admin.git   |
-| 前端 | https://github.com/opsre/go-ldap-admin-ui.git | https://cnb.cool/opsre/go-ldap-admin-ui.git | https://gitee.com/eryajf-world/go-ldap-admin-ui.git |
+| 后端 |  [go-ldap-admin](https://github.com/opsre/go-ldap-admin.git)   | [go-ldap-admin](https://cnb.cool/opsre/go-ldap-admin.git) | [go-ldap-admin](https://gitee.com/eryajf-world/go-ldap-admin.git)   |
+| 前端 | [go-ldap-admin-ui](https://github.com/opsre/go-ldap-admin-ui.git) | [go-ldap-admin-ui](https://cnb.cool/opsre/go-ldap-admin-ui.git) | [go-ldap-admin-ui](https://gitee.com/eryajf-world/go-ldap-admin-ui.git) |
 
 ## 🔗 文档快链
 
