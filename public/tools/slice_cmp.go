@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//字符串切片比较
+// 字符串切片比较
 func ArrStrCmp(src []string, dest []string) ([]string, []string) {
 	msrc := make(map[string]byte) //按源数组建索引
 	mall := make(map[string]byte) //源+目所有元素建索引
@@ -43,7 +43,7 @@ func ArrStrCmp(src []string, dest []string) ([]string, []string) {
 	return added, deleted
 }
 
-//uint切片比较
+// uint切片比较
 func ArrUintCmp(src []uint, dest []uint) ([]uint, []uint) {
 	msrc := make(map[uint]byte) //按源数组建索引
 	mall := make(map[uint]byte) //源+目所有元素建索引
@@ -80,19 +80,19 @@ func ArrUintCmp(src []uint, dest []uint) ([]uint, []uint) {
 	return added, deleted
 }
 
-//将字符串切片转换为uint切片
+// 将字符串切片转换为uint切片
 func SliceToString(src []uint, delim string) string {
-	return strings.Trim(strings.Replace(fmt.Sprint(src), " ", delim, -1), "[]")
+	return strings.Trim(strings.ReplaceAll(fmt.Sprint(src), " ", delim), "[]")
 }
 
-//将字符串切片转换为uint切片
+// 将字符串切片转换为uint切片
 func StringToSlice(src string, delim string) []uint {
 	var dest []uint
 	if src == "" {
 		return dest
 	}
-	strs := strings.Split(src, delim)
-	for _, v := range strs {
+	strs := strings.SplitSeq(src, delim)
+	for v := range strs {
 		t, _ := strconv.Atoi(v)
 		dest = append(dest, uint(t))
 	}

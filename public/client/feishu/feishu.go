@@ -12,11 +12,11 @@ import (
 
 // 官方文档： https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/children
 // GetAllDepts 获取所有部门
-func GetAllDepts() (ret []map[string]interface{}, err error) {
+func GetAllDepts() (ret []map[string]any, err error) {
 	var (
-		fetchChild bool   = true
-		pageSize   int64  = 50
-		pageToken  string = ""
+		fetchChild       = true
+		pageSize   int64 = 50
+		pageToken        = ""
 		// DeptID     lark.DepartmentIDType = "department_id"
 	)
 
@@ -35,7 +35,7 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 			}
 
 			for _, dept := range res.Items {
-				ele := make(map[string]interface{})
+				ele := make(map[string]any)
 				ele["name"] = dept.Name
 				ele["custom_name_pinyin"] = tools.ConvertToPinYin(dept.Name)
 				ele["parent_department_id"] = dept.ParentDepartmentID
@@ -54,16 +54,14 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 		//使用dept-list来一个一个添加部门，开头为^的不添加子部门
 		isInDeptList := func(id string) bool {
 			for _, v := range config.Conf.FeiShu.DeptList {
-				if strings.HasPrefix(v, "^") {
-					v = v[1:]
-				}
+				v = strings.TrimPrefix(v, "^")
 				if id == v {
 					return true
 				}
 			}
 			return false
 		}
-		dep_append_norepeat := func(ret []map[string]interface{}, dept map[string]interface{}) []map[string]interface{} {
+		dep_append_norepeat := func(ret []map[string]any, dept map[string]any) []map[string]any {
 			for _, v := range ret {
 				if v["open_department_id"] == dept["open_department_id"] {
 					return ret
@@ -85,7 +83,7 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 			if err != nil {
 				return nil, err
 			}
-			ele := make(map[string]interface{})
+			ele := make(map[string]any)
 
 			ele["name"] = res.Department.Name
 			ele["custom_name_pinyin"] = tools.ConvertToPinYin(res.Department.Name)
@@ -116,7 +114,7 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 					}
 
 					for _, dept := range res.Items {
-						ele := make(map[string]interface{})
+						ele := make(map[string]any)
 						ele["name"] = dept.Name
 						ele["custom_name_pinyin"] = tools.ConvertToPinYin(dept.Name)
 						ele["parent_department_id"] = dept.ParentDepartmentID
@@ -139,10 +137,10 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 
 // 官方文档： https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/find_by_department
 // GetAllUsers 获取所有员工信息
-func GetAllUsers() (ret []map[string]interface{}, err error) {
+func GetAllUsers() (ret []map[string]any, err error) {
 	var (
-		pageSize  int64  = 50
-		pageToken string = ""
+		pageSize  int64 = 50
+		pageToken       = ""
 		// deptidtype lark.DepartmentIDType = "department_id"
 	)
 	depts, err := GetAllDepts()
@@ -169,7 +167,7 @@ func GetAllUsers() (ret []map[string]interface{}, err error) {
 				return nil, err
 			}
 			for _, user := range res.Items {
-				ele := make(map[string]interface{})
+				ele := make(map[string]any)
 				ele["name"] = user.Name
 				ele["custom_name_pinyin"] = tools.ConvertToPinYin(user.Name)
 				ele["union_id"] = user.UnionID

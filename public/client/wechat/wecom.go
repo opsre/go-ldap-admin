@@ -11,7 +11,7 @@ import (
 
 // 官方文档： https://developer.work.weixin.qq.com/document/path/90208
 // GetAllDepts 获取所有部门
-func GetAllDepts() (ret []map[string]interface{}, err error) {
+func GetAllDepts() (ret []map[string]any, err error) {
 	depts, err := InitWeComClient().ListDepartment(
 		&wecom.ListDepartmentRequest{},
 	)
@@ -19,7 +19,7 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 		return nil, err
 	}
 	for _, dept := range depts.Department {
-		ele := make(map[string]interface{})
+		ele := make(map[string]any)
 		ele["name"] = dept.Name
 		ele["custom_name_pinyin"] = tools.ConvertToPinYin(dept.Name)
 		ele["id"] = dept.ID
@@ -32,7 +32,7 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 
 // 官方文档： https://developer.work.weixin.qq.com/document/path/90201
 // GetAllUsers 获取所有员工信息
-func GetAllUsers() (ret []map[string]interface{}, err error) {
+func GetAllUsers() (ret []map[string]any, err error) {
 	depts, err := GetAllDepts()
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func GetAllUsers() (ret []map[string]interface{}, err error) {
 			return nil, err
 		}
 		for _, user := range users.UserList {
-			ele := make(map[string]interface{})
+			ele := make(map[string]any)
 			ele["name"] = user.Name
 			ele["custom_name_pinyin"] = tools.ConvertToPinYin(user.Name)
 			ele["userid"] = user.UserID

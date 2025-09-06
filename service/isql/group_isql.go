@@ -101,12 +101,12 @@ func (s GroupService) ChangeSyncState(id, status int) error {
 }
 
 // Find 获取单个资源
-func (s GroupService) Find(filter map[string]interface{}, data *model.Group, args ...interface{}) error {
+func (s GroupService) Find(filter map[string]any, data *model.Group, args ...any) error {
 	return common.DB.Where(filter, args).Preload("Users").First(&data).Error
 }
 
 // Exist 判断资源是否存在
-func (s GroupService) Exist(filter map[string]interface{}) bool {
+func (s GroupService) Exist(filter map[string]any) bool {
 	var dataObj model.Group
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)

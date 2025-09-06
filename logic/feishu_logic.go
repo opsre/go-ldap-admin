@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -18,19 +19,19 @@ type FeiShuLogic struct {
 }
 
 // 通过飞书获取部门信息
-func (d *FeiShuLogic) SyncFeiShuDepts(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (d *FeiShuLogic) SyncFeiShuDepts(c *gin.Context, req any) (data any, rspError any) {
 	// 1.获取所有部门
 	deptSource, err := feishu.GetAllDepts()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取飞书部门列表失败：%s", err.Error())
 		common.Log.Errorf("SyncFeiShuDepts: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	depts, err := ConvertDeptData(config.Conf.FeiShu.Flag, deptSource)
 	if err != nil {
 		errMsg := fmt.Sprintf("转换飞书部门数据失败：%s", err.Error())
 		common.Log.Errorf("SyncFeiShuDepts: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 
 	// 2.将远程数据转换成树
@@ -55,14 +56,14 @@ func (d FeiShuLogic) addDepts(depts []*model.Group) error {
 		if err != nil {
 			errMsg := fmt.Sprintf("DsyncFeiShuDepts添加部门[%s]失败: %s", dept.GroupName, err.Error())
 			common.Log.Errorf("%s", errMsg)
-			return tools.NewOperationError(fmt.Errorf(errMsg))
+			return tools.NewOperationError(errors.New(errMsg))
 		}
 		if len(dept.Children) != 0 {
 			err = d.addDepts(dept.Children)
 			if err != nil {
 				errMsg := fmt.Sprintf("DsyncFeiShuDepts添加子部门失败: %s", err.Error())
 				common.Log.Errorf("%s", errMsg)
-				return tools.NewOperationError(fmt.Errorf(errMsg))
+				return tools.NewOperationError(errors.New(errMsg))
 			}
 		}
 	}
@@ -95,19 +96,19 @@ func (d FeiShuLogic) AddDepts(group *model.Group) error {
 }
 
 // 根据现有数据库同步到的部门信息，开启用户同步
-func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req any) (data any, rspError any) {
 	// 1.获取飞书用户列表
 	staffSource, err := feishu.GetAllUsers()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取飞书用户列表失败：%s", err.Error())
 		common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	staffs, err := ConvertUserData(config.Conf.FeiShu.Flag, staffSource)
 	if err != nil {
 		errMsg := fmt.Sprintf("转换飞书用户数据失败：%s", err.Error())
 		common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	// 2.遍历用户，开始写入
 	for i, staff := range staffs {
@@ -116,7 +117,7 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req interface{}) (data inte
 		if err != nil {
 			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Username, err.Error())
 			common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
-			return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+			return nil, tools.NewOperationError(errors.New(errMsg))
 		}
 		common.Log.Infof("SyncFeiShuUsers: 成功同步用户[%s] (%d/%d)", staff.Username, i+1, len(staffs))
 	}
@@ -126,7 +127,7 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req interface{}) (data inte
 	if err != nil {
 		errMsg := fmt.Sprintf("获取飞书离职用户列表失败：%s", err.Error())
 		common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	// 4.遍历id，开始处理
 	processedCount := 0
@@ -141,21 +142,21 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req interface{}) (data inte
 			if err != nil {
 				errMsg := fmt.Sprintf("在MySQL查询离职用户[%s]失败: %s", uid, err.Error())
 				common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
-				return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+				return nil, tools.NewMySqlError(errors.New(errMsg))
 			}
 			// 先从ldap删除用户
 			err = ildap.User.Delete(user.UserDN)
 			if err != nil {
 				errMsg := fmt.Sprintf("在LDAP删除离职用户[%s]失败: %s", user.Username, err.Error())
 				common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
-				return nil, tools.NewLdapError(fmt.Errorf(errMsg))
+				return nil, tools.NewLdapError(errors.New(errMsg))
 			}
 			// 然后更新MySQL中用户状态
 			err = isql.User.ChangeStatus(int(user.ID), 2)
 			if err != nil {
 				errMsg := fmt.Sprintf("在MySQL更新离职用户[%s]状态失败: %s", user.Username, err.Error())
 				common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
-				return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+				return nil, tools.NewMySqlError(errors.New(errMsg))
 			}
 			processedCount++
 			common.Log.Infof("SyncFeiShuUsers: 成功处理离职用户[%s]", user.Username)
@@ -184,7 +185,7 @@ func (d FeiShuLogic) AddUsers(user *model.User) error {
 		// 获取用户将要添加的分组
 		groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("根据部门ID获取部门信息失败" + err.Error()))
+			return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
 		}
 		var deptTmp string
 		for _, group := range groups {
@@ -209,7 +210,7 @@ func (d FeiShuLogic) AddUsers(user *model.User) error {
 			// 获取用户将要添加的分组
 			groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 			if err != nil {
-				return tools.NewMySqlError(fmt.Errorf("根据部门ID获取部门信息失败" + err.Error()))
+				return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
 			}
 			var deptTmp string
 			for _, group := range groups {

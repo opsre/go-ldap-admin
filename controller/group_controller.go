@@ -20,7 +20,7 @@ type GroupController struct{}
 // @Security ApiKeyAuth
 func (m *GroupController) List(c *gin.Context) {
 	req := new(request.GroupListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Group.List(c, req)
 	})
 }
@@ -38,7 +38,7 @@ func (m *GroupController) List(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) UserInGroup(c *gin.Context) {
 	req := new(request.UserInGroupReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Group.UserInGroup(c, req)
 	})
 }
@@ -56,7 +56,7 @@ func (m *GroupController) UserInGroup(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) UserNoInGroup(c *gin.Context) {
 	req := new(request.UserNoInGroupReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Group.UserNoInGroup(c, req)
 	})
 }
@@ -72,7 +72,7 @@ func (m *GroupController) UserNoInGroup(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) GetTree(c *gin.Context) {
 	req := new(request.GroupListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Group.GetTree(c, req)
 	})
 }
@@ -89,7 +89,7 @@ func (m *GroupController) GetTree(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) Add(c *gin.Context) {
 	req := new(request.GroupAddReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Group.Add(c, req)
 	})
 }
@@ -106,7 +106,7 @@ func (m *GroupController) Add(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) Update(c *gin.Context) {
 	req := new(request.GroupUpdateReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Group.Update(c, req)
 	})
 }
@@ -123,7 +123,7 @@ func (m *GroupController) Update(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) Delete(c *gin.Context) {
 	req := new(request.GroupDeleteReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Group.Delete(c, req)
 	})
 }
@@ -140,7 +140,7 @@ func (m *GroupController) Delete(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) AddUser(c *gin.Context) {
 	req := new(request.GroupAddUserReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Group.AddUser(c, req)
 	})
 }
@@ -157,7 +157,7 @@ func (m *GroupController) AddUser(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) RemoveUser(c *gin.Context) {
 	req := new(request.GroupRemoveUserReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Group.RemoveUser(c, req)
 	})
 }
@@ -173,7 +173,7 @@ func (m *GroupController) RemoveUser(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) SyncDingTalkDepts(c *gin.Context) {
 	req := new(request.SyncDingTalkDeptsReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.DingTalk.SyncDingTalkDepts(c, req)
 	})
 }
@@ -189,7 +189,7 @@ func (m *GroupController) SyncDingTalkDepts(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) SyncWeComDepts(c *gin.Context) {
 	req := new(request.SyncWeComDeptsReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.WeCom.SyncWeComDepts(c, req)
 	})
 }
@@ -205,7 +205,7 @@ func (m *GroupController) SyncWeComDepts(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) SyncFeiShuDepts(c *gin.Context) {
 	req := new(request.SyncFeiShuDeptsReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.FeiShu.SyncFeiShuDepts(c, req)
 	})
 }
@@ -221,7 +221,7 @@ func (m *GroupController) SyncFeiShuDepts(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) SyncOpenLdapDepts(c *gin.Context) {
 	req := new(request.SyncOpenLdapDeptsReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.OpenLdap.SyncOpenLdapDepts(c, req)
 	})
 }
@@ -237,7 +237,7 @@ func (m *GroupController) SyncOpenLdapDepts(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *GroupController) SyncSqlGroups(c *gin.Context) {
 	req := new(request.SyncSqlGrooupsReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Sql.SyncSqlGroups(c, req)
 	})
 }

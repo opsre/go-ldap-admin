@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -18,24 +19,24 @@ type DingTalkLogic struct {
 }
 
 // 通过钉钉获取部门信息
-func (d *DingTalkLogic) SyncDingTalkDepts(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (d *DingTalkLogic) SyncDingTalkDepts(c *gin.Context, req any) (data any, rspError any) {
 	// 1.获取所有部门
 	deptSource, err := dingtalk.GetAllDepts()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取钉钉部门列表失败：%s", err.Error())
 		common.Log.Errorf("SyncDingTalkDepts: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	depts, err := ConvertDeptData(config.Conf.DingTalk.Flag, deptSource)
 	if err != nil {
 		errMsg := fmt.Sprintf("转换钉钉部门数据失败：%s", err.Error())
 		common.Log.Errorf("SyncDingTalkDepts: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	if len(depts) == 0 {
 		errMsg := "获取到的部门数量为0"
 		common.Log.Errorf("SyncDingTalkDepts: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 
 	// 2.将远程数据转换成树
@@ -60,14 +61,14 @@ func (d DingTalkLogic) addDepts(depts []*model.Group) error {
 		if err != nil {
 			errMsg := fmt.Sprintf("DsyncDingTalkDepts添加部门[%s]失败: %s", dept.GroupName, err.Error())
 			common.Log.Errorf("%s", errMsg)
-			return tools.NewOperationError(fmt.Errorf(errMsg))
+			return tools.NewOperationError(errors.New(errMsg))
 		}
 		if len(dept.Children) != 0 {
 			err = d.addDepts(dept.Children)
 			if err != nil {
 				errMsg := fmt.Sprintf("DsyncDingTalkDepts添加子部门失败: %s", err.Error())
 				common.Log.Errorf("%s", errMsg)
-				return tools.NewOperationError(fmt.Errorf(errMsg))
+				return tools.NewOperationError(errors.New(errMsg))
 			}
 		}
 	}
@@ -99,19 +100,19 @@ func (d DingTalkLogic) AddDepts(group *model.Group) error {
 }
 
 // 根据现有数据库同步到的部门信息，开启用户同步
-func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rspError any) {
 	// 1.获取钉钉用户列表
 	staffSource, err := dingtalk.GetAllUsers()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取钉钉用户列表失败：%s", err.Error())
 		common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	staffs, err := ConvertUserData(config.Conf.DingTalk.Flag, staffSource)
 	if err != nil {
 		errMsg := fmt.Sprintf("转换钉钉用户数据失败：%s", err.Error())
 		common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	// 2.遍历用户，开始写入
 	for i, staff := range staffs {
@@ -120,7 +121,7 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req interface{}) (data 
 		if err != nil {
 			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Username, err.Error())
 			common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
-			return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+			return nil, tools.NewOperationError(errors.New(errMsg))
 		}
 		common.Log.Infof("SyncDingTalkUsers: 成功同步用户[%s] (%d/%d)", staff.Username, i+1, len(staffs))
 	}
@@ -136,7 +137,7 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req interface{}) (data 
 	if err != nil {
 		errMsg := fmt.Sprintf("获取钉钉离职用户列表失败：%s", err.Error())
 		common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 
 	// 4.遍历id，开始处理
@@ -152,21 +153,21 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req interface{}) (data 
 			if err != nil {
 				errMsg := fmt.Sprintf("在MySQL查询离职用户[%s]失败: %s", uid, err.Error())
 				common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
-				return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+				return nil, tools.NewMySqlError(errors.New(errMsg))
 			}
 			// 先从ldap删除用户
 			err = ildap.User.Delete(user.UserDN)
 			if err != nil {
 				errMsg := fmt.Sprintf("在LDAP删除离职用户[%s]失败: %s", user.Username, err.Error())
 				common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
-				return nil, tools.NewLdapError(fmt.Errorf(errMsg))
+				return nil, tools.NewLdapError(errors.New(errMsg))
 			}
 			// 然后更新MySQL中用户状态
 			err = isql.User.ChangeStatus(int(user.ID), 2)
 			if err != nil {
 				errMsg := fmt.Sprintf("在MySQL更新离职用户[%s]状态失败: %s", user.Username, err.Error())
 				common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
-				return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+				return nil, tools.NewMySqlError(errors.New(errMsg))
 			}
 			processedCount++
 			common.Log.Infof("SyncDingTalkUsers: 成功处理离职用户[%s]", user.Username)
@@ -195,7 +196,7 @@ func (d DingTalkLogic) AddUsers(user *model.User) error {
 		// 获取用户将要添加的分组
 		groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("根据部门ID获取部门信息失败" + err.Error()))
+			return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
 		}
 		var deptTmp string
 		for _, group := range groups {
@@ -219,7 +220,7 @@ func (d DingTalkLogic) AddUsers(user *model.User) error {
 			// 获取用户将要添加的分组
 			groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 			if err != nil {
-				return tools.NewMySqlError(fmt.Errorf("根据部门ID获取部门信息失败" + err.Error()))
+				return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
 			}
 			var deptTmp string
 			for _, group := range groups {

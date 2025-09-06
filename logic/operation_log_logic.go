@@ -15,7 +15,7 @@ import (
 type OperationLogLogic struct{}
 
 // List 数据列表
-func (l OperationLogLogic) List(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l OperationLogLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.OperationLogListReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -52,7 +52,7 @@ func (l OperationLogLogic) List(c *gin.Context, req interface{}) (data interface
 }
 
 // Delete 删除数据
-func (l OperationLogLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l OperationLogLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.OperationLogDeleteReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -73,7 +73,7 @@ func (l OperationLogLogic) Delete(c *gin.Context, req interface{}) (data interfa
 	return nil, nil
 }
 
-func (l OperationLogLogic) Clean(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l OperationLogLogic) Clean(c *gin.Context, req any) (data any, rspError any) {
 	_, ok := req.(*request.OperationLogListReq)
 	if !ok {
 		return nil, ReqAssertErr

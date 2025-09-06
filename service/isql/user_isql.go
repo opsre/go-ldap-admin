@@ -122,7 +122,7 @@ func (s UserService) Count() (int64, error) {
 }
 
 // Exist 判断资源是否存在
-func (s UserService) Exist(filter map[string]interface{}) bool {
+func (s UserService) Exist(filter map[string]any) bool {
 	var dataObj model.User
 	err := common.DB.Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
@@ -134,7 +134,7 @@ func (s UserService) FindTheSameUserName(username string, data *model.User) erro
 }
 
 // Find 获取单个资源
-func (s UserService) Find(filter map[string]interface{}, data *model.User) error {
+func (s UserService) Find(filter map[string]any, data *model.User) error {
 	return common.DB.Where(filter).Preload("Roles").First(&data).Error
 }
 
@@ -179,7 +179,7 @@ func (s UserService) GetUserMinRoleSortsByIds(ids []uint) ([]int, error) {
 	return roleMinSortList, nil
 }
 
-//GetCurrentUserMinRoleSort  获取当前用户角色排序最小值（最高等级角色）以及当前用户信息
+// GetCurrentUserMinRoleSort  获取当前用户角色排序最小值（最高等级角色）以及当前用户信息
 func (s UserService) GetCurrentUserMinRoleSort(c *gin.Context) (uint, model.User, error) {
 	// 获取当前用户
 	ctxUser, err := s.GetCurrentLoginUser(c)

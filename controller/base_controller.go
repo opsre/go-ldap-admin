@@ -20,7 +20,7 @@ type BaseController struct{}
 // @Router /base/sendcode [post]
 func (m *BaseController) SendCode(c *gin.Context) {
 	req := new(request.BaseSendCodeReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Base.SendCode(c, req)
 	})
 }
@@ -36,7 +36,7 @@ func (m *BaseController) SendCode(c *gin.Context) {
 // @Router /base/changePwd [post]
 func (m *BaseController) ChangePwd(c *gin.Context) {
 	req := new(request.BaseChangePwdReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Base.ChangePwd(c, req)
 	})
 }
@@ -51,7 +51,7 @@ func (m *BaseController) ChangePwd(c *gin.Context) {
 // @Router /base/dashboard [get]
 func (m *BaseController) Dashboard(c *gin.Context) {
 	req := new(request.BaseDashboardReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Base.Dashboard(c, req)
 	})
 }
@@ -67,7 +67,7 @@ func (m *BaseController) Dashboard(c *gin.Context) {
 // @Router /base/encryptpwd [get]
 func (m *BaseController) EncryptPasswd(c *gin.Context) {
 	req := new(request.EncryptPasswdReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Base.EncryptPasswd(c, req)
 	})
 }
@@ -83,7 +83,7 @@ func (m *BaseController) EncryptPasswd(c *gin.Context) {
 // @Router /base/decryptpwd [get]
 func (m *BaseController) DecryptPasswd(c *gin.Context) {
 	req := new(request.DecryptPasswdReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Base.DecryptPasswd(c, req)
 	})
 }

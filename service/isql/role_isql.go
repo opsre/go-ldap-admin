@@ -16,7 +16,7 @@ import (
 type RoleService struct{}
 
 // Exist 判断资源是否存在
-func (s RoleService) Exist(filter map[string]interface{}) bool {
+func (s RoleService) Exist(filter map[string]any) bool {
 	var dataObj model.Role
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
@@ -63,7 +63,7 @@ func (s RoleService) Update(role *model.Role) error {
 }
 
 // Find 获取单个资源
-func (s RoleService) Find(filter map[string]interface{}, data *model.Role) error {
+func (s RoleService) Find(filter map[string]any, data *model.Role) error {
 	return common.DB.Where(filter).First(&data).Error
 }
 

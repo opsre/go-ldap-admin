@@ -80,7 +80,7 @@ func (x UserService) Update(oldusername string, user *model.User) error {
 	return nil
 }
 
-func (x UserService) Exist(filter map[string]interface{}) (bool, error) {
+func (x UserService) Exist(filter map[string]any) (bool, error) {
 	filter_str := ""
 	for key, value := range filter {
 		filter_str += fmt.Sprintf("(%s=%s)", key, value)

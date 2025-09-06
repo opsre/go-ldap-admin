@@ -105,12 +105,12 @@ func (s ApiService) Update(api *model.Api) error {
 }
 
 // Find 获取单个资源
-func (s ApiService) Find(filter map[string]interface{}, data *model.Api) error {
+func (s ApiService) Find(filter map[string]any, data *model.Api) error {
 	return common.DB.Where(filter).First(&data).Error
 }
 
 // Exist 判断资源是否存在
-func (s ApiService) Exist(filter map[string]interface{}) bool {
+func (s ApiService) Exist(filter map[string]any) bool {
 	var dataObj model.Api
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)

@@ -17,7 +17,7 @@ import (
 type RoleLogic struct{}
 
 // Add 添加数据
-func (l RoleLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l RoleLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleAddReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -59,7 +59,7 @@ func (l RoleLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspEr
 }
 
 // List 数据列表
-func (l RoleLogic) List(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l RoleLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleListReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -89,7 +89,7 @@ func (l RoleLogic) List(c *gin.Context, req interface{}) (data interface{}, rspE
 }
 
 // Update 更新数据
-func (l RoleLogic) Update(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleUpdateReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -196,7 +196,7 @@ func (l RoleLogic) Update(c *gin.Context, req interface{}) (data interface{}, rs
 }
 
 // Delete 删除数据
-func (l RoleLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l RoleLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleDeleteReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -234,7 +234,7 @@ func (l RoleLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rs
 }
 
 // GetMenuList 获取角色菜单列表
-func (l RoleLogic) GetMenuList(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l RoleLogic) GetMenuList(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleGetMenuListReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -243,13 +243,13 @@ func (l RoleLogic) GetMenuList(c *gin.Context, req interface{}) (data interface{
 
 	menus, err := isql.Role.GetRoleMenusById(r.RoleID)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取角色的权限菜单失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取角色的权限菜单失败: "+err.Error()))
 	}
 	return menus, nil
 }
 
 // GetApiList 获取角色接口列表
-func (l RoleLogic) GetApiList(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l RoleLogic) GetApiList(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleGetApiListReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -259,14 +259,14 @@ func (l RoleLogic) GetApiList(c *gin.Context, req interface{}) (data interface{}
 	role := new(model.Role)
 	err := isql.Role.Find(tools.H{"id": r.RoleID}, role)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取资源失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源失败: "+err.Error()))
 	}
 
 	policies := common.CasbinEnforcer.GetFilteredPolicy(0, role.Keyword)
 
 	apis, err := isql.Api.ListAll()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取资源列表失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
 	}
 	accessApis := make([]*model.Api, 0)
 
@@ -285,7 +285,7 @@ func (l RoleLogic) GetApiList(c *gin.Context, req interface{}) (data interface{}
 }
 
 // UpdateMenus 更新角色菜单
-func (l RoleLogic) UpdateMenus(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l RoleLogic) UpdateMenus(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleUpdateMenusReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -313,7 +313,7 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req interface{}) (data interface{
 	// 获取当前用户所拥有的权限菜单
 	ctxUserMenus, err := isql.Menu.GetUserMenusByUserId(ctxUser.ID)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前用户的可访问菜单列表失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取当前用户的可访问菜单列表失败: "+err.Error()))
 	}
 
 	// 获取当前用户所拥有的权限菜单ID
@@ -346,7 +346,7 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req interface{}) (data interface{
 		// 根据menuIds查询查询菜单
 		menus, err := isql.Menu.List()
 		if err != nil {
-			return nil, tools.NewValidatorError(fmt.Errorf("获取菜单列表失败: " + err.Error()))
+			return nil, tools.NewValidatorError(fmt.Errorf("%s", "获取菜单列表失败: "+err.Error()))
 		}
 		for _, menuId := range r.MenuIds {
 			for _, menu := range menus {
@@ -361,14 +361,14 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req interface{}) (data interface{
 
 	err = isql.Role.UpdateRoleMenus(roles[0])
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("更新角色的权限菜单失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "更新角色的权限菜单失败: "+err.Error()))
 	}
 
 	return nil, nil
 }
 
 // UpdateApis 更新角色接口
-func (l RoleLogic) UpdateApis(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l RoleLogic) UpdateApis(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleUpdateApisReq)
 	if !ok {
 		return nil, ReqAssertErr

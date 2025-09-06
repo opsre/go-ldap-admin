@@ -2,10 +2,10 @@ package tools
 
 import (
 	"bytes"
+	"crypto/rand"
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
-	"math/rand"
 )
 
 // code from https://gist.github.com/newm4n/ce9ac4308ae1beb4250efddad28e3f85
@@ -20,7 +20,9 @@ func EncodePass(rawPassPhrase []byte) string {
 // makeSalt make a 4 byte array containing random bytes.
 func makeSalt() []byte {
 	sbytes := make([]byte, 4)
-	rand.Read(sbytes)
+	if _, err := rand.Read(sbytes); err != nil {
+		panic(err) // crypto/rand should never fail
+	}
 	return sbytes
 }
 

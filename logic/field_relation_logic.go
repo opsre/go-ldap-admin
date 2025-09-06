@@ -15,7 +15,7 @@ import (
 type FieldRelationLogic struct{}
 
 // Add 添加数据
-func (l FieldRelationLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l FieldRelationLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.FieldRelationAddReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -46,7 +46,7 @@ func (l FieldRelationLogic) Add(c *gin.Context, req interface{}) (data interface
 }
 
 // List 数据列表
-func (l FieldRelationLogic) List(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l FieldRelationLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	_, ok := req.(*request.FieldRelationListReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -63,7 +63,7 @@ func (l FieldRelationLogic) List(c *gin.Context, req interface{}) (data interfac
 }
 
 // Update 更新数据
-func (l FieldRelationLogic) Update(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l FieldRelationLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.FieldRelationUpdateReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -101,7 +101,7 @@ func (l FieldRelationLogic) Update(c *gin.Context, req interface{}) (data interf
 }
 
 // Delete 删除数据
-func (l FieldRelationLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l FieldRelationLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.FieldRelationDeleteReq)
 	if !ok {
 		return nil, ReqAssertErr

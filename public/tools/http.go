@@ -57,7 +57,7 @@ func NewOperationError(err error) *RspError {
 }
 
 // ReloadErr 重新加载错误
-func ReloadErr(err interface{}) *RspError {
+func ReloadErr(err any) *RspError {
 	rspErr, ok := err.(*RspError)
 	if !ok {
 		rspError, ok := err.(error)
@@ -76,7 +76,7 @@ func ReloadErr(err interface{}) *RspError {
 }
 
 // Success http 成功
-func Success(c *gin.Context, data interface{}) {
+func Success(c *gin.Context, data any) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 0,
 		"msg":  "success",
@@ -85,7 +85,7 @@ func Success(c *gin.Context, data interface{}) {
 }
 
 // Err http 错误
-func Err(c *gin.Context, err *RspError, data interface{}) {
+func Err(c *gin.Context, err *RspError, data any) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": err.Code(),
 		"msg":  err.Error(),

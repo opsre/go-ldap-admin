@@ -6,7 +6,7 @@ import (
 )
 
 // 结构体转为json
-func Struct2Json(obj interface{}) string {
+func Struct2Json(obj any) string {
 	str, err := json.Marshal(obj)
 	if err != nil {
 		panic(fmt.Sprintf("[Struct2Json]转换异常: %v", err))
@@ -15,7 +15,7 @@ func Struct2Json(obj interface{}) string {
 }
 
 // json转为结构体
-func Json2Struct(str string, obj interface{}) {
+func Json2Struct(str string, obj any) {
 	// 将json转为结构体
 	err := json.Unmarshal([]byte(str), obj)
 	if err != nil {
@@ -24,7 +24,7 @@ func Json2Struct(str string, obj interface{}) {
 }
 
 // json interface转为结构体
-func JsonI2Struct(str interface{}, obj interface{}) {
+func JsonI2Struct(str any, obj any) {
 	JsonStr := str.(string)
 	Json2Struct(JsonStr, obj)
 }

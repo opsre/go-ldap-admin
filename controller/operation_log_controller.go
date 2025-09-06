@@ -27,7 +27,7 @@ type OperationLogController struct{}
 // @Security ApiKeyAuth
 func (m *OperationLogController) List(c *gin.Context) {
 	req := new(request.OperationLogListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.OperationLog.List(c, req)
 	})
 }
@@ -44,7 +44,7 @@ func (m *OperationLogController) List(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *OperationLogController) Delete(c *gin.Context) {
 	req := new(request.OperationLogDeleteReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.OperationLog.Delete(c, req)
 	})
 }
@@ -60,7 +60,7 @@ func (m *OperationLogController) Delete(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *OperationLogController) Clean(c *gin.Context) {
 	req := new(request.OperationLogListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.OperationLog.Clean(c, req)
 	})
 }

@@ -41,7 +41,7 @@ func checkMobile(fl validator.FieldLevel) bool {
 	return rgx.MatchString(fl.Field().String())
 }
 
-func Run(c *gin.Context, req interface{}, fn func() (interface{}, interface{})) {
+func Run(c *gin.Context, req any, fn func() (any, any)) {
 	var err error
 	// bind struct
 	err = c.Bind(req)
@@ -53,7 +53,7 @@ func Run(c *gin.Context, req interface{}, fn func() (interface{}, interface{})) 
 	err = validate.Struct(req)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			tools.Err(c, tools.NewValidatorError(fmt.Errorf(err.Translate(trans))), nil)
+			tools.Err(c, tools.NewValidatorError(fmt.Errorf("%s", err.Translate(trans))), nil)
 			return
 		}
 	}

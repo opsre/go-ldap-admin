@@ -14,7 +14,7 @@ import (
 type MenuLogic struct{}
 
 // Add 添加数据
-func (l MenuLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l MenuLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.MenuAddReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -59,7 +59,7 @@ func (l MenuLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspEr
 }
 
 // // List 数据列表
-// func (l MenuLogic) List(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+// func (l MenuLogic) List(c *gin.Context, req any) (data any, rspError any) {
 // 	_, ok := req.(*request.MenuListReq)
 // 	if !ok {
 // 		return nil, ReqAssertErr
@@ -87,7 +87,7 @@ func (l MenuLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspEr
 // }
 
 // Update 更新数据
-func (l MenuLogic) Update(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l MenuLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.MenuUpdateReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -139,7 +139,7 @@ func (l MenuLogic) Update(c *gin.Context, req interface{}) (data interface{}, rs
 }
 
 // Delete 删除数据
-func (l MenuLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l MenuLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.MenuDeleteReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -162,7 +162,7 @@ func (l MenuLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rs
 }
 
 // GetTree 数据树
-func (l MenuLogic) GetTree(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l MenuLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	_, ok := req.(*request.MenuGetTreeReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -170,7 +170,7 @@ func (l MenuLogic) GetTree(c *gin.Context, req interface{}) (data interface{}, r
 	_ = c
 	menus, err := isql.Menu.List()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取资源列表失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
 	}
 
 	tree := isql.GenMenuTree(0, menus)
@@ -179,7 +179,7 @@ func (l MenuLogic) GetTree(c *gin.Context, req interface{}) (data interface{}, r
 }
 
 // GetAccessTree 获取用户菜单树
-func (l MenuLogic) GetAccessTree(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l MenuLogic) GetAccessTree(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.MenuGetAccessTreeReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -193,7 +193,7 @@ func (l MenuLogic) GetAccessTree(c *gin.Context, req interface{}) (data interfac
 	user := new(model.User)
 	err := isql.User.Find(filter, user)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("在MySQL查询用户失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL查询用户失败: "+err.Error()))
 	}
 	var roleIds []uint
 	for _, role := range user.Roles {
@@ -201,7 +201,7 @@ func (l MenuLogic) GetAccessTree(c *gin.Context, req interface{}) (data interfac
 	}
 	menus, err := isql.Menu.ListUserMenus(roleIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取资源列表失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
 	}
 
 	tree := isql.GenMenuTree(0, menus)

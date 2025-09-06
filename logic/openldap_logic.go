@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -15,14 +16,14 @@ import (
 type OpenLdapLogic struct {
 }
 
-//通过ldap获取部门信息
-func (d *OpenLdapLogic) SyncOpenLdapDepts(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+// 通过ldap获取部门信息
+func (d *OpenLdapLogic) SyncOpenLdapDepts(c *gin.Context, req any) (data any, rspError any) {
 	// 1.获取所有部门
 	depts, err := openldap.GetAllDepts()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取OpenLDAP部门列表失败：%s", err.Error())
 		common.Log.Errorf("SyncOpenLdapDepts: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	groups := make([]*model.Group, 0)
 	for _, dept := range depts {
@@ -56,14 +57,14 @@ func (d OpenLdapLogic) addDepts(depts []*model.Group) error {
 		if err != nil {
 			errMsg := fmt.Sprintf("DsyncOpenLdapDepts添加部门[%s]失败: %s", dept.GroupName, err.Error())
 			common.Log.Errorf("%s", errMsg)
-			return tools.NewOperationError(fmt.Errorf(errMsg))
+			return tools.NewOperationError(errors.New(errMsg))
 		}
 		if len(dept.Children) != 0 {
 			err = d.addDepts(dept.Children)
 			if err != nil {
 				errMsg := fmt.Sprintf("DsyncOpenLdapDepts添加子部门失败: %s", err.Error())
 				common.Log.Errorf("%s", errMsg)
-				return tools.NewOperationError(fmt.Errorf(errMsg))
+				return tools.NewOperationError(errors.New(errMsg))
 			}
 		}
 	}
@@ -110,14 +111,14 @@ func (d OpenLdapLogic) getParentGroupID(group *model.Group) (id uint, err error)
 	return parentGroup.ID, nil
 }
 
-//根据现有数据库同步到的部门信息，开启用户同步
-func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+// 根据现有数据库同步到的部门信息，开启用户同步
+func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req any) (data any, rspError any) {
 	// 1.获取ldap用户列表
 	staffs, err := openldap.GetAllUsers()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取OpenLDAP用户列表失败：%s", err.Error())
 		common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
-		return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+		return nil, tools.NewOperationError(errors.New(errMsg))
 	}
 	// 2.遍历用户，开始写入
 	for i, staff := range staffs {
@@ -125,14 +126,14 @@ func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req interface{}) (data 
 		if err != nil {
 			errMsg := fmt.Sprintf("将用户[%s]的部门ids转换为内部部门id失败：%s", staff.Name, err.Error())
 			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
-			return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+			return nil, tools.NewMySqlError(errors.New(errMsg))
 		}
 		// 根据角色id获取角色
 		roles, err := isql.Role.GetRolesByIds([]uint{2})
 		if err != nil {
 			errMsg := fmt.Sprintf("获取用户[%s]的角色信息失败：%s", staff.Name, err.Error())
 			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
-			return nil, tools.NewValidatorError(fmt.Errorf(errMsg))
+			return nil, tools.NewValidatorError(errors.New(errMsg))
 		}
 		// 入库
 		err = d.AddUsers(&model.User{
@@ -157,11 +158,11 @@ func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req interface{}) (data 
 		if err != nil {
 			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Name, err.Error())
 			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
-			return nil, tools.NewOperationError(fmt.Errorf(errMsg))
+			return nil, tools.NewOperationError(errors.New(errMsg))
 		}
 		common.Log.Infof("SyncOpenLdapUsers: 成功同步用户[%s] (%d/%d)", staff.Name, i+1, len(staffs))
 	}
-	
+
 	common.Log.Infof("SyncOpenLdapUsers: OpenLDAP用户同步完成，共同步%d个用户", len(staffs))
 	return nil, nil
 }
@@ -191,13 +192,13 @@ func (d OpenLdapLogic) AddUsers(user *model.User) error {
 		// 先将用户添加到MySQL
 		err := isql.User.Add(user)
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("向MySQL创建用户失败：" + err.Error()))
+			return tools.NewMySqlError(fmt.Errorf("%s", "向MySQL创建用户失败："+err.Error()))
 		}
 
 		// 获取用户将要添加的分组
 		groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("根据部门ID获取部门信息失败" + err.Error()))
+			return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
 		}
 		for _, group := range groups {
 			if group.GroupDN[:3] == "ou=" {
@@ -206,7 +207,7 @@ func (d OpenLdapLogic) AddUsers(user *model.User) error {
 			// 先将用户和部门信息维护到MySQL
 			err := isql.Group.AddUserToGroup(group, []model.User{*user})
 			if err != nil {
-				return tools.NewMySqlError(fmt.Errorf("向MySQL添加用户到分组关系失败：" + err.Error()))
+				return tools.NewMySqlError(fmt.Errorf("%s", "向MySQL添加用户到分组关系失败："+err.Error()))
 			}
 		}
 		return nil

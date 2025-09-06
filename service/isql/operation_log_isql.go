@@ -84,12 +84,12 @@ func (s OperationLogService) Count() (count int64, err error) {
 }
 
 // 获取单个用户
-func (s OperationLogService) Find(filter map[string]interface{}, data *model.OperationLog) error {
+func (s OperationLogService) Find(filter map[string]any, data *model.OperationLog) error {
 	return common.DB.Where(filter).First(&data).Error
 }
 
 // Exist 判断资源是否存在
-func (s OperationLogService) Exist(filter map[string]interface{}) bool {
+func (s OperationLogService) Exist(filter map[string]any) bool {
 	var dataObj model.OperationLog
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)

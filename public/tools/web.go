@@ -17,7 +17,7 @@ func init() {
 
 // NewPageOption 创建一个分页参数
 func NewPageOption(pageNum, pageSize int) *PageOption {
-	if !(pageSize > 0 && pageSize <= 1000) || pageNum < 0 || pageSize <= 0 {
+	if pageSize <= 0 || pageSize > 1000 || pageNum < 0 {
 		return defaultOptions
 	}
 

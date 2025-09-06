@@ -13,16 +13,16 @@ import (
 
 // 官方文档地址： https://open.dingtalk.com/document/orgapp-server/obtain-the-department-list
 // GetAllDepts 获取所有部门
-func GetAllDepts() (ret []map[string]interface{}, err error) {
+func GetAllDepts() (ret []map[string]any, err error) {
 	depts, err := InitDingTalkClient().FetchDeptList(1, true, "zh_CN")
 	if err != nil {
 		return ret, err
 	}
 	if len(config.Conf.DingTalk.DeptList) == 0 {
 
-		ret = make([]map[string]interface{}, 0)
+		ret = make([]map[string]any, 0)
 		for _, dept := range depts.Dept {
-			ele := make(map[string]interface{})
+			ele := make(map[string]any)
 			ele["id"] = dept.Id
 			ele["name"] = dept.Name
 			ele["parentid"] = dept.ParentId
@@ -33,7 +33,7 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 
 		// 遍历配置的部门ID列表获取数据进行处理
 		// 从取得的所有部门列表中将配置的部门ID筛选出来再去请求其子部门过滤为1和为配置值的部门ID
-		ret = make([]map[string]interface{}, 0)
+		ret = make([]map[string]any, 0)
 
 		for _, dept := range depts.Dept {
 			inset := false
@@ -48,7 +48,7 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 				}
 			}
 			if dept.Id == 1 || inset {
-				ele := make(map[string]interface{})
+				ele := make(map[string]any)
 				ele["id"] = dept.Id
 				ele["name"] = dept.Name
 				ele["parentid"] = dept.ParentId
@@ -71,7 +71,7 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 			}
 
 			for _, dept := range depts.Dept {
-				ele := make(map[string]interface{})
+				ele := make(map[string]any)
 				ele["id"] = dept.Id
 				ele["name"] = dept.Name
 				ele["parentid"] = dept.ParentId
@@ -85,7 +85,7 @@ func GetAllDepts() (ret []map[string]interface{}, err error) {
 
 // 官方文档地址： https://open.dingtalk.com/document/orgapp-server/queries-the-complete-information-of-a-department-user
 // GetAllUsers 获取所有员工信息
-func GetAllUsers() (ret []map[string]interface{}, err error) {
+func GetAllUsers() (ret []map[string]any, err error) {
 	depts, err := GetAllDepts()
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func GetAllUsers() (ret []map[string]interface{}, err error) {
 				return nil, err
 			}
 			for _, user := range rsp.Page.List {
-				ele := make(map[string]interface{})
+				ele := make(map[string]any)
 				ele["userid"] = user.UserId
 				ele["unionid"] = user.UnionId
 				ele["custom_name_pinyin"] = tools.ConvertToPinYin(user.Name)

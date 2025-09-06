@@ -21,7 +21,7 @@ type UserController struct{}
 // @Security ApiKeyAuth
 func (m *UserController) Add(c *gin.Context) {
 	req := new(request.UserAddReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.User.Add(c, req)
 	})
 }
@@ -38,7 +38,7 @@ func (m *UserController) Add(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *UserController) Update(c *gin.Context) {
 	req := new(request.UserUpdateReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.User.Update(c, req)
 	})
 }
@@ -54,7 +54,7 @@ func (m *UserController) Update(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *UserController) List(c *gin.Context) {
 	req := new(request.UserListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.User.List(c, req)
 	})
 }
@@ -71,7 +71,7 @@ func (m *UserController) List(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m UserController) Delete(c *gin.Context) {
 	req := new(request.UserDeleteReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.User.Delete(c, req)
 	})
 }
@@ -88,7 +88,7 @@ func (m UserController) Delete(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m UserController) ChangePwd(c *gin.Context) {
 	req := new(request.UserChangePwdReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.User.ChangePwd(c, req)
 	})
 }
@@ -105,7 +105,7 @@ func (m UserController) ChangePwd(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m UserController) ChangeUserStatus(c *gin.Context) {
 	req := new(request.UserChangeUserStatusReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.User.ChangeUserStatus(c, req)
 	})
 }
@@ -121,7 +121,7 @@ func (m UserController) ChangeUserStatus(c *gin.Context) {
 // @Security ApiKeyAuth
 func (uc UserController) GetUserInfo(c *gin.Context) {
 	req := new(request.UserGetUserInfoReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.User.GetUserInfo(c, req)
 	})
 }
@@ -138,7 +138,7 @@ func (uc UserController) GetUserInfo(c *gin.Context) {
 // @Security ApiKeyAuth
 func (uc UserController) SyncDingTalkUsers(c *gin.Context) {
 	req := new(request.SyncDingUserReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.DingTalk.SyncDingTalkUsers(c, req)
 	})
 }
@@ -155,7 +155,7 @@ func (uc UserController) SyncDingTalkUsers(c *gin.Context) {
 // @Security ApiKeyAuth
 func (uc UserController) SyncWeComUsers(c *gin.Context) {
 	req := new(request.SyncWeComUserReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.WeCom.SyncWeComUsers(c, req)
 	})
 }
@@ -172,7 +172,7 @@ func (uc UserController) SyncWeComUsers(c *gin.Context) {
 // @Security ApiKeyAuth
 func (uc UserController) SyncFeiShuUsers(c *gin.Context) {
 	req := new(request.SyncFeiShuUserReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.FeiShu.SyncFeiShuUsers(c, req)
 	})
 }
@@ -189,7 +189,7 @@ func (uc UserController) SyncFeiShuUsers(c *gin.Context) {
 // @Security ApiKeyAuth
 func (uc UserController) SyncOpenLdapUsers(c *gin.Context) {
 	req := new(request.SyncOpenLdapUserReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.OpenLdap.SyncOpenLdapUsers(c, req)
 	})
 }
@@ -206,7 +206,7 @@ func (uc UserController) SyncOpenLdapUsers(c *gin.Context) {
 // @Security ApiKeyAuth
 func (uc UserController) SyncSqlUsers(c *gin.Context) {
 	req := new(request.SyncSqlUserReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Sql.SyncSqlUsers(c, req)
 	})
 }

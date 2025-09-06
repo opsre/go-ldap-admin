@@ -20,7 +20,7 @@ import (
 type GroupLogic struct{}
 
 // Add 添加数据
-func (l GroupLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupAddReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -65,7 +65,7 @@ func (l GroupLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspE
 	// 先在ldap中创建组
 	err = ildap.Group.Add(&group)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("向LDAP创建分组失败" + err.Error()))
+		return nil, tools.NewLdapError(fmt.Errorf("%s", "向LDAP创建分组失败"+err.Error()))
 	}
 
 	// 然后在数据库中创建组
@@ -90,7 +90,7 @@ func (l GroupLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspE
 }
 
 // List 数据列表
-func (l GroupLogic) List(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l GroupLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupListReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -119,7 +119,7 @@ func (l GroupLogic) List(c *gin.Context, req interface{}) (data interface{}, rsp
 }
 
 // GetTree 数据树
-func (l GroupLogic) GetTree(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l GroupLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupListReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -129,7 +129,7 @@ func (l GroupLogic) GetTree(c *gin.Context, req interface{}) (data interface{}, 
 	var groups []*model.Group
 	groups, err := isql.Group.ListTree(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取资源列表失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
 	}
 
 	tree := isql.GenGroupTree(0, groups)
@@ -138,7 +138,7 @@ func (l GroupLogic) GetTree(c *gin.Context, req interface{}) (data interface{}, 
 }
 
 // Update 更新数据
-func (l GroupLogic) Update(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l GroupLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupUpdateReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -177,7 +177,7 @@ func (l GroupLogic) Update(c *gin.Context, req interface{}) (data interface{}, r
 
 	err = ildap.Group.Update(oldGroup, &newGroup)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("向LDAP更新分组失败：" + err.Error()))
+		return nil, tools.NewLdapError(fmt.Errorf("%s", "向LDAP更新分组失败："+err.Error()))
 	}
 	err = isql.Group.Update(&newGroup)
 	if err != nil {
@@ -187,7 +187,7 @@ func (l GroupLogic) Update(c *gin.Context, req interface{}) (data interface{}, r
 }
 
 // Delete 删除数据
-func (l GroupLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l GroupLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupDeleteReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -216,7 +216,7 @@ func (l GroupLogic) Delete(c *gin.Context, req interface{}) (data interface{}, r
 		// 删除的时候先从ldap进行删除
 		err = ildap.Group.Delete(group.GroupDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("向LDAP删除分组失败：" + err.Error()))
+			return nil, tools.NewLdapError(fmt.Errorf("%s", "向LDAP删除分组失败："+err.Error()))
 		}
 	}
 
@@ -230,7 +230,7 @@ func (l GroupLogic) Delete(c *gin.Context, req interface{}) (data interface{}, r
 }
 
 // AddUser 添加用户到分组
-func (l GroupLogic) AddUser(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l GroupLogic) AddUser(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupAddUserReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -268,7 +268,7 @@ func (l GroupLogic) AddUser(c *gin.Context, req interface{}) (data interface{}, 
 	for _, user := range users {
 		err = ildap.Group.AddUserToGroup(group.GroupDN, user.UserDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("向LDAP添加用户到分组失败" + err.Error()))
+			return nil, tools.NewLdapError(fmt.Errorf("%s", "向LDAP添加用户到分组失败"+err.Error()))
 		}
 	}
 
@@ -284,7 +284,7 @@ func (l GroupLogic) AddUser(c *gin.Context, req interface{}) (data interface{}, 
 		newData.Departments = oldData.Departments + "," + group.GroupName
 		err = l.updataUser(newData)
 		if err != nil {
-			return nil, tools.NewOperationError(fmt.Errorf("处理用户的部门数据失败:" + err.Error()))
+			return nil, tools.NewOperationError(fmt.Errorf("%s", "处理用户的部门数据失败:"+err.Error()))
 		}
 	}
 
@@ -294,13 +294,13 @@ func (l GroupLogic) AddUser(c *gin.Context, req interface{}) (data interface{}, 
 func (l GroupLogic) updataUser(newUser *model.User) error {
 	err := isql.User.Update(newUser)
 	if err != nil {
-		return tools.NewMySqlError(fmt.Errorf("在MySQL更新用户失败：" + err.Error()))
+		return tools.NewMySqlError(fmt.Errorf("%s", "在MySQL更新用户失败："+err.Error()))
 	}
 	return nil
 }
 
 // RemoveUser 移除用户
-func (l GroupLogic) RemoveUser(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupRemoveUserReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -332,7 +332,7 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req interface{}) (data interface{
 	for _, user := range users {
 		err := ildap.Group.RemoveUserFromGroup(group.GroupDN, user.UserDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("将用户从ldap移除失败" + err.Error()))
+			return nil, tools.NewLdapError(fmt.Errorf("%s", "将用户从ldap移除失败"+err.Error()))
 		}
 	}
 
@@ -369,7 +369,7 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req interface{}) (data interface{
 		newData.DepartmentId = strings.Join(newDeptIds, ",")
 		err = l.updataUser(newData)
 		if err != nil {
-			return nil, tools.NewOperationError(fmt.Errorf("处理用户的部门数据失败:" + err.Error()))
+			return nil, tools.NewOperationError(fmt.Errorf("%s", "处理用户的部门数据失败:"+err.Error()))
 		}
 	}
 
@@ -377,7 +377,7 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req interface{}) (data interface{
 }
 
 // UserInGroup 在分组内的用户
-func (l GroupLogic) UserInGroup(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l GroupLogic) UserInGroup(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserInGroupReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -422,7 +422,7 @@ func (l GroupLogic) UserInGroup(c *gin.Context, req interface{}) (data interface
 }
 
 // UserNoInGroup 不在分组内的用户
-func (l GroupLogic) UserNoInGroup(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l GroupLogic) UserNoInGroup(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserNoInGroupReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -444,7 +444,7 @@ func (l GroupLogic) UserNoInGroup(c *gin.Context, req interface{}) (data interfa
 	var userList []*model.User
 	userList, err = isql.User.ListAll()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取资源列表失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
 	}
 
 	rets := make([]response.Guser, 0)

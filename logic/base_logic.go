@@ -16,7 +16,7 @@ import (
 type BaseLogic struct{}
 
 // SendCode 发送验证码
-func (l BaseLogic) SendCode(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l BaseLogic) SendCode(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.BaseSendCodeReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -26,21 +26,21 @@ func (l BaseLogic) SendCode(c *gin.Context, req interface{}) (data interface{}, 
 	user := new(model.User)
 	err := isql.User.Find(tools.H{"mail": r.Mail}, user)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("通过邮箱查询用户失败" + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "通过邮箱查询用户失败"+err.Error()))
 	}
 	if user.Status != 1 || user.SyncState != 1 {
 		return nil, tools.NewMySqlError(fmt.Errorf("该用户已离职或者未同步在ldap，无法重置密码，如有疑问，请联系管理员"))
 	}
 	err = tools.SendCode([]string{r.Mail})
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("邮件发送失败" + err.Error()))
+		return nil, tools.NewLdapError(fmt.Errorf("%s", "邮件发送失败"+err.Error()))
 	}
 
 	return nil, nil
 }
 
 // ChangePwd 重置密码
-func (l BaseLogic) ChangePwd(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l BaseLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.BaseChangePwdReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -63,30 +63,30 @@ func (l BaseLogic) ChangePwd(c *gin.Context, req interface{}) (data interface{},
 	user := new(model.User)
 	err := isql.User.Find(tools.H{"mail": r.Mail}, user)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("通过邮箱查询用户失败" + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "通过邮箱查询用户失败"+err.Error()))
 	}
 
 	newpass, err := ildap.User.NewPwd(user.Username)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("LDAP生成新密码失败" + err.Error()))
+		return nil, tools.NewLdapError(fmt.Errorf("%s", "LDAP生成新密码失败"+err.Error()))
 	}
 
 	err = tools.SendMail([]string{user.Mail}, newpass)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("邮件发送失败" + err.Error()))
+		return nil, tools.NewLdapError(fmt.Errorf("%s", "邮件发送失败"+err.Error()))
 	}
 
 	// 更新数据库密码
 	err = isql.User.ChangePwd(user.Username, tools.NewGenPasswd(newpass))
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("在MySQL更新密码失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL更新密码失败: "+err.Error()))
 	}
 
 	return nil, nil
 }
 
 // Dashboard 仪表盘
-func (l BaseLogic) Dashboard(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l BaseLogic) Dashboard(c *gin.Context, req any) (data any, rspError any) {
 	_, ok := req.(*request.BaseDashboardReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -169,7 +169,7 @@ func (l BaseLogic) Dashboard(c *gin.Context, req interface{}) (data interface{},
 }
 
 // EncryptPasswd
-func (l BaseLogic) EncryptPasswd(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l BaseLogic) EncryptPasswd(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.EncryptPasswdReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -180,7 +180,7 @@ func (l BaseLogic) EncryptPasswd(c *gin.Context, req interface{}) (data interfac
 }
 
 // DecryptPasswd
-func (l BaseLogic) DecryptPasswd(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l BaseLogic) DecryptPasswd(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.DecryptPasswdReq)
 	if !ok {
 		return nil, ReqAssertErr

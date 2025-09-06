@@ -19,7 +19,7 @@ import (
 type UserLogic struct{}
 
 // Add 添加数据
-func (l UserLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserAddReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -61,7 +61,7 @@ func (l UserLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspEr
 	}
 
 	// 根据角色id获取角色
-	if r.RoleIds == nil || len(r.RoleIds) == 0 {
+	if len(r.RoleIds) == 0 {
 		r.RoleIds = []uint{2} // 默认添加为普通用户角色
 	}
 
@@ -112,18 +112,18 @@ func (l UserLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspEr
 	// 获取用户将要添加的分组
 	groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("根据部门ID获取部门信息失败" + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
 	}
 
 	err = CommonAddUser(&user, groups)
 	if err != nil {
-		return nil, tools.NewOperationError(fmt.Errorf("添加用户失败" + err.Error()))
+		return nil, tools.NewOperationError(fmt.Errorf("%s", "添加用户失败"+err.Error()))
 	}
 	return nil, nil
 }
 
 // List 数据列表
-func (l UserLogic) List(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l UserLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserListReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -132,7 +132,7 @@ func (l UserLogic) List(c *gin.Context, req interface{}) (data interface{}, rspE
 
 	users, err := isql.User.List(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取用户列表失败：" + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取用户列表失败："+err.Error()))
 	}
 
 	rets := make([]model.User, 0)
@@ -141,7 +141,7 @@ func (l UserLogic) List(c *gin.Context, req interface{}) (data interface{}, rspE
 	}
 	count, err := isql.User.ListCount(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取用户总数失败：" + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取用户总数失败："+err.Error()))
 	}
 
 	return response.UserListRsp{
@@ -151,7 +151,7 @@ func (l UserLogic) List(c *gin.Context, req interface{}) (data interface{}, rspE
 }
 
 // Update 更新数据
-func (l UserLogic) Update(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserUpdateReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -255,14 +255,14 @@ func (l UserLogic) Update(c *gin.Context, req interface{}) (data interface{}, rs
 	}
 
 	if err = CommonUpdateUser(oldData, &user, r.DepartmentId); err != nil {
-		return nil, tools.NewOperationError(fmt.Errorf("更新用户失败" + err.Error()))
+		return nil, tools.NewOperationError(fmt.Errorf("%s", "更新用户失败"+err.Error()))
 	}
 
 	return nil, nil
 }
 
 // Delete 删除数据
-func (l UserLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l UserLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserDeleteReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -302,28 +302,28 @@ func (l UserLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rs
 
 	users, err := isql.User.GetUserByIds(r.UserIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取用户信息失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取用户信息失败: "+err.Error()))
 	}
 
 	// 先将用户从ldap中删除
 	for _, user := range users {
 		err := ildap.User.Delete(user.UserDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("在LDAP删除用户失败" + err.Error()))
+			return nil, tools.NewLdapError(fmt.Errorf("%s", "在LDAP删除用户失败"+err.Error()))
 		}
 	}
 
 	// 再将用户从MySQL中删除
 	err = isql.User.Delete(r.UserIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("在MySQL删除用户失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL删除用户失败: "+err.Error()))
 	}
 
 	return nil, nil
 }
 
 // ChangePwd 修改密码
-func (l UserLogic) ChangePwd(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l UserLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserChangePwdReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -359,20 +359,20 @@ func (l UserLogic) ChangePwd(c *gin.Context, req interface{}) (data interface{},
 	// ldap更新密码时可以直接指定用户DN和新密码即可更改成功
 	err = ildap.User.ChangePwd(user.UserDN, "", r.NewPassword)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("在LDAP更新密码失败" + err.Error()))
+		return nil, tools.NewLdapError(fmt.Errorf("%s", "在LDAP更新密码失败"+err.Error()))
 	}
 
 	// 更新密码
 	err = isql.User.ChangePwd(user.Username, tools.NewGenPasswd(r.NewPassword))
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("在MySQL更新密码失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL更新密码失败: "+err.Error()))
 	}
 
 	return nil, nil
 }
 
 // ChangeUserStatus 修改用户状态
-func (l UserLogic) ChangeUserStatus(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l UserLogic) ChangeUserStatus(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserChangeUserStatusReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -386,7 +386,7 @@ func (l UserLogic) ChangeUserStatus(c *gin.Context, req interface{}) (data inter
 	user := new(model.User)
 	err := isql.User.Find(filter, user)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("在MySQL查询用户失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL查询用户失败: "+err.Error()))
 	}
 
 	if r.Status == 1 && r.Status == user.Status {
@@ -410,23 +410,23 @@ func (l UserLogic) ChangeUserStatus(c *gin.Context, req interface{}) (data inter
 	if r.Status == 2 {
 		err = ildap.User.Delete(user.UserDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("在LDAP删除用户失败" + err.Error()))
+			return nil, tools.NewLdapError(fmt.Errorf("%s", "在LDAP删除用户失败"+err.Error()))
 		}
 	} else {
 		err = ildap.User.Add(user)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("在LDAP添加用户失败" + err.Error()))
+			return nil, tools.NewLdapError(fmt.Errorf("%s", "在LDAP添加用户失败"+err.Error()))
 		}
 	}
 	err = isql.User.ChangeStatus(int(r.ID), int(r.Status))
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("在MySQL更新用户状态失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL更新用户状态失败: "+err.Error()))
 	}
 	return nil, nil
 }
 
 // GetUserInfo 获取用户信息
-func (l UserLogic) GetUserInfo(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l UserLogic) GetUserInfo(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserGetUserInfoReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -437,7 +437,7 @@ func (l UserLogic) GetUserInfo(c *gin.Context, req interface{}) (data interface{
 
 	user, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前用户信息失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取当前用户信息失败: "+err.Error()))
 	}
 	return user, nil
 }

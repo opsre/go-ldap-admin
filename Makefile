@@ -22,7 +22,7 @@ build-linux:
 
 .PHONY: lint
 lint:
-	env GOGC=25 golangci-lint run --fix -j 8 -v ./... --timeout=5m --skip-files="public/client/feishu/feishu.go"
+	env GOGC=25 golangci-lint run --fix -j 8 -v ./... --timeout=5m
 
 .PHONY: gox-linux
 gox-linux:

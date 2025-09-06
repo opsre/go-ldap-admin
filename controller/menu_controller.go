@@ -19,7 +19,7 @@ type MenuController struct{}
 // @Security ApiKeyAuth
 func (m *MenuController) GetTree(c *gin.Context) {
 	req := new(request.MenuGetTreeReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Menu.GetTree(c, req)
 	})
 }
@@ -35,7 +35,7 @@ func (m *MenuController) GetTree(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *MenuController) GetAccessTree(c *gin.Context) {
 	req := new(request.MenuGetAccessTreeReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Menu.GetAccessTree(c, req)
 	})
 }
@@ -51,7 +51,7 @@ func (m *MenuController) GetAccessTree(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *MenuController) Add(c *gin.Context) {
 	req := new(request.MenuAddReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Menu.Add(c, req)
 	})
 }
@@ -67,7 +67,7 @@ func (m *MenuController) Add(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *MenuController) Update(c *gin.Context) {
 	req := new(request.MenuUpdateReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Menu.Update(c, req)
 	})
 }
@@ -83,7 +83,7 @@ func (m *MenuController) Update(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *MenuController) Delete(c *gin.Context) {
 	req := new(request.MenuDeleteReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Menu.Delete(c, req)
 	})
 }

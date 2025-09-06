@@ -20,7 +20,7 @@ type FieldRelationController struct{}
 // @Security ApiKeyAuth
 func (m *FieldRelationController) List(c *gin.Context) {
 	req := new(request.FieldRelationListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.FieldRelation.List(c, req)
 	})
 }
@@ -37,7 +37,7 @@ func (m *FieldRelationController) List(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *FieldRelationController) Add(c *gin.Context) {
 	req := new(request.FieldRelationAddReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.FieldRelation.Add(c, req)
 	})
 }
@@ -54,7 +54,7 @@ func (m *FieldRelationController) Add(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *FieldRelationController) Update(c *gin.Context) {
 	req := new(request.FieldRelationUpdateReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.FieldRelation.Update(c, req)
 	})
 }
@@ -71,7 +71,7 @@ func (m *FieldRelationController) Update(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *FieldRelationController) Delete(c *gin.Context) {
 	req := new(request.FieldRelationDeleteReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.FieldRelation.Delete(c, req)
 	})
 }

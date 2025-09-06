@@ -20,7 +20,7 @@ type RoleController struct{}
 // @Security ApiKeyAuth
 func (m *RoleController) List(c *gin.Context) {
 	req := new(request.RoleListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Role.List(c, req)
 	})
 }
@@ -37,7 +37,7 @@ func (m *RoleController) List(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *RoleController) Add(c *gin.Context) {
 	req := new(request.RoleAddReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Role.Add(c, req)
 	})
 }
@@ -54,7 +54,7 @@ func (m *RoleController) Add(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *RoleController) Update(c *gin.Context) {
 	req := new(request.RoleUpdateReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Role.Update(c, req)
 	})
 }
@@ -71,7 +71,7 @@ func (m *RoleController) Update(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *RoleController) Delete(c *gin.Context) {
 	req := new(request.RoleDeleteReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Role.Delete(c, req)
 	})
 }
@@ -88,7 +88,7 @@ func (m *RoleController) Delete(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *RoleController) GetMenuList(c *gin.Context) {
 	req := new(request.RoleGetMenuListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Role.GetMenuList(c, req)
 	})
 }
@@ -105,7 +105,7 @@ func (m *RoleController) GetMenuList(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *RoleController) GetApiList(c *gin.Context) {
 	req := new(request.RoleGetApiListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Role.GetApiList(c, req)
 	})
 }
@@ -122,7 +122,7 @@ func (m *RoleController) GetApiList(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *RoleController) UpdateMenus(c *gin.Context) {
 	req := new(request.RoleUpdateMenusReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Role.UpdateMenus(c, req)
 	})
 }
@@ -139,7 +139,7 @@ func (m *RoleController) UpdateMenus(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *RoleController) UpdateApis(c *gin.Context) {
 	req := new(request.RoleUpdateApisReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Role.UpdateApis(c, req)
 	})
 }

@@ -13,7 +13,7 @@ import (
 type MenuService struct{}
 
 // Exist 判断资源是否存在
-func (s MenuService) Exist(filter map[string]interface{}) bool {
+func (s MenuService) Exist(filter map[string]any) bool {
 	var dataObj model.Menu
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
@@ -37,7 +37,7 @@ func (s MenuService) Update(menu *model.Menu) error {
 }
 
 // Find 获取单个资源
-func (s MenuService) Find(filter map[string]interface{}, data *model.Menu) error {
+func (s MenuService) Find(filter map[string]any, data *model.Menu) error {
 	return common.DB.Where(filter).First(&data).Error
 }
 

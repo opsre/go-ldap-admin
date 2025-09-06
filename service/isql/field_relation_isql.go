@@ -12,7 +12,7 @@ import (
 type FieldRelationService struct{}
 
 // Exist 判断资源是否存在
-func (s FieldRelationService) Exist(filter map[string]interface{}) bool {
+func (s FieldRelationService) Exist(filter map[string]any) bool {
 	var dataObj model.FieldRelation
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
@@ -36,7 +36,7 @@ func (s FieldRelationService) Update(fieldRelation *model.FieldRelation) error {
 }
 
 // Find 获取单个资源
-func (s FieldRelationService) Find(filter map[string]interface{}, data *model.FieldRelation) error {
+func (s FieldRelationService) Find(filter map[string]any, data *model.FieldRelation) error {
 	return common.DB.Where(filter).First(&data).Error
 }
 

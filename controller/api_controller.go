@@ -20,7 +20,7 @@ type ApiController struct{}
 // @Security ApiKeyAuth
 func (m *ApiController) List(c *gin.Context) {
 	req := new(request.ApiListReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Api.List(c, req)
 	})
 }
@@ -36,7 +36,7 @@ func (m *ApiController) List(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *ApiController) GetTree(c *gin.Context) {
 	req := new(request.ApiGetTreeReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Api.GetTree(c, req)
 	})
 }
@@ -53,7 +53,7 @@ func (m *ApiController) GetTree(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *ApiController) Add(c *gin.Context) {
 	req := new(request.ApiAddReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Api.Add(c, req)
 	})
 }
@@ -70,7 +70,7 @@ func (m *ApiController) Add(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *ApiController) Update(c *gin.Context) {
 	req := new(request.ApiUpdateReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Api.Update(c, req)
 	})
 }
@@ -87,7 +87,7 @@ func (m *ApiController) Update(c *gin.Context) {
 // @Security ApiKeyAuth
 func (m *ApiController) Delete(c *gin.Context) {
 	req := new(request.ApiDeleteReq)
-	Run(c, req, func() (interface{}, interface{}) {
+	Run(c, req, func() (any, any) {
 		return logic.Api.Delete(c, req)
 	})
 }

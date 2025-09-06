@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/eryajf/go-ldap-admin/config"
@@ -16,7 +17,7 @@ import (
 type SqlLogic struct{}
 
 // SyncSqlUsers 同步sql的用户信息到ldap
-func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.SyncSqlUserReq)
 	if !ok {
 		errMsg := "请求参数类型断言失败"
@@ -30,14 +31,14 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req interface{}) (data interface
 		if !isql.User.Exist(filter) {
 			errMsg := fmt.Sprintf("用户ID[%d]不存在", id)
 			common.Log.Errorf("SyncSqlUsers: %s", errMsg)
-			return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+			return nil, tools.NewMySqlError(errors.New(errMsg))
 		}
 	}
 	users, err := isql.User.GetUserByIds(r.UserIds)
 	if err != nil {
 		errMsg := fmt.Sprintf("获取用户信息失败: %s", err.Error())
 		common.Log.Errorf("SyncSqlUsers: %s", errMsg)
-		return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+		return nil, tools.NewMySqlError(errors.New(errMsg))
 	}
 	// 2.再将用户添加到ldap
 	for i, user := range users {
@@ -45,14 +46,14 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req interface{}) (data interface
 		if err != nil {
 			errMsg := fmt.Sprintf("向LDAP同步用户[%s]失败：%s", user.Username, err.Error())
 			common.Log.Errorf("SyncSqlUsers: %s", errMsg)
-			return nil, tools.NewLdapError(fmt.Errorf(errMsg))
+			return nil, tools.NewLdapError(errors.New(errMsg))
 		}
 		// 获取用户将要添加的分组
 		groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 		if err != nil {
 			errMsg := fmt.Sprintf("用户[%s]根据部门ID获取部门信息失败: %s", user.Username, err.Error())
 			common.Log.Errorf("SyncSqlUsers: %s", errMsg)
-			return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+			return nil, tools.NewMySqlError(errors.New(errMsg))
 		}
 		for _, group := range groups {
 			//根据选择的部门，添加到部门内
@@ -60,14 +61,14 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req interface{}) (data interface
 			if err != nil {
 				errMsg := fmt.Sprintf("向Ldap添加用户[%s]到分组[%s]失败：%s", user.Username, group.GroupName, err.Error())
 				common.Log.Errorf("SyncSqlUsers: %s", errMsg)
-				return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+				return nil, tools.NewMySqlError(errors.New(errMsg))
 			}
 		}
 		err = isql.User.ChangeSyncState(int(user.ID), 1)
 		if err != nil {
 			errMsg := fmt.Sprintf("用户[%s]同步完毕之后更新状态失败：%s", user.Username, err.Error())
 			common.Log.Errorf("SyncSqlUsers: %s", errMsg)
-			return nil, tools.NewLdapError(fmt.Errorf(errMsg))
+			return nil, tools.NewLdapError(errors.New(errMsg))
 		}
 		common.Log.Infof("SyncSqlUsers: 成功同步用户[%s] (%d/%d)", user.Username, i+1, len(users))
 	}
@@ -77,7 +78,7 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req interface{}) (data interface
 }
 
 // SyncSqlGroups 同步sql中的分组信息到ldap
-func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.SyncSqlGrooupsReq)
 	if !ok {
 		errMsg := "请求参数类型断言失败"
@@ -91,14 +92,14 @@ func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req interface{}) (data interfac
 		if !isql.Group.Exist(filter) {
 			errMsg := fmt.Sprintf("分组ID[%d]不存在", id)
 			common.Log.Errorf("SyncSqlGroups: %s", errMsg)
-			return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+			return nil, tools.NewMySqlError(errors.New(errMsg))
 		}
 	}
 	groups, err := isql.Group.GetGroupByIds(r.GroupIds)
 	if err != nil {
 		errMsg := fmt.Sprintf("获取分组信息失败: %s", err.Error())
 		common.Log.Errorf("SyncSqlGroups: %s", errMsg)
-		return nil, tools.NewMySqlError(fmt.Errorf(errMsg))
+		return nil, tools.NewMySqlError(errors.New(errMsg))
 	}
 	// 2.再将分组添加到ldap
 	for _, group := range groups {
@@ -106,7 +107,7 @@ func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req interface{}) (data interfac
 		if err != nil {
 			errMsg := fmt.Sprintf("向LDAP同步分组[%s]失败：%s", group.GroupName, err.Error())
 			common.Log.Errorf("SyncSqlGroups: %s", errMsg)
-			return nil, tools.NewLdapError(fmt.Errorf(errMsg))
+			return nil, tools.NewLdapError(errors.New(errMsg))
 		}
 		if len(group.Users) > 0 {
 			for _, user := range group.Users {
@@ -117,7 +118,7 @@ func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req interface{}) (data interfac
 				if err != nil {
 					errMsg := fmt.Sprintf("同步分组[%s]之后处理分组内的用户[%s]失败：%s", group.GroupName, user.Username, err.Error())
 					common.Log.Errorf("SyncSqlGroups: %s", errMsg)
-					return nil, tools.NewLdapError(fmt.Errorf(errMsg))
+					return nil, tools.NewLdapError(errors.New(errMsg))
 				}
 			}
 		}
@@ -125,7 +126,7 @@ func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req interface{}) (data interfac
 		if err != nil {
 			errMsg := fmt.Sprintf("分组[%s]同步完毕之后更新状态失败：%s", group.GroupName, err.Error())
 			common.Log.Errorf("SyncSqlGroups: %s", errMsg)
-			return nil, tools.NewLdapError(fmt.Errorf(errMsg))
+			return nil, tools.NewLdapError(errors.New(errMsg))
 		}
 	}
 

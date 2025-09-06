@@ -16,7 +16,7 @@ import (
 type ApiLogic struct{}
 
 // Add 添加数据
-func (l ApiLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l ApiLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiAddReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -47,7 +47,7 @@ func (l ApiLogic) Add(c *gin.Context, req interface{}) (data interface{}, rspErr
 }
 
 // List 数据列表
-func (l ApiLogic) List(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l ApiLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiListReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -76,7 +76,7 @@ func (l ApiLogic) List(c *gin.Context, req interface{}) (data interface{}, rspEr
 }
 
 // GetTree 数据树
-func (l ApiLogic) GetTree(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l ApiLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiGetTreeReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -86,7 +86,7 @@ func (l ApiLogic) GetTree(c *gin.Context, req interface{}) (data interface{}, rs
 
 	apis, err := isql.Api.ListAll()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取资源列表失败: " + err.Error()))
+		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
 	}
 
 	// 获取所有的分类
@@ -117,7 +117,7 @@ func (l ApiLogic) GetTree(c *gin.Context, req interface{}) (data interface{}, rs
 }
 
 // Update 更新数据
-func (l ApiLogic) Update(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l ApiLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiUpdateReq)
 	if !ok {
 		return nil, ReqAssertErr
@@ -157,7 +157,7 @@ func (l ApiLogic) Update(c *gin.Context, req interface{}) (data interface{}, rsp
 }
 
 // Delete 删除数据
-func (l ApiLogic) Delete(c *gin.Context, req interface{}) (data interface{}, rspError interface{}) {
+func (l ApiLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiDeleteReq)
 	if !ok {
 		return nil, ReqAssertErr
