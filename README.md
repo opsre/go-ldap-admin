@@ -48,7 +48,7 @@
 
 提供在线体验地址如下：
 
-- 地址：[http://61.171.114.86:8888](http://61.171.114.86:8888)
+- 地址：[https://demo-go-ldap-admin.eryajf.net/](https://demo-go-ldap-admin.eryajf.net/)
 - 登陆信息：admin/123456
 
 > 在线环境可能不稳，如果遇到访问异常，或者数据错乱，请联系我进行修复。请勿填写个人敏感信息。
