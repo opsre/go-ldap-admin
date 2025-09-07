@@ -11,6 +11,8 @@ $:
         ALIHUB_URL: registry.cn-hangzhou.aliyuncs.com
         ALIHUB_USERNAME: eryajf
         ALIHUB_IMAGE_REPONAME: eryajf
+      imports:
+        - https://cnb.cool/eryajf/build-env/-/blob/main/env.yaml
       stages:
         - name: 📦 构建制品
           timeout: 3h
@@ -38,7 +40,7 @@ $:
               --driver remote docker-container://buildkitd
             docker buildx build \
               -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME} \
-              -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
+              -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME}:${CNB_BRANCH} \
               -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE} \
-              -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
+              -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH} \
               --platform=linux/arm64,linux/amd64 . --push
