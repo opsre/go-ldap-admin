@@ -22,6 +22,7 @@ func InitUserRoutes(r *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) gi
 		user.POST("/update", controller.User.Update)                     // 更新用户
 		user.POST("/delete", controller.User.Delete)                     // 删除用户
 		user.POST("/changePwd", controller.User.ChangePwd)               // 修改用户密码
+		user.POST("/resetPassword", controller.User.ResetPassword)       // 重置用户密码
 		user.POST("/changeUserStatus", controller.User.ChangeUserStatus) // 修改用户状态
 
 		user.POST("/syncDingTalkUsers", controller.User.SyncDingTalkUsers) // 同步钉钉用户到平台

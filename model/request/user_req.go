@@ -94,6 +94,11 @@ type UserChangePwdReq struct {
 	NewPassword string `json:"newPassword" validate:"required"`
 }
 
+// UserResetPasswordReq 重置密码结构体
+type UserResetPasswordReq struct {
+	Username string `json:"username" validate:"required"`
+}
+
 // UserChangeUserStatusReq 修改用户状态结构体
 type UserChangeUserStatusReq struct {
 	ID     uint `json:"id" validate:"required"`

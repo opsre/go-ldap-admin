@@ -15,7 +15,7 @@ main:
         ALIHUB_IMAGE_REPONAME: eryajf
       stages:
         - name: 📦 构建制品
-          image: docker.cnb.cool/znb/images/debian:all
+          image: docker.cnb.cool/znb/images/debian:new
           script: |
             docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
             make gox-linux

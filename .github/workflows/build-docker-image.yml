@@ -29,9 +29,9 @@ jobs:
   buildImage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Inject slug/short variables
-        uses: rlespinasse/github-slug-action@v4
+        uses: rlespinasse/github-slug-action@v5
       - name: Get current date
         id: date
         run: echo "today=$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT

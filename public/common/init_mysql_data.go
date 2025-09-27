@@ -322,6 +322,13 @@ func InitData() {
 		},
 		{
 			Method:   "POST",
+			Path:     "/user/resetPassword",
+			Category: "user",
+			Remark:   "重置用户密码",
+			Creator:  "系统",
+		},
+		{
+			Method:   "POST",
 			Path:     "/user/add",
 			Category: "user",
 			Remark:   "创建用户",

@@ -93,6 +93,23 @@ func (m UserController) ChangePwd(c *gin.Context) {
 	})
 }
 
+// ResetPassword 重置用户密码
+// @Summary 重置用户密码
+// @Description 重置用户密码为随机密码并发送邮件通知
+// @Tags 用户管理
+// @Accept application/json
+// @Produce application/json
+// @Param  data body request.UserResetPasswordReq true "重置用户密码的结构体"
+// @Success 200 {object} response.ResponseBody
+// @Router /user/resetPassword [post]
+// @Security ApiKeyAuth
+func (m UserController) ResetPassword(c *gin.Context) {
+	req := new(request.UserResetPasswordReq)
+	Run(c, req, func() (any, any) {
+		return logic.User.ResetPassword(c, req)
+	})
+}
+
 // ChangeUserStatus 更改用户状态
 // @Summary 更改用户状态
 // @Description 更改用户状态

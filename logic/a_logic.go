@@ -123,6 +123,11 @@ func CommonAddUser(user *model.User, groups []*model.Group) error {
 	if err != nil {
 		return tools.NewMySqlError(fmt.Errorf("%s", "向MySQL创建用户失败："+err.Error()))
 	}
+
+	// 发送用户创建成功通知邮件
+	if err := tools.SendUserCreationNotification(user.Username, user.Nickname, user.Mail, tools.NewParPasswd(user.Password)); err != nil {
+		common.Log.Warnf("发送用户创建通知邮件失败，用户: %s, 邮箱: %s, 错误: %v", user.Username, user.Mail, err)
+	}
 	// 再将用户添加到ldap
 	err = ildap.User.Add(user)
 	if err != nil {

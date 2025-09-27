@@ -64,3 +64,51 @@ func SendCode(sendto []string) error {
     </div>`, vcode)
 	return email(sendto, subject, body)
 }
+
+// SendUserCreationNotification 发送用户创建成功通知邮件
+func SendUserCreationNotification(username, nickname, mail, password string) error {
+	subject := "LDAP账户创建成功通知"
+	// 邮件正文
+	body := fmt.Sprintf(`<div>
+        <div>
+            尊敬的%s，您好！
+        </div>
+        <div style="padding: 8px 40px 8px 50px;">
+            <p>您的LDAP账户已创建成功，以下是您的账户信息：</p>
+            <ul>
+                <li>用户名：%s</li>
+                <li>昵称：%s</li>
+                <li>初始密码：%s</li>
+            </ul>
+            <p style="color: #ff6600;">请妥善保管您的账户信息，建议首次登录后及时修改密码。</p>
+        </div>
+        <div>
+            <p>此邮箱为系统邮箱，请勿回复。</p>
+        </div>
+    </div>`, nickname, username, nickname, password)
+	return email([]string{mail}, subject, body)
+}
+
+// SendPasswordResetNotification 发送密码重置成功通知邮件
+func SendPasswordResetNotification(username, nickname, mail, newPassword string) error {
+	subject := "LDAP密码重置成功通知"
+	// 邮件正文
+	body := fmt.Sprintf(`<div>
+        <div>
+            尊敬的%s，您好！
+        </div>
+        <div style="padding: 8px 40px 8px 50px;">
+            <p>您的LDAP账户密码已成功重置，以下是您的新密码信息：</p>
+            <ul>
+                <li>用户名：%s</li>
+                <li>新密码：%s</li>
+            </ul>
+            <p style="color: #ff6600;">为了您的账户安全，请尽快登录并修改为您自己的密码。</p>
+            <p style="color: #ff0000;">请妥善保管您的账户信息，切勿泄露给他人。</p>
+        </div>
+        <div>
+            <p>此邮箱为系统邮箱，请勿回复。</p>
+        </div>
+    </div>`, nickname, username, newPassword)
+	return email([]string{mail}, subject, body)
+}

@@ -8,6 +8,7 @@ import (
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
+	"github.com/eryajf/go-ldap-admin/public/common"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/ildap"
 	"github.com/eryajf/go-ldap-admin/service/isql"
@@ -369,6 +370,49 @@ func (l UserLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	}
 
 	return nil, nil
+}
+
+// ResetPassword 重置用户密码
+func (l UserLogic) ResetPassword(c *gin.Context, req any) (data any, rspError any) {
+	r, ok := req.(*request.UserResetPasswordReq)
+	if !ok {
+		return nil, ReqAssertErr
+	}
+	_ = c
+
+	// 检查用户是否存在
+	if !isql.User.Exist(tools.H{"username": r.Username}) {
+		return nil, tools.NewValidatorError(fmt.Errorf("用户不存在"))
+	}
+
+	// 获取用户信息
+	user := new(model.User)
+	err := isql.User.Find(tools.H{"username": r.Username}, user)
+	if err != nil {
+		return nil, tools.NewMySqlError(fmt.Errorf("获取用户信息失败: %s", err.Error()))
+	}
+
+	// 生成随机密码
+	newPassword := tools.GenerateRandomPassword()
+
+	// 在LDAP中更新密码
+	err = ildap.User.ChangePwd(user.UserDN, "", newPassword)
+	if err != nil {
+		return nil, tools.NewLdapError(fmt.Errorf("在LDAP更新密码失败: %s", err.Error()))
+	}
+
+	// 在MySQL中更新密码
+	err = isql.User.ChangePwd(user.Username, tools.NewGenPasswd(newPassword))
+	if err != nil {
+		return nil, tools.NewMySqlError(fmt.Errorf("在MySQL更新密码失败: %s", err.Error()))
+	}
+
+	// 发送密码重置通知邮件
+	if err := tools.SendPasswordResetNotification(user.Username, user.Nickname, user.Mail, newPassword); err != nil {
+		common.Log.Warnf("发送密码重置通知邮件失败，用户: %s, 邮箱: %s, 错误: %v", user.Username, user.Mail, err)
+	}
+
+	return map[string]string{"newPassword": newPassword}, nil
 }
 
 // ChangeUserStatus 修改用户状态

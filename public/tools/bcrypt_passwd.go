@@ -1,6 +1,9 @@
 package tools
 
 import (
+	"crypto/rand"
+	"math/big"
+
 	"github.com/eryajf/go-ldap-admin/config"
 )
 
@@ -31,4 +34,22 @@ func NewGenPasswd(passwd string) string {
 func NewParPasswd(passwd string) string {
 	pass, _ := RSADecrypt([]byte(passwd), config.Conf.System.RSAPrivateBytes)
 	return string(pass)
+}
+
+const (
+	passwordLength = 8
+	letters        = "abcdefghijklmnopqrstu@vwxyzABCDEFGHIJKL#MNOP*QRSTUVWXYZ0123456789"
+	lettersLength  = len(letters)
+)
+
+// 生成随机密码
+func GenerateRandomPassword() string {
+	password := make([]byte, passwordLength)
+
+	for i := range password {
+		index, _ := rand.Int(rand.Reader, big.NewInt(int64(lettersLength)))
+		password[i] = letters[index.Int64()]
+	}
+
+	return string(password)
 }
