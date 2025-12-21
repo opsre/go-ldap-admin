@@ -127,6 +127,9 @@ func (x UserService) Delete(udn string) error {
 
 // ChangePwd 修改用户密码，此处旧密码也可以为空，ldap可以直接通过用户DN加上新密码来进行修改
 func (x UserService) ChangePwd(udn, oldpasswd, newpasswd string) error {
+	if config.Conf.Ldap.UserPasswordEncryptionType == "clear" {
+		return updatePasswordClear(udn, newpasswd)
+	}
 	modifyPass := ldap.NewPasswordModifyRequest(udn, oldpasswd, newpasswd)
 
 	// 获取 LDAP 连接
@@ -149,6 +152,13 @@ func (x UserService) NewPwd(username string) (string, error) {
 	if username == "admin" {
 		udn = config.Conf.Ldap.AdminDN
 	}
+	if config.Conf.Ldap.UserPasswordEncryptionType == "clear" {
+		newpass := tools.GenerateRandomPassword()
+		if err := updatePasswordClear(udn, newpass); err != nil {
+			return "", fmt.Errorf("password modify failed for %s, err: %v", username, err)
+		}
+		return newpass, nil
+	}
 	modifyPass := ldap.NewPasswordModifyRequest(udn, "", "")
 
 	// 获取 LDAP 连接
@@ -163,6 +173,23 @@ func (x UserService) NewPwd(username string) (string, error) {
 		return "", fmt.Errorf("password modify failed for %s, err: %v", username, err)
 	}
 	return newpass.GeneratedPassword, nil
+}
+
+func updatePasswordClear(udn, newpasswd string) error {
+	modify := ldap.NewModifyRequest(udn, nil)
+	modify.Replace("userPassword", []string{newpasswd})
+
+	// 获取 LDAP 连接
+	conn, err := common.GetLDAPConn()
+	defer common.PutLADPConn(conn)
+	if err != nil {
+		return err
+	}
+
+	if err := conn.Modify(modify); err != nil {
+		return fmt.Errorf("password modify failed for %s, err: %v", udn, err)
+	}
+	return nil
 }
 func (x UserService) ListUserDN() (users []*model.User, err error) {
 	// Construct query request
