@@ -198,6 +198,7 @@ type LdapConfig struct {
 	UserNameModify             bool   `mapstructure:"user-name-modify" json:"userNameModify"`
 	DefaultEmailSuffix         string `mapstructure:"default-email-suffix" json:"defaultEmailSuffix"`
 	UserPasswordEncryptionType string `mapstructure:"user-password-encryption-type" json:"userPasswordEncryptionType"`
+	EnableSync                 bool   `mapstructure:"enable-sync" json:"enableSync"`
 }
 type EmailConfig struct {
 	Host string `mapstructure:"host" json:"host"`

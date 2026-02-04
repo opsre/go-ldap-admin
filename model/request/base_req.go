@@ -24,3 +24,7 @@ type EncryptPasswdReq struct {
 type DecryptPasswdReq struct {
 	Passwd string `json:"passwd" form:"passwd" validate:"required"`
 }
+
+// BaseConfigReq 获取系统配置结构体
+type BaseConfigReq struct {
+}

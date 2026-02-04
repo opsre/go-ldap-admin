@@ -3,6 +3,7 @@ package logic
 import (
 	"fmt"
 
+	"github.com/eryajf/go-ldap-admin/config"
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
@@ -188,4 +189,20 @@ func (l BaseLogic) DecryptPasswd(c *gin.Context, req any) (data any, rspError an
 	_ = c
 
 	return tools.NewParPasswd(r.Passwd), nil
+}
+
+// GetConfig 获取系统配置
+func (l BaseLogic) GetConfig(c *gin.Context, req any) (data any, rspError any) {
+	_, ok := req.(*request.BaseConfigReq)
+	if !ok {
+		return nil, ReqAssertErr
+	}
+	_ = c
+
+	return &response.BaseConfigRsp{
+		LdapEnableSync:     config.Conf.Ldap.EnableSync,
+		DingTalkEnableSync: config.Conf.DingTalk.EnableSync,
+		FeiShuEnableSync:   config.Conf.FeiShu.EnableSync,
+		WeComEnableSync:    config.Conf.WeCom.EnableSync,
+	}, nil
 }
