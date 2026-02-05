@@ -3,8 +3,11 @@ $:
     - runner:
         cpus: 8
       services:
-        - docker
         - git-clone-yyds
+        - name: docker
+          options:
+            rootlessBuildkitd:
+              enabled: true
       env:
         IMAGE_NAME: "go-ldap-admin"
         DOCKERHUB_USERNAME: eryajf
@@ -29,15 +32,7 @@ $:
         - name: 🐋 推送镜像
           timeout: 3h
           script: |
-            docker login -u ${ALIHUB_USERNAME} -p ${ALIHUB_TOKEN} ${ALIHUB_URL}
-            docker run -d --name buildkitd \
-              --security-opt seccomp=unconfined \
-              --security-opt apparmor=unconfined \
-              --security-opt systempaths=unconfined \
-              moby/buildkit:rootless
-            docker buildx create --use \
-              --name mybuilder \
-              --driver remote docker-container://buildkitd
+            echo ${ALIHUB_TOKEN} | docker login -u ${ALIHUB_USERNAME} --password-stdin ${ALIHUB_URL}
             docker buildx build \
               -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME} \
               -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME}:${CNB_BRANCH} \

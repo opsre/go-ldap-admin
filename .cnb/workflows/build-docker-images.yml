@@ -3,8 +3,11 @@ main:
     - runner:
         cpus: 8
       services:
-        - docker
         - git-clone-yyds
+        - name: docker
+          options:
+            rootlessBuildkitd:
+              enabled: true
       imports:
         - https://cnb.cool/eryajf/build-env/-/blob/main/env.yaml
       env:
@@ -23,14 +26,6 @@ main:
           timeout: 3h
           script: |
             echo ${ALIHUB_TOKEN} | docker login -u ${ALIHUB_USERNAME} --password-stdin ${ALIHUB_URL}
-            docker run -d --name buildkitd \
-              --security-opt seccomp=unconfined \
-              --security-opt apparmor=unconfined \
-              --security-opt systempaths=unconfined \
-              moby/buildkit:rootless
-            docker buildx create --use \
-              --name mybuilder \
-              --driver remote docker-container://buildkitd
             docker buildx build \
               -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME} \
               -t ${ALIHUB_URL}/${ALIHUB_USERNAME}/${IMAGE_NAME}:${CNB_BRANCH}_`date "+%Y%m%d%H%M%S"` \
