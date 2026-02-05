@@ -199,10 +199,20 @@ func (l BaseLogic) GetConfig(c *gin.Context, req any) (data any, rspError any) {
 	}
 	_ = c
 
-	return &response.BaseConfigRsp{
-		LdapEnableSync:     config.Conf.Ldap.EnableSync,
-		DingTalkEnableSync: config.Conf.DingTalk.EnableSync,
-		FeiShuEnableSync:   config.Conf.FeiShu.EnableSync,
-		WeComEnableSync:    config.Conf.WeCom.EnableSync,
-	}, nil
+	// 安全获取配置值，防止配置段缺失导致空指针
+	rsp := &response.BaseConfigRsp{}
+	if config.Conf.Ldap != nil {
+		rsp.LdapEnableSync = config.Conf.Ldap.EnableSync
+	}
+	if config.Conf.DingTalk != nil {
+		rsp.DingTalkEnableSync = config.Conf.DingTalk.EnableSync
+	}
+	if config.Conf.FeiShu != nil {
+		rsp.FeiShuEnableSync = config.Conf.FeiShu.EnableSync
+	}
+	if config.Conf.WeCom != nil {
+		rsp.WeComEnableSync = config.Conf.WeCom.EnableSync
+	}
+
+	return rsp, nil
 }
