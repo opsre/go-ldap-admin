@@ -87,3 +87,18 @@ func (m *BaseController) DecryptPasswd(c *gin.Context) {
 		return logic.Base.DecryptPasswd(c, req)
 	})
 }
+
+// GetConfig 获取系统配置
+// @Summary 获取系统配置
+// @Description 获取系统配置信息，用于前端判断是否显示同步按钮
+// @Tags 基础管理
+// @Accept application/json
+// @Produce application/json
+// @Success 200 {object} response.ResponseBody
+// @Router /base/config [get]
+func (m *BaseController) GetConfig(c *gin.Context) {
+	req := new(request.BaseConfigReq)
+	Run(c, req, func() (any, any) {
+		return logic.Base.GetConfig(c, req)
+	})
+}
