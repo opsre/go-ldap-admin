@@ -28,3 +28,7 @@ type DecryptPasswdReq struct {
 // BaseConfigReq 获取系统配置结构体
 type BaseConfigReq struct {
 }
+
+// BaseVersionReq 获取版本信息结构体
+type BaseVersionReq struct {
+}
