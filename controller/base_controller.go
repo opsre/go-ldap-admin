@@ -102,3 +102,18 @@ func (m *BaseController) GetConfig(c *gin.Context) {
 		return logic.Base.GetConfig(c, req)
 	})
 }
+
+// GetVersion 获取版本信息
+// @Summary 获取版本信息
+// @Description 获取系统版本号、Git提交哈希和构建时间
+// @Tags 基础管理
+// @Accept application/json
+// @Produce application/json
+// @Success 200 {object} response.ResponseBody
+// @Router /base/version [get]
+func (m *BaseController) GetVersion(c *gin.Context) {
+	req := new(request.BaseVersionReq)
+	Run(c, req, func() (any, any) {
+		return logic.Base.GetVersion(c, req)
+	})
+}
