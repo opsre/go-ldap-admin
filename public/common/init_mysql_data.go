@@ -265,6 +265,48 @@ func InitData() {
 	// 4.写入api
 	apis := []model.Api{
 		{
+			Method:   "GET",
+			Path:     "/base/ping",
+			Category: "base",
+			Remark:   "测试接口",
+			Creator:  "系统",
+		},
+		{
+			Method:   "GET",
+			Path:     "/base/encryptpwd",
+			Category: "base",
+			Remark:   "加密密码",
+			Creator:  "系统",
+		},
+		{
+			Method:   "GET",
+			Path:     "/base/decryptpwd",
+			Category: "base",
+			Remark:   "解密密码",
+			Creator:  "系统",
+		},
+		{
+			Method:   "GET",
+			Path:     "/base/config",
+			Category: "base",
+			Remark:   "获取系统配置",
+			Creator:  "系统",
+		},
+		{
+			Method:   "GET",
+			Path:     "/base/version",
+			Category: "base",
+			Remark:   "获取系统版本信息",
+			Creator:  "系统",
+		},
+		{
+			Method:   "GET",
+			Path:     "/base/dashboard",
+			Category: "base",
+			Remark:   "获取系统首页展示数据",
+			Creator:  "系统",
+		},
+		{
 			Method:   "POST",
 			Path:     "/base/login",
 			Category: "base",
