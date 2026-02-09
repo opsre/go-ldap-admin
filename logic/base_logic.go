@@ -8,6 +8,7 @@ import (
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
 	"github.com/eryajf/go-ldap-admin/public/tools"
+	"github.com/eryajf/go-ldap-admin/public/version"
 	"github.com/eryajf/go-ldap-admin/service/ildap"
 	"github.com/eryajf/go-ldap-admin/service/isql"
 
@@ -215,4 +216,15 @@ func (l BaseLogic) GetConfig(c *gin.Context, req any) (data any, rspError any) {
 	}
 
 	return rsp, nil
+}
+
+// GetVersion 获取版本信息
+func (l BaseLogic) GetVersion(c *gin.Context, req any) (data any, rspError any) {
+	_, ok := req.(*request.BaseVersionReq)
+	if !ok {
+		return nil, ReqAssertErr
+	}
+	_ = c
+
+	return version.GetVersion(), nil
 }

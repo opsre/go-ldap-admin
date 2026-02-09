@@ -23,3 +23,4 @@ docs/docker-compose/data
 dist
 data
 bin
+.worktrees
