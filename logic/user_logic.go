@@ -357,6 +357,12 @@ func (l UserLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	if tools.NewParPasswd(user.Password) != r.OldPassword {
 		return nil, tools.NewValidatorError(fmt.Errorf("原密码错误"))
 	}
+
+	err = tools.CheckPasswdStrength(r.NewPassword)
+	if err != nil {
+		return nil, tools.NewValidatorError(err)
+	}
+
 	// ldap更新密码时可以直接指定用户DN和新密码即可更改成功
 	err = ildap.User.ChangePwd(user.UserDN, "", r.NewPassword)
 	if err != nil {
