@@ -43,6 +43,16 @@
 
 > 在完成针对`OpenLDAP`的管理能力之下，支持对`钉钉`，`企业微信`，`飞书`的集成，用户可以选择手动或者自动同步组织架构以及员工信息到平台中，让`go-ldap-admin`项目成为打通企业 IM 与企业内网应用之间的桥梁。
 
+## ❤️ 赞助商
+
+[![](https://wsrv.nl/?url=https://raw.githubusercontent.com/eryajf/tu/refs/heads/main/img/image_20260422_094140.png)](https://aiserve.top/)
+
+
+- 是 API 中转站: 适合开发者和有接口接入需求的团队。
+- 也是 AI 镜像站: 适合个人、运营、内容团队，打开网页直接使用。
+
+[**猿人AI**](https://aiserve.top/): Gemini | ChatGPT | Claude 一站式支持平台，提供先进的AI镜像服务，助你在国内优雅的使用 ChatGPT 和 Claude 等模型。
+
 ## 🏊 在线体验
 
 提供在线体验地址如下：
