@@ -33,7 +33,7 @@ mysql:
   # 用户名
   username: root
   # 密码
-  password: 123456
+  password: your-password
   # 数据库名
   database: go_ldap_admin
   # 主机地址
@@ -56,7 +56,7 @@ jwt:
   # jwt标识
   realm: test jwt
   # 服务端密钥
-  key: secret key
+  key: your-jwt-key
   # token过期时间, 小时
   timeout: 12000
   # 刷新token最大过期时间, 小时
@@ -100,11 +100,11 @@ ldap:
   # ldap管理员DN
   admin-dn: "cn=admin,dc=eryajf,dc=net"
   # ldap管理员密码
-  admin-pass: "123456"
+  admin-pass: "your-ldap-password"
   # ldap用户OU
   user-dn: "ou=people,dc=eryajf,dc=net"
   # ldap用户初始默认密码
-  user-init-password: "123456"
+  user-init-password: "your-password"
   # 是否允许更改分组DN
   group-name-modify: false
   # 是否允许更改用户DN

@@ -89,6 +89,10 @@ func InitConfig() {
 	if mysqlUsername != "" {
 		Conf.Mysql.Username = mysqlUsername
 	}
+	jwtKey := os.Getenv("JWT_KEY")
+	if jwtKey != "" {
+		Conf.Jwt.Key = jwtKey
+	}
 	mysqlPassword := os.Getenv("MYSQL_PASSWORD")
 	if mysqlPassword != "" {
 		Conf.Mysql.Password = mysqlPassword
