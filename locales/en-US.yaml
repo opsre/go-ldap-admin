@@ -1,0 +1,411 @@
+common:
+  success: success
+  unknown_error: unknown error
+  request_invalid: invalid request
+error:
+  database: database operation failed
+  ldap: LDAP operation failed
+  operation: operation failed
+  validator: validation failed
+auth:
+  login_success: login successful
+  logout_success: logout successful
+  refresh_success: token refreshed successfully
+  jwt_failed: "JWT authentication failed, code: {code}, message: {message}"
+  not_logged_in: user is not logged in
+  user_not_found: user does not exist
+  user_disabled: the current user has been disabled
+  password_incorrect: incorrect password
+  no_permission: no permission
+rate_limit:
+  limited: too many requests
+email:
+  password_reset_subject: LDAP password reset successful
+  password_reset_body: "<li><a>Your new password is: %s </a></li>"
+  verification_code_subject: Verification code - password reset
+  verification_code_body: "<div><div>Hello,</div><div style=\"padding: 8px 40px 8px 50px;\"><p>Your verification code is %s. For account security, this code is valid for 5 minutes. Confirm that this was your own operation and do not share it with anyone.</p></div><div><p>This is a system email. Please do not reply.</p></div></div>"
+  user_creation_subject: LDAP account created successfully
+  user_creation_body: "<div><div>Hello %s,</div><div style=\"padding: 8px 40px 8px 50px;\"><p>Your LDAP account has been created. Account information:</p><ul><li>Username: %s</li><li>Nickname: %s</li><li>Initial password: %s</li></ul><p style=\"color: #ff6600;\">Keep your account information safe and change your password after first login.</p></div><div><p>This is a system email. Please do not reply.</p></div></div>"
+  admin_password_reset_subject: LDAP password reset notification
+  admin_password_reset_body: "<div><div>Hello %s,</div><div style=\"padding: 8px 40px 8px 50px;\"><p>Your LDAP account password has been reset. New password information:</p><ul><li>Username: %s</li><li>New password: %s</li></ul><p style=\"color: #ff6600;\">For account security, please log in and change it as soon as possible.</p><p style=\"color: #ff0000;\">Keep your account information safe and do not share it with anyone.</p></div><div><p>This is a system email. Please do not reply.</p></div></div>"
+dashboard:
+  user: users
+  group: groups
+  role: roles
+  menu: menus
+  api: APIs
+  log: logs
+sync:
+  dept_list_failed: "failed to get {provider} department list: {error}"
+  dept_convert_failed: "failed to convert {provider} department data: {error}"
+  empty_depts: got 0 departments
+  dept_add_failed: "failed to add department [{dept}]: {error}"
+  child_dept_add_failed: "failed to add child department: {error}"
+  parent_dept_query_failed: "failed to query parent department: {error}"
+  add_dept_failed: "failed to add department {dept}: {error}"
+  user_list_failed: "failed to get {provider} user list: {error}"
+  user_convert_failed: "failed to convert {provider} user data: {error}"
+  empty_users: got 0 users
+  user_write_failed: "failed to write user [{username}]: {error}"
+  leave_user_list_failed: "failed to get {provider} departed user list: {error}"
+  leave_user_query_failed: "failed to query departed user [{username}] in MySQL: {error}"
+  leave_user_ldap_delete_failed: "failed to delete departed user [{username}] in LDAP: {error}"
+  leave_user_status_update_failed: "failed to update departed user [{username}] status in MySQL: {error}"
+  role_info_failed: "failed to get role information by role ID: {error}"
+  add_user_failed: "failed to add user {username}: {error}"
+  mysql_user_list_failed: "failed to get MySQL user list: {error}"
+  dept_ids_convert_failed: "failed to convert department IDs to internal department IDs: {error}"
+  user_dept_ids_convert_failed: "failed to convert department IDs for user [{username}] to internal department IDs: {error}"
+  user_role_info_failed: "failed to get role information for user [{username}]: {error}"
+common_user:
+  mysql_create_failed: "failed to create user in MySQL: {error}"
+  ldap_create_failed: "failed to create user in LDAP: {error}"
+  mysql_add_group_relation_failed: "failed to add user-group relation in MySQL: {error}"
+  ldap_add_group_relation_failed: "failed to add user-group relation in LDAP: {error}"
+  ldap_update_failed: "failed to update user in LDAP: {error}"
+  mysql_update_failed: "failed to update user in MySQL: {error}"
+  mysql_remove_group_relation_failed: "failed to remove user from group in MySQL: {error}"
+  ldap_remove_group_relation_failed: "failed to remove user from group in LDAP: {error}"
+base:
+  email_not_found: email does not exist, please check the email address
+  code_expired: the verification code expired after 5 minutes, please reset the password again
+  code_invalid: the verification code is incorrect, please use the latest code sent to your email
+  reset_password_user_unavailable: this user has left or has not been synced to LDAP, please contact an administrator
+  send_email_failed: "failed to send email: {error}"
+  email_query_failed: "failed to query user by email: {error}"
+  ldap_new_password_failed: "failed to generate new password in LDAP: {error}"
+user:
+  username_exists: username already exists, do not add it again
+  mobile_exists: mobile number already exists, do not add it again
+  job_number_exists: job number already exists, do not add it again
+  mail_exists: email already exists, do not add it again
+  password_encrypt_failed: failed to encrypt password
+  password_decrypt_failed: failed to decrypt password
+  password_min_length: password must be at least {min} characters
+  cannot_delete_self: users cannot delete themselves
+  not_found: user does not exist
+  current_min_role_sort_failed: failed to get current user's minimum role sort
+  role_info_failed: failed to get role information by role ID
+  cannot_create_higher_or_equal: users cannot create users with a higher or equal role level than themselves
+  department_info_failed: "failed to get department information by department ID: {error}"
+  create_failed: "failed to add user: {error}"
+  list_failed: "failed to get user list: {error}"
+  count_failed: "failed to get user count: {error}"
+  cannot_change_self_role: cannot change your own role
+  min_role_sort_by_id_failed: failed to get user minimum role sort by user ID
+  cannot_update_higher_or_equal: users cannot update users with a higher or equal role level than themselves
+  update_failed: "failed to update user: {error}"
+  cannot_delete_higher: users cannot delete users with a higher role level than themselves
+  info_failed: "failed to get user information: {error}"
+  ldap_delete_failed: "failed to delete user in LDAP: {error}"
+  mysql_delete_failed: "failed to delete user in MySQL: {error}"
+  ldap_password_update_failed: "failed to update password in LDAP: {error}"
+  mysql_password_update_failed: "failed to update password in MySQL: {error}"
+  mysql_query_failed: "failed to query user in MySQL: {error}"
+  ldap_add_failed: "failed to add user in LDAP: {error}"
+  mysql_status_update_failed: "failed to update user status in MySQL: {error}"
+  current_info_failed: "failed to get current user information: {error}"
+menu:
+  name_exists: menu name already exists
+  create_failed: "failed to create record: {error}"
+  update_failed: "failed to update record: {error}"
+  delete_failed: "failed to delete API: {error}"
+  record_not_found: no record exists for this ID
+  record_get_failed: "failed to get record: {error}"
+  count_failed: failed to get menu count
+api:
+  create_failed: "failed to create API: {error}"
+  list_failed: "failed to get API list: {error}"
+  count_failed: failed to get API count
+  not_found: API does not exist
+  update_failed: "failed to update API: {error}"
+  delete_failed: "failed to delete API: {error}"
+operation_log:
+  list_failed: "failed to get operation log list: {error}"
+  count_failed: failed to get operation log count
+  not_found: operation log record does not exist
+  delete_failed: "failed to delete operation log record: {error}"
+  clean_failed: "failed to clear operation logs: {error}"
+role:
+  name_exists: role name already exists
+  not_found: role does not exist
+  current_max_sort_failed: "failed to get current user's highest role level: {error}"
+  no_update_permission: current user has no permission to update roles
+  cannot_create_higher_or_equal: cannot create a role with a higher or equal level than yourself
+  create_failed: "failed to create role: {error}"
+  list_failed: "failed to get role list: {error}"
+  count_failed: failed to get role count
+  info_not_found: failed to get role information, no matching role found
+  cannot_update_higher_or_equal: cannot update a role with a higher or equal level than yourself
+  cannot_set_higher_or_equal: cannot set the role level higher than or equal to the current user's level
+  update_failed: "failed to update role: {error}"
+  keyword_policy_update_failed: role updated, but failed to update permission APIs linked to the role keyword
+  keyword_policy_load_failed: role updated, but failed to load permission API policies linked to the role keyword
+  no_role_info: failed to get role information
+  cannot_delete_higher_or_equal: cannot delete a role with a higher or equal level than yourself
+  delete_failed: "failed to delete role: {error}"
+  menu_list_failed: "failed to get role permission menus: {error}"
+  resource_failed: "failed to get resource: {error}"
+  cannot_update_higher_or_equal_permissions: cannot update permission menus for a role with a higher or equal level than yourself
+  current_user_menu_list_failed: "failed to get current user's accessible menu list: {error}"
+  no_menu_permission: "no permission to assign menu ID {id}"
+  menu_all_list_failed: "failed to get menu list: {error}"
+  update_menus_failed: "failed to update role permission menus: {error}"
+  api_info_failed: failed to get API information by API ID
+  no_api_permission: "no permission to assign API path {path}, method {method}"
+  update_apis_failed: failed to update role permission APIs
+group:
+  parent_info_failed: failed to get parent group information
+  dn_exists: the group DN already exists
+  ldap_create_failed: "failed to create group in LDAP: {error}"
+  mysql_create_failed: failed to create group in MySQL
+  add_user_failed: "failed to add user to group: {error}"
+  user_list_failed: "failed to get user list: {error}"
+  list_failed: "failed to get group list: {error}"
+  count_failed: failed to get group count
+  not_found: group does not exist
+  ldap_update_failed: "failed to update group in LDAP: {error}"
+  mysql_update_failed: failed to update group in MySQL
+  some_not_found: some groups do not exist
+  has_children: this group has child groups, delete child groups first
+  ldap_delete_failed: "failed to delete group in LDAP: {error}"
+  delete_failed: "failed to delete group: {error}"
+  get_failed: "failed to get group: {error}"
+  ou_cannot_add_user: OU groups cannot contain users
+  ou_has_no_user: OU groups have no users
+  ldap_add_user_failed: "failed to add user to group in LDAP: {error}"
+  user_department_failed: "failed to process user's department data: {error}"
+  mysql_user_update_failed: "failed to update user in MySQL: {error}"
+  ldap_remove_user_failed: "failed to remove user from LDAP: {error}"
+  mysql_remove_user_failed: "failed to remove user from MySQL: {error}"
+field_relation:
+  exists: the dynamic field relation for this platform already exists
+  not_found: the dynamic field relation for this platform does not exist
+  map_to_json_failed: "failed to convert map to JSON: {error}"
+  create_failed: "failed to create dynamic field relation: {error}"
+  list_failed: "failed to get dynamic field relation list: {error}"
+  update_failed: "failed to update dynamic field relation: {error}"
+  delete_failed: "failed to delete dynamic field relation: {error}"
+legacy:
+  common:
+    current_user_failed: failed to get current login user
+    resource_list_failed: "failed to get resource list: {error}"
+    record_not_found: record does not exist
+  user:
+    some_not_found: some users do not exist
+    not_found: user does not exist
+    old_password_incorrect: old password is incorrect
+    old_password_parse_failed: failed to parse old password
+    new_password_parse_failed: failed to parse new password
+    already_active: user is already active
+    already_inactive: user is already inactive
+    only_admin_change_status: only administrators can change user status
+    list_failed: "failed to get user list: {error}"
+    count_failed: failed to get user count
+    create_failed: "failed to add user: {error}"
+    update_failed: "failed to update user: {error}"
+    info_failed: "failed to get user information: {error}"
+    ldap_delete_failed: "failed to delete user in LDAP: {error}"
+    ldap_add_failed: "failed to add user in LDAP: {error}"
+    ldap_password_update_failed: "failed to update password in LDAP: {error}"
+    mysql_delete_failed: "failed to delete user in MySQL: {error}"
+    mysql_password_update_failed: "failed to update password in MySQL: {error}"
+    mysql_status_update_failed: "failed to update user status in MySQL: {error}"
+  api:
+    create_failed: "failed to create API: {error}"
+    list_failed: "failed to get API list: {error}"
+    count_failed: failed to get API count
+    not_found: API does not exist
+    update_failed: "failed to update API: {error}"
+    delete_failed: "failed to delete API: {error}"
+  role:
+    name_exists: role name already exists
+    not_found: role does not exist
+    current_max_sort_failed: "failed to get current user's highest role level: {error}"
+    no_update_permission: current user has no permission to update roles
+    cannot_create_higher_or_equal: cannot create a role with a higher or equal level than yourself
+    create_failed: "failed to create role: {error}"
+    list_failed: "failed to get role list: {error}"
+    info_failed: "failed to get role information: {error}"
+    cannot_update_higher_or_equal: cannot update a role with a higher or equal level than yourself
+    cannot_set_higher_or_equal: cannot set the role level higher than or equal to the current user's level
+    update_failed: "failed to update role: {error}"
+    no_role_info: failed to get role information
+    cannot_delete_higher_or_equal: cannot delete a role with a higher or equal level than yourself
+    delete_failed: "failed to delete role: {error}"
+    menu_list_failed: "failed to get role permission menus: {error}"
+    count_failed: failed to get role count
+  group:
+    parent_info_failed: failed to get parent group information
+    dn_exists: the group DN already exists
+    ldap_create_failed: "failed to create group in LDAP: {error}"
+    mysql_create_failed: failed to create group in MySQL
+    add_user_failed: "failed to add user to group: {error}"
+    list_failed: "failed to get group list: {error}"
+    count_failed: failed to get group count
+    not_found: group does not exist
+    ldap_update_failed: "failed to update group in LDAP: {error}"
+    mysql_update_failed: failed to update group in MySQL
+    some_not_found: some groups do not exist
+    has_children: this group has child groups, delete child groups first
+    ldap_delete_failed: "failed to delete group in LDAP: {error}"
+    get_failed: "failed to get group: {error}"
+    ou_cannot_add_user: OU groups cannot contain users
+    ou_has_no_user: OU groups have no users
+    ldap_add_user_failed: "failed to add user to group in LDAP: {error}"
+    user_department_failed: "failed to process user's department data: {error}"
+    mysql_user_update_failed: "failed to update user in MySQL: {error}"
+    ldap_remove_user_failed: "failed to remove user from LDAP: {error}"
+    mysql_remove_user_failed: "failed to remove user from MySQL: {error}"
+  base:
+    email_query_failed: "failed to query user by email: {error}"
+    ldap_new_password_failed: "failed to generate new LDAP password: {error}"
+  menu:
+    count_failed: failed to get menu count
+  log:
+    count_failed: failed to get log count
+builtin:
+  creator:
+    系统: System
+    system: System
+  role:
+    admin:
+      name: Administrator
+      remark: ""
+    user:
+      name: Standard user
+      remark: ""
+    guest:
+      name: Guest
+      remark: ""
+  menu:
+    UserManage:
+      name: Personnel
+      title: Personnel
+    User:
+      name: Users
+      title: Users
+    Group:
+      name: Groups
+      title: Groups
+    FieldRelation:
+      name: Field Relations
+      title: Field Relations
+    System:
+      name: System
+      title: System
+    Role:
+      name: Roles
+      title: Roles
+    Menu:
+      name: Menus
+      title: Menus
+    Api:
+      name: APIs
+      title: APIs
+    Log:
+      name: Logs
+      title: Logs
+    OperationLog:
+      name: Operation Logs
+      title: Operation Logs
+  api:
+    category:
+      base: Base
+      user: Users
+      group: Groups
+      role: Roles
+      menu: Menus
+      api: APIs
+      fieldrelation: Field Relations
+      log: Logs
+    remark:
+      get:
+        base_ping: Health check
+        base_encryptpwd: Encrypt password
+        base_decryptpwd: Decrypt password
+        base_config: Get system config
+        base_version: Get system version
+        base_dashboard: Get dashboard data
+        user_info: Get current user info
+        user_list: Get user list
+        group_list: Get group list
+        group_tree: Get group tree
+        group_useringroup: Get users in group
+        group_usernoingroup: Get users not in group
+        role_list: Get role list
+        role_getmenulist: Get role permission menus
+        role_getapilist: Get role permission APIs
+        menu_tree: Get menu tree
+        menu_access_tree: Get user menu tree
+        api_list: Get API list
+        api_tree: Get API tree
+        fieldrelation_list: Get dynamic field relation list
+        log_operation_list: Get operation log list
+      post:
+        base_login: User login
+        base_logout: User logout
+        base_refreshtoken: Refresh JWT token
+        base_sendcode: Send verification code to user email
+        base_changepwd: Change password by email
+        user_changepwd: Change user login password
+        user_resetpassword: Reset user password
+        user_add: Create user
+        user_update: Update user
+        user_delete: Batch delete users
+        user_changeuserstatus: Change user employment status
+        user_syncdingtalkusers: Sync users from DingTalk
+        user_syncwecomusers: Sync users from WeCom
+        user_syncfeishuusers: Sync users from Feishu
+        user_syncopenldapusers: Sync users from OpenLDAP
+        user_syncsqlusers: Sync database users to LDAP
+        group_add: Create group
+        group_update: Update group
+        group_delete: Batch delete groups
+        group_adduser: Add users to group
+        group_removeuser: Remove users from group
+        group_syncdingtalkdepts: Sync departments from DingTalk
+        group_syncwecomdepts: Sync departments from WeCom
+        group_syncfeishudepts: Sync departments from Feishu
+        group_syncopenldapdepts: Sync departments from OpenLDAP
+        group_syncsqlgroups: Sync database groups to LDAP
+        role_add: Create role
+        role_update: Update role
+        role_updatemenus: Update role permission menus
+        role_updateapis: Update role permission APIs
+        role_delete: Batch delete roles
+        menu_add: Create menu
+        menu_update: Update menu
+        menu_delete: Batch delete menus
+        api_add: Create API
+        api_update: Update API
+        api_delete: Batch delete APIs
+        fieldrelation_add: Create dynamic field relation
+        fieldrelation_update: Update dynamic field relation
+        fieldrelation_delete: Batch delete dynamic field relations
+        log_operation_delete: Batch delete operation logs
+      delete:
+        log_operation_clean: Clear operation logs
+  group:
+    name:
+      openldap:
+        root: root
+      dingtalk:
+        dingtalkroot: DingTalk root department
+      wecom:
+        wecomroot: WeCom root department
+      feishu:
+        feishuroot: Feishu root department
+      platform:
+        group: Default group
+    remark:
+      openldap:
+        root: Base
+      dingtalk:
+        dingtalkroot: DingTalk root department
+      wecom:
+        wecomroot: WeCom root department
+      feishu:
+        feishuroot: Feishu root department
+      platform:
+        group: Default group

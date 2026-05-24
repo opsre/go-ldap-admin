@@ -83,7 +83,7 @@ func (s RoleService) Delete(roleIds []uint) error {
 			if len(rmPolicies) > 0 {
 				isRemoved, _ := common.CasbinEnforcer.RemovePolicies(rmPolicies)
 				if !isRemoved {
-					return errors.New("删除角色成功, 删除角色关联权限接口失败")
+					return errors.New("role deleted, but failed to delete related permission APIs")
 				}
 			}
 		}
@@ -116,22 +116,22 @@ func (s RoleService) UpdateRoleApis(roleKeyword string, reqRolePolicies [][]stri
 	// 先获取path中的角色ID对应角色已有的police(需要先删除的)
 	err := common.CasbinEnforcer.LoadPolicy()
 	if err != nil {
-		return errors.New("角色的权限接口策略加载失败")
+		return errors.New("failed to load role permission API policy")
 	}
 	rmPolicies := common.CasbinEnforcer.GetFilteredPolicy(0, roleKeyword)
 	if len(rmPolicies) > 0 {
 		isRemoved, _ := common.CasbinEnforcer.RemovePolicies(rmPolicies)
 		if !isRemoved {
-			return errors.New("更新角色的权限接口失败")
+			return errors.New("failed to update role permission APIs")
 		}
 	}
 	isAdded, _ := common.CasbinEnforcer.AddPolicies(reqRolePolicies)
 	if !isAdded {
-		return errors.New("更新角色的权限接口失败")
+		return errors.New("failed to update role permission APIs")
 	}
 	err = common.CasbinEnforcer.LoadPolicy()
 	if err != nil {
-		return errors.New("更新角色的权限接口成功，角色的权限接口策略加载失败")
+		return errors.New("role permission APIs updated, but failed to load role permission API policy")
 	} else {
 		return err
 	}

@@ -1,11 +1,10 @@
 package middleware
 
 import (
-	"fmt"
-
 	"github.com/eryajf/go-ldap-admin/config"
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/public/common"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/isql"
 
@@ -111,7 +110,26 @@ func authorizator(data any, c *gin.Context) bool {
 // 用户登录校验失败处理
 func unauthorized(c *gin.Context, code int, message string) {
 	common.Log.Debugf("JWT认证失败, 错误码: %d, 错误信息: %s", code, message)
-	response.Response(c, code, code, nil, fmt.Sprintf("JWT认证失败, 错误码: %d, 错误信息: %s", code, message))
+	message = localizeAuthFailure(c, message)
+	response.Response(c, code, code, nil, i18n.TC(c, "auth.jwt_failed", i18n.Args{
+		"code":    code,
+		"message": message,
+	}))
+}
+
+func localizeAuthFailure(c *gin.Context, message string) string {
+	switch message {
+	case "用户未登录":
+		return i18n.TC(c, "auth.not_logged_in", nil)
+	case "用户不存在":
+		return i18n.TC(c, "auth.user_not_found", nil)
+	case "用户被禁用":
+		return i18n.TC(c, "auth.user_disabled", nil)
+	case "密码错误":
+		return i18n.TC(c, "auth.password_incorrect", nil)
+	default:
+		return message
+	}
 }
 
 // 登录成功后的响应
@@ -121,12 +139,12 @@ func loginResponse(c *gin.Context, code int, token string, expires time.Time) {
 			"token":   token,
 			"expires": expires.Format("2006-01-02 15:04:05"),
 		},
-		"登录成功")
+		i18n.TC(c, "auth.login_success", nil))
 }
 
 // 登出后的响应
 func logoutResponse(c *gin.Context, code int) {
-	response.Success(c, nil, "退出成功")
+	response.Success(c, nil, i18n.TC(c, "auth.logout_success", nil))
 }
 
 // 刷新token后的响应
@@ -136,5 +154,5 @@ func refreshResponse(c *gin.Context, code int, token string, expires time.Time) 
 			"token":   token,
 			"expires": expires,
 		},
-		"刷新token成功")
+		i18n.TC(c, "auth.refresh_success", nil))
 }

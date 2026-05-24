@@ -10,6 +10,7 @@ import (
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/ildap"
 	"github.com/eryajf/go-ldap-admin/service/isql"
@@ -30,7 +31,7 @@ func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	// 获取当前用户
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前登陆用户信息失败"))
+		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
 	}
 
 	group := model.Group{
@@ -50,7 +51,7 @@ func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 		parentGroup := new(model.Group)
 		err := isql.Group.Find(tools.H{"id": r.ParentId}, parentGroup)
 		if err != nil {
-			return nil, tools.NewMySqlError(fmt.Errorf("获取父级组信息失败"))
+			return nil, tools.NewMySqlI18nError("group.parent_info_failed", nil)
 		}
 		group.SourceDeptId = "platform_0"
 		group.SourceDeptParentId = fmt.Sprintf("%s_%d", parentGroup.Source, r.ParentId)
@@ -59,19 +60,19 @@ func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 
 	// 根据 group_dn 判断分组是否已存在
 	if isql.Group.Exist(tools.H{"group_dn": group.GroupDN}) {
-		return nil, tools.NewValidatorError(fmt.Errorf("该分组对应DN已存在"))
+		return nil, tools.NewValidatorI18nError("group.dn_exists", nil)
 	}
 
 	// 先在ldap中创建组
 	err = ildap.Group.Add(&group)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("%s", "向LDAP创建分组失败"+err.Error()))
+		return nil, tools.NewLdapI18nError("group.ldap_create_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 然后在数据库中创建组
 	err = isql.Group.Add(&group)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("向MySQL创建分组失败"))
+		return nil, tools.NewLdapI18nError("group.mysql_create_failed", nil)
 	}
 
 	// 默认创建分组之后，需要将admin添加到分组中
@@ -83,7 +84,7 @@ func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 
 	err = isql.Group.AddUserToGroup(&group, []model.User{*adminInfo})
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("添加用户到分组失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.add_user_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -100,16 +101,17 @@ func (l GroupLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	// 获取数据列表
 	groups, err := isql.Group.List(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取分组列表失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	rets := make([]model.Group, 0)
 	for _, group := range groups {
+		localizeGroup(c, group)
 		rets = append(rets, *group)
 	}
 	count, err := isql.Group.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取分组总数失败"))
+		return nil, tools.NewMySqlI18nError("group.count_failed", nil)
 	}
 
 	return response.GroupListRsp{
@@ -129,10 +131,11 @@ func (l GroupLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	var groups []*model.Group
 	groups, err := isql.Group.ListTree(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("legacy.common.resource_list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	tree := isql.GenGroupTree(0, groups)
+	localizeGroups(c, tree)
 
 	return tree, nil
 }
@@ -147,13 +150,13 @@ func (l GroupLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 
 	filter := tools.H{"id": int(r.ID)}
 	if !isql.Group.Exist(filter) {
-		return nil, tools.NewMySqlError(fmt.Errorf("分组不存在"))
+		return nil, tools.NewMySqlI18nError("group.not_found", nil)
 	}
 
 	// 获取当前登陆用户
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前登陆用户失败"))
+		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
 	}
 
 	oldGroup := new(model.Group)
@@ -177,11 +180,11 @@ func (l GroupLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 
 	err = ildap.Group.Update(oldGroup, &newGroup)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("%s", "向LDAP更新分组失败："+err.Error()))
+		return nil, tools.NewLdapI18nError("group.ldap_update_failed", i18n.Args{"error": err.Error()})
 	}
 	err = isql.Group.Update(&newGroup)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("向MySQL更新分组失败"))
+		return nil, tools.NewLdapI18nError("group.mysql_update_failed", nil)
 	}
 	return nil, nil
 }
@@ -197,33 +200,33 @@ func (l GroupLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	for _, id := range r.GroupIds {
 		filter := tools.H{"id": int(id)}
 		if !isql.Group.Exist(filter) {
-			return nil, tools.NewMySqlError(fmt.Errorf("有分组不存在"))
+			return nil, tools.NewMySqlI18nError("group.some_not_found", nil)
 		}
 	}
 
 	groups, err := isql.Group.GetGroupByIds(r.GroupIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取分组列表失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	for _, group := range groups {
 		// 判断存在子分组，不允许删除
 		filter := tools.H{"parent_id": int(group.ID)}
 		if isql.Group.Exist(filter) {
-			return nil, tools.NewMySqlError(fmt.Errorf("存在子分组，请先删除子分组，再执行该分组的删除操作！"))
+			return nil, tools.NewMySqlI18nError("group.has_children", nil)
 		}
 
 		// 删除的时候先从ldap进行删除
 		err = ildap.Group.Delete(group.GroupDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("%s", "向LDAP删除分组失败："+err.Error()))
+			return nil, tools.NewLdapI18nError("group.ldap_delete_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 
 	// 从MySQL中删除
 	err = isql.Group.Delete(groups)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("删除接口失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.delete_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -240,35 +243,35 @@ func (l GroupLogic) AddUser(c *gin.Context, req any) (data any, rspError any) {
 	filter := tools.H{"id": r.GroupID}
 
 	if !isql.Group.Exist(filter) {
-		return nil, tools.NewMySqlError(fmt.Errorf("分组不存在"))
+		return nil, tools.NewMySqlI18nError("group.not_found", nil)
 	}
 
 	users, err := isql.User.GetUserByIds(r.UserIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取用户列表失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.user_list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	group := new(model.Group)
 	err = isql.Group.Find(filter, group)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取分组失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.get_failed", i18n.Args{"error": err.Error()})
 	}
 
 	if group.GroupDN[:3] == "ou=" {
-		return nil, tools.NewMySqlError(fmt.Errorf("ou类型的分组不能添加用户"))
+		return nil, tools.NewMySqlI18nError("group.ou_cannot_add_user", nil)
 	}
 
 	// 先添加到MySQL
 	err = isql.Group.AddUserToGroup(group, users)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("添加用户到分组失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.add_user_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 再往ldap添加
 	for _, user := range users {
 		err = ildap.Group.AddUserToGroup(group.GroupDN, user.UserDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("%s", "向LDAP添加用户到分组失败"+err.Error()))
+			return nil, tools.NewLdapI18nError("group.ldap_add_user_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 
@@ -284,7 +287,7 @@ func (l GroupLogic) AddUser(c *gin.Context, req any) (data any, rspError any) {
 		newData.Departments = oldData.Departments + "," + group.GroupName
 		err = l.updataUser(newData)
 		if err != nil {
-			return nil, tools.NewOperationError(fmt.Errorf("%s", "处理用户的部门数据失败:"+err.Error()))
+			return nil, tools.NewOperationI18nError("group.user_department_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 
@@ -294,7 +297,7 @@ func (l GroupLogic) AddUser(c *gin.Context, req any) (data any, rspError any) {
 func (l GroupLogic) updataUser(newUser *model.User) error {
 	err := isql.User.Update(newUser)
 	if err != nil {
-		return tools.NewMySqlError(fmt.Errorf("%s", "在MySQL更新用户失败："+err.Error()))
+		return tools.NewMySqlI18nError("group.mysql_user_update_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil
 }
@@ -310,36 +313,36 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any)
 	filter := tools.H{"id": r.GroupID}
 
 	if !isql.Group.Exist(filter) {
-		return nil, tools.NewMySqlError(fmt.Errorf("分组不存在"))
+		return nil, tools.NewMySqlI18nError("group.not_found", nil)
 	}
 
 	users, err := isql.User.GetUserByIds(r.UserIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取用户列表失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.user_list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	group := new(model.Group)
 	err = isql.Group.Find(filter, group)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取分组失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.get_failed", i18n.Args{"error": err.Error()})
 	}
 
 	if group.GroupDN[:3] == "ou=" {
-		return nil, tools.NewMySqlError(fmt.Errorf("ou类型的分组内没有用户"))
+		return nil, tools.NewMySqlI18nError("group.ou_has_no_user", nil)
 	}
 
 	// 先操作ldap
 	for _, user := range users {
 		err := ildap.Group.RemoveUserFromGroup(group.GroupDN, user.UserDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("%s", "将用户从ldap移除失败"+err.Error()))
+			return nil, tools.NewLdapI18nError("group.ldap_remove_user_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 
 	// 再操作MySQL
 	err = isql.Group.RemoveUserFromGroup(group, users)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("将用户从MySQL移除失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.mysql_remove_user_failed", i18n.Args{"error": err.Error()})
 	}
 
 	for _, user := range users {
@@ -369,7 +372,7 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any)
 		newData.DepartmentId = strings.Join(newDeptIds, ",")
 		err = l.updataUser(newData)
 		if err != nil {
-			return nil, tools.NewOperationError(fmt.Errorf("%s", "处理用户的部门数据失败:"+err.Error()))
+			return nil, tools.NewOperationI18nError("group.user_department_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 
@@ -387,13 +390,13 @@ func (l GroupLogic) UserInGroup(c *gin.Context, req any) (data any, rspError any
 	filter := tools.H{"id": r.GroupID}
 
 	if !isql.Group.Exist(filter) {
-		return nil, tools.NewMySqlError(fmt.Errorf("分组不存在"))
+		return nil, tools.NewMySqlI18nError("group.not_found", nil)
 	}
 
 	group := new(model.Group)
 	err := isql.Group.Find(filter, group)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取分组失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.get_failed", i18n.Args{"error": err.Error()})
 	}
 
 	rets := make([]response.Guser, 0)
@@ -432,19 +435,19 @@ func (l GroupLogic) UserNoInGroup(c *gin.Context, req any) (data any, rspError a
 	filter := tools.H{"id": r.GroupID}
 
 	if !isql.Group.Exist(filter) {
-		return nil, tools.NewMySqlError(fmt.Errorf("分组不存在"))
+		return nil, tools.NewMySqlI18nError("group.not_found", nil)
 	}
 
 	group := new(model.Group)
 	err := isql.Group.Find(filter, group)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取分组失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("group.get_failed", i18n.Args{"error": err.Error()})
 	}
 
 	var userList []*model.User
 	userList, err = isql.User.ListAll()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("legacy.common.resource_list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	rets := make([]response.Guser, 0)

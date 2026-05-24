@@ -13,6 +13,7 @@ import (
 	"github.com/eryajf/go-ldap-admin/config"
 	"github.com/eryajf/go-ldap-admin/middleware"
 	"github.com/eryajf/go-ldap-admin/public/common"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/routes"
 	"github.com/eryajf/go-ldap-admin/service/isql"
 )
@@ -35,6 +36,10 @@ func main() {
 
 	// 加载配置文件到全局配置结构体
 	config.InitConfig()
+
+	if err := i18n.Init(config.Conf.I18n.DefaultLocale, config.Conf.I18n.SupportedLocales); err != nil {
+		panic(fmt.Errorf("初始化i18n失败:%s", err))
+	}
 
 	// 初始化日志
 	common.InitLogger()

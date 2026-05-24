@@ -1,11 +1,10 @@
 package logic
 
 import (
-	"fmt"
-
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/isql"
 
@@ -26,7 +25,7 @@ func (l ApiLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	// 获取当前用户
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前登陆用户信息失败"))
+		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
 	}
 
 	api := model.Api{
@@ -40,7 +39,7 @@ func (l ApiLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	// 创建接口
 	err = isql.Api.Add(&api)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("创建接口失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("api.create_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -57,16 +56,17 @@ func (l ApiLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	// 获取数据列表
 	apis, err := isql.Api.List(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取接口列表失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("api.list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	rets := make([]model.Api, 0)
 	for _, api := range apis {
+		localizeApi(c, api)
 		rets = append(rets, *api)
 	}
 	count, err := isql.Api.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取接口总数失败"))
+		return nil, tools.NewMySqlI18nError("api.count_failed", nil)
 	}
 
 	return response.ApiListRsp{
@@ -86,8 +86,9 @@ func (l ApiLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 
 	apis, err := isql.Api.ListAll()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("legacy.common.resource_list_failed", i18n.Args{"error": err.Error()})
 	}
+	localizeApis(c, apis)
 
 	// 获取所有的分类
 	var categoryList []string
@@ -101,10 +102,12 @@ func (l ApiLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 
 	for i, category := range categoryUniq {
 		apiTree[i] = &response.ApiTreeRsp{
-			ID:       -i,
-			Remark:   category,
-			Category: category,
-			Children: nil,
+			ID:              -i,
+			Remark:          localizeBuiltinValue(c, "api.category", category),
+			RemarkDisplay:   localizeBuiltinValue(c, "api.category", category),
+			Category:        category,
+			CategoryDisplay: localizeBuiltinValue(c, "api.category", category),
+			Children:        nil,
 		}
 		for _, api := range apis {
 			if category == api.Category {
@@ -126,13 +129,13 @@ func (l ApiLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 
 	filter := tools.H{"id": int(r.ID)}
 	if !isql.Api.Exist(filter) {
-		return nil, tools.NewMySqlError(fmt.Errorf("接口不存在"))
+		return nil, tools.NewMySqlI18nError("api.not_found", nil)
 	}
 
 	// 获取当前登陆用户
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前登陆用户失败"))
+		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
 	}
 
 	oldData := new(model.Api)
@@ -151,7 +154,7 @@ func (l ApiLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	}
 	err = isql.Api.Update(&api)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("更新接口失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("api.update_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil, nil
 }
@@ -167,13 +170,13 @@ func (l ApiLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	for _, id := range r.ApiIds {
 		filter := tools.H{"id": int(id)}
 		if !isql.Api.Exist(filter) {
-			return nil, tools.NewMySqlError(fmt.Errorf("接口不存在"))
+			return nil, tools.NewMySqlI18nError("api.not_found", nil)
 		}
 	}
 	// 删除接口
 	err := isql.Api.Delete(r.ApiIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("删除接口失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("api.delete_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil, nil
 }

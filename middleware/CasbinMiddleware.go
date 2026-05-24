@@ -6,6 +6,7 @@ import (
 
 	"github.com/eryajf/go-ldap-admin/config"
 	"github.com/eryajf/go-ldap-admin/public/common"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/isql"
 
@@ -19,12 +20,12 @@ func CasbinMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, err := isql.User.GetCurrentLoginUser(c)
 		if err != nil {
-			tools.Response(c, 401, 401, nil, "用户未登录")
+			tools.Response(c, 401, 401, nil, i18n.TC(c, "auth.not_logged_in", nil))
 			c.Abort()
 			return
 		}
 		if user.Status != 1 {
-			tools.Response(c, 401, 401, nil, "当前用户已被禁用")
+			tools.Response(c, 401, 401, nil, i18n.TC(c, "auth.user_disabled", nil))
 			c.Abort()
 			return
 		}
@@ -43,7 +44,7 @@ func CasbinMiddleware() gin.HandlerFunc {
 		act := c.Request.Method
 		isPass := check(subs, obj, act)
 		if !isPass {
-			tools.Response(c, 401, 401, nil, "没有权限")
+			tools.Response(c, 401, 401, nil, i18n.TC(c, "auth.no_permission", nil))
 			c.Abort()
 			return
 		}

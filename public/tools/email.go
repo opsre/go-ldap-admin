@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/eryajf/go-ldap-admin/config"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/patrickmn/go-cache"
 
 	"strconv"
@@ -37,78 +38,48 @@ func email(mailTo []string, subject string, body string) error {
 }
 
 func SendMail(sendto []string, pass string) error {
-	subject := "重置LDAP密码成功"
-	// 邮件正文
-	body := fmt.Sprintf("<li><a>更改之后的密码为: %s </a></li>", pass)
+	return SendMailI18n(sendto, pass, "")
+}
+
+func SendMailI18n(sendto []string, pass string, locale string) error {
+	subject := i18n.T(locale, "email.password_reset_subject", nil)
+	body := fmt.Sprintf(i18n.T(locale, "email.password_reset_body", nil), pass)
 	return email(sendto, subject, body)
 }
 
 // SendCode 发送验证码
 func SendCode(sendto []string) error {
+	return SendCodeI18n(sendto, "")
+}
+
+func SendCodeI18n(sendto []string, locale string) error {
 	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 	vcode := fmt.Sprintf("%06v", rnd.Int31n(1000000))
 	// 把验证码信息放到cache，以便于验证时拿到
 	VerificationCodeCache.Set(sendto[0], vcode, time.Minute*5)
-	subject := "验证码-重置密码"
-	//发送的内容
-	body := fmt.Sprintf(`<div>
-        <div>
-            尊敬的用户，您好！
-        </div>
-        <div style="padding: 8px 40px 8px 50px;">
-            <p>你本次的验证码为 %s ,为了保证账号安全，验证码有效期为5分钟。请确认为本人操作，切勿向他人泄露，感谢您的理解与使用。</p>
-        </div>
-        <div>
-            <p>此邮箱为系统邮箱，请勿回复。</p>
-        </div>
-    </div>`, vcode)
+	subject := i18n.T(locale, "email.verification_code_subject", nil)
+	body := fmt.Sprintf(i18n.T(locale, "email.verification_code_body", nil), vcode)
 	return email(sendto, subject, body)
 }
 
 // SendUserCreationNotification 发送用户创建成功通知邮件
 func SendUserCreationNotification(username, nickname, mail, password string) error {
-	subject := "LDAP账户创建成功通知"
-	// 邮件正文
-	body := fmt.Sprintf(`<div>
-        <div>
-            尊敬的%s，您好！
-        </div>
-        <div style="padding: 8px 40px 8px 50px;">
-            <p>您的LDAP账户已创建成功，以下是您的账户信息：</p>
-            <ul>
-                <li>用户名：%s</li>
-                <li>昵称：%s</li>
-                <li>初始密码：%s</li>
-            </ul>
-            <p style="color: #ff6600;">请妥善保管您的账户信息，建议首次登录后及时修改密码。</p>
-        </div>
-        <div>
-            <p>此邮箱为系统邮箱，请勿回复。</p>
-        </div>
-    </div>`, nickname, username, nickname, password)
+	return SendUserCreationNotificationI18n(username, nickname, mail, password, "")
+}
+
+func SendUserCreationNotificationI18n(username, nickname, mail, password string, locale string) error {
+	subject := i18n.T(locale, "email.user_creation_subject", nil)
+	body := fmt.Sprintf(i18n.T(locale, "email.user_creation_body", nil), nickname, username, nickname, password)
 	return email([]string{mail}, subject, body)
 }
 
 // SendPasswordResetNotification 发送密码重置成功通知邮件
 func SendPasswordResetNotification(username, nickname, mail, newPassword string) error {
-	subject := "LDAP密码重置成功通知"
-	// 邮件正文
-	body := fmt.Sprintf(`<div>
-        <div>
-            尊敬的%s，您好！
-        </div>
-        <div style="padding: 8px 40px 8px 50px;">
-            <p>您的LDAP账户密码已成功重置，以下是您的新密码信息：</p>
-            <ul>
-                <li>用户名：%s</li>
-                <li>新密码：%s</li>
-            </ul>
-            <p style="color: #ff6600;">为了您的账户安全，请尽快登录并修改为您自己的密码。</p>
-            <p style="color: #ff0000;">请妥善保管您的账户信息，切勿泄露给他人。</p>
-        </div>
-        <div>
-            <p>此邮箱为系统邮箱，请勿回复。</p>
-        </div>
-    </div>`, nickname, username, newPassword)
+	return SendPasswordResetNotificationI18n(username, nickname, mail, newPassword, "")
+}
+
+func SendPasswordResetNotificationI18n(username, nickname, mail, newPassword string, locale string) error {
+	subject := i18n.T(locale, "email.admin_password_reset_subject", nil)
+	body := fmt.Sprintf(i18n.T(locale, "email.admin_password_reset_body", nil), nickname, username, newPassword)
 	return email([]string{mail}, subject, body)
 }

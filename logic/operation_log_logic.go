@@ -1,11 +1,10 @@
 package logic
 
 import (
-	"fmt"
-
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/isql"
 
@@ -21,11 +20,10 @@ func (l OperationLogLogic) List(c *gin.Context, req any) (data any, rspError any
 		return nil, ReqAssertErr
 	}
 	_ = c
-	fmt.Println(r)
 	// 获取数据列表
 	logs, err := isql.OperationLog.List(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取接口列表失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("operation_log.list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	rets := make([]model.OperationLog, 0)
@@ -34,7 +32,7 @@ func (l OperationLogLogic) List(c *gin.Context, req any) (data any, rspError any
 	}
 	count, err := isql.OperationLog.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取接口总数失败"))
+		return nil, tools.NewMySqlI18nError("operation_log.count_failed", nil)
 	}
 
 	return response.LogListRsp{
@@ -62,13 +60,13 @@ func (l OperationLogLogic) Delete(c *gin.Context, req any) (data any, rspError a
 	for _, id := range r.OperationLogIds {
 		filter := tools.H{"id": int(id)}
 		if !isql.OperationLog.Exist(filter) {
-			return nil, tools.NewMySqlError(fmt.Errorf("该条记录不存在"))
+			return nil, tools.NewMySqlI18nError("operation_log.not_found", nil)
 		}
 	}
 	// 删除接口
 	err := isql.OperationLog.Delete(r.OperationLogIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("删除该改条记录失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("operation_log.delete_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil, nil
 }
@@ -81,7 +79,7 @@ func (l OperationLogLogic) Clean(c *gin.Context, req any) (data any, rspError an
 	_ = c
 	err := isql.OperationLog.Clean()
 	if err != nil {
-		return err, nil
+		return nil, tools.NewMySqlI18nError("operation_log.clean_failed", i18n.Args{"error": err.Error()})
 	}
-	return "操作日志清空完成", nil
+	return nil, nil
 }

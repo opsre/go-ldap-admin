@@ -16,20 +16,20 @@ func RSAEncrypt(data, publicBytes []byte) ([]byte, error) {
 	block, _ := pem.Decode(publicBytes)
 
 	if block == nil {
-		return res, fmt.Errorf("无法加密, 公钥可能不正确")
+		return res, fmt.Errorf("failed to encrypt: invalid public key")
 	}
 
 	// 使用X509将解码之后的数据 解析出来
 	// x509.MarshalPKCS1PublicKey(block):解析之后无法用，所以采用以下方法：ParsePKIXPublicKey
 	keyInit, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
-		return res, fmt.Errorf("无法加密, 公钥可能不正确, %v", err)
+		return res, fmt.Errorf("failed to encrypt: invalid public key: %v", err)
 	}
 	// 使用公钥加密数据
 	pubKey := keyInit.(*rsa.PublicKey)
 	res, err = rsa.EncryptPKCS1v15(rand.Reader, pubKey, data)
 	if err != nil {
-		return res, fmt.Errorf("无法加密, 公钥可能不正确, %v", err)
+		return res, fmt.Errorf("failed to encrypt: invalid public key: %v", err)
 	}
 	// 将数据加密为base64格式
 	return []byte(EncodeStr2Base64(string(res))), nil
@@ -43,16 +43,16 @@ func RSADecrypt(base64Data, privateBytes []byte) ([]byte, error) {
 	// 解析私钥
 	block, _ := pem.Decode(privateBytes)
 	if block == nil {
-		return res, fmt.Errorf("无法解密, 私钥可能不正确,解析私钥失败")
+		return res, fmt.Errorf("failed to decrypt: invalid private key")
 	}
 	// 还原数据
 	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		return res, fmt.Errorf("无法解密, 私钥可能不正确,解析PKCS失败 %v", err)
+		return res, fmt.Errorf("failed to decrypt: invalid private key: %v", err)
 	}
 	res, err = rsa.DecryptPKCS1v15(rand.Reader, privateKey, data)
 	if err != nil {
-		return res, fmt.Errorf("无法解密, 私钥可能不正确,解密PKCS1v15失败 %v", err)
+		return res, fmt.Errorf("failed to decrypt: invalid private key: %v", err)
 	}
 	return res, nil
 }

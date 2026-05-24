@@ -1,0 +1,411 @@
+common:
+  success: correcto
+  unknown_error: error desconocido
+  request_invalid: solicitud no válida
+error:
+  database: operación de base de datos fallida
+  ldap: operación LDAP fallida
+  operation: operación fallida
+  validator: validación fallida
+auth:
+  login_success: inicio de sesión correcto
+  logout_success: sesión cerrada correctamente
+  refresh_success: token actualizado correctamente
+  jwt_failed: "falló la autenticación JWT, código: {code}, mensaje: {message}"
+  not_logged_in: el usuario no ha iniciado sesión
+  user_not_found: el usuario no existe
+  user_disabled: el usuario actual está deshabilitado
+  password_incorrect: contraseña incorrecta
+  no_permission: sin permisos
+rate_limit:
+  limited: demasiadas solicitudes
+email:
+  password_reset_subject: Restablecimiento de contraseña LDAP completado
+  password_reset_body: "<li><a>Tu nueva contraseña es: %s </a></li>"
+  verification_code_subject: Código de verificación - restablecimiento de contraseña
+  verification_code_body: "<div><div>Hola,</div><div style=\"padding: 8px 40px 8px 50px;\"><p>Tu código de verificación es %s. Por seguridad de la cuenta, el código es válido durante 5 minutos. Confirma que esta operación fue realizada por ti y no lo compartas con nadie.</p></div><div><p>Este es un correo del sistema. No respondas.</p></div></div>"
+  user_creation_subject: Cuenta LDAP creada correctamente
+  user_creation_body: "<div><div>Hola %s,</div><div style=\"padding: 8px 40px 8px 50px;\"><p>Tu cuenta LDAP ha sido creada. Información de la cuenta:</p><ul><li>Usuario: %s</li><li>Nombre: %s</li><li>Contraseña inicial: %s</li></ul><p style=\"color: #ff6600;\">Guarda la información de la cuenta de forma segura y cambia la contraseña después del primer inicio de sesión.</p></div><div><p>Este es un correo del sistema. No respondas.</p></div></div>"
+  admin_password_reset_subject: Notificación de restablecimiento de contraseña LDAP
+  admin_password_reset_body: "<div><div>Hola %s,</div><div style=\"padding: 8px 40px 8px 50px;\"><p>La contraseña de tu cuenta LDAP ha sido restablecida. Nueva información de contraseña:</p><ul><li>Usuario: %s</li><li>Nueva contraseña: %s</li></ul><p style=\"color: #ff6600;\">Por seguridad, inicia sesión y cámbiala lo antes posible.</p><p style=\"color: #ff0000;\">Guarda la información de la cuenta de forma segura y no la compartas con nadie.</p></div><div><p>Este es un correo del sistema. No respondas.</p></div></div>"
+dashboard:
+  user: usuarios
+  group: grupos
+  role: roles
+  menu: menús
+  api: APIs
+  log: registros
+sync:
+  dept_list_failed: "no se pudo obtener la lista de departamentos de {provider}: {error}"
+  dept_convert_failed: "no se pudieron convertir los datos de departamentos de {provider}: {error}"
+  empty_depts: se obtuvieron 0 departamentos
+  dept_add_failed: "no se pudo agregar el departamento [{dept}]: {error}"
+  child_dept_add_failed: "no se pudo agregar el departamento hijo: {error}"
+  parent_dept_query_failed: "no se pudo consultar el departamento padre: {error}"
+  add_dept_failed: "no se pudo agregar el departamento {dept}: {error}"
+  user_list_failed: "no se pudo obtener la lista de usuarios de {provider}: {error}"
+  user_convert_failed: "no se pudieron convertir los datos de usuarios de {provider}: {error}"
+  empty_users: se obtuvieron 0 usuarios
+  user_write_failed: "no se pudo escribir el usuario [{username}]: {error}"
+  leave_user_list_failed: "no se pudo obtener la lista de usuarios dados de baja de {provider}: {error}"
+  leave_user_query_failed: "no se pudo consultar en MySQL el usuario dado de baja [{username}]: {error}"
+  leave_user_ldap_delete_failed: "no se pudo eliminar en LDAP el usuario dado de baja [{username}]: {error}"
+  leave_user_status_update_failed: "no se pudo actualizar en MySQL el estado del usuario dado de baja [{username}]: {error}"
+  role_info_failed: "no se pudo obtener la información del rol por ID: {error}"
+  add_user_failed: "no se pudo agregar el usuario {username}: {error}"
+  mysql_user_list_failed: "no se pudo obtener la lista de usuarios de MySQL: {error}"
+  dept_ids_convert_failed: "no se pudieron convertir los IDs de departamento a IDs internos: {error}"
+  user_dept_ids_convert_failed: "no se pudieron convertir los IDs de departamento del usuario [{username}] a IDs internos: {error}"
+  user_role_info_failed: "no se pudo obtener la información de roles del usuario [{username}]: {error}"
+common_user:
+  mysql_create_failed: "no se pudo crear el usuario en MySQL: {error}"
+  ldap_create_failed: "no se pudo crear el usuario en LDAP: {error}"
+  mysql_add_group_relation_failed: "no se pudo agregar la relación usuario-grupo en MySQL: {error}"
+  ldap_add_group_relation_failed: "no se pudo agregar la relación usuario-grupo en LDAP: {error}"
+  ldap_update_failed: "no se pudo actualizar el usuario en LDAP: {error}"
+  mysql_update_failed: "no se pudo actualizar el usuario en MySQL: {error}"
+  mysql_remove_group_relation_failed: "no se pudo quitar el usuario del grupo en MySQL: {error}"
+  ldap_remove_group_relation_failed: "no se pudo quitar el usuario del grupo en LDAP: {error}"
+base:
+  email_not_found: el correo no existe, comprueba que sea correcto
+  code_expired: el código de verificación expiró después de 5 minutos, restablece la contraseña otra vez
+  code_invalid: el código de verificación es incorrecto, usa el último código enviado a tu correo
+  reset_password_user_unavailable: este usuario salió de la organización o no se sincronizó con LDAP, contacta con un administrador
+  send_email_failed: "no se pudo enviar el correo: {error}"
+  email_query_failed: "no se pudo consultar el usuario por correo: {error}"
+  ldap_new_password_failed: "no se pudo generar una nueva contraseña en LDAP: {error}"
+user:
+  username_exists: el nombre de usuario ya existe, no lo agregues de nuevo
+  mobile_exists: el número de móvil ya existe, no lo agregues de nuevo
+  job_number_exists: el número de empleado ya existe, no lo agregues de nuevo
+  mail_exists: el correo ya existe, no lo agregues de nuevo
+  password_encrypt_failed: no se pudo cifrar la contraseña
+  password_decrypt_failed: no se pudo descifrar la contraseña
+  password_min_length: la contraseña debe tener al menos {min} caracteres
+  cannot_delete_self: los usuarios no pueden eliminarse a sí mismos
+  not_found: el usuario no existe
+  current_min_role_sort_failed: no se pudo obtener el nivel mínimo de rol del usuario actual
+  role_info_failed: no se pudo obtener la información del rol por ID
+  cannot_create_higher_or_equal: no puedes crear usuarios con un nivel de rol superior o igual al tuyo
+  department_info_failed: "no se pudo obtener la información del departamento por ID: {error}"
+  create_failed: "no se pudo agregar el usuario: {error}"
+  list_failed: "no se pudo obtener la lista de usuarios: {error}"
+  count_failed: "no se pudo obtener el total de usuarios: {error}"
+  cannot_change_self_role: no puedes cambiar tu propio rol
+  min_role_sort_by_id_failed: no se pudo obtener el nivel mínimo de rol por ID de usuario
+  cannot_update_higher_or_equal: no puedes actualizar usuarios con un nivel de rol superior o igual al tuyo
+  update_failed: "no se pudo actualizar el usuario: {error}"
+  cannot_delete_higher: no puedes eliminar usuarios con un nivel de rol superior al tuyo
+  info_failed: "no se pudo obtener la información del usuario: {error}"
+  ldap_delete_failed: "no se pudo eliminar el usuario en LDAP: {error}"
+  mysql_delete_failed: "no se pudo eliminar el usuario en MySQL: {error}"
+  ldap_password_update_failed: "no se pudo actualizar la contraseña en LDAP: {error}"
+  mysql_password_update_failed: "no se pudo actualizar la contraseña en MySQL: {error}"
+  mysql_query_failed: "no se pudo consultar el usuario en MySQL: {error}"
+  ldap_add_failed: "no se pudo agregar el usuario en LDAP: {error}"
+  mysql_status_update_failed: "no se pudo actualizar el estado del usuario en MySQL: {error}"
+  current_info_failed: "no se pudo obtener la información del usuario actual: {error}"
+menu:
+  name_exists: el nombre del menú ya existe
+  create_failed: "no se pudo crear el registro: {error}"
+  update_failed: "no se pudo actualizar el registro: {error}"
+  delete_failed: "no se pudo eliminar la API: {error}"
+  record_not_found: no existe ningún registro para este ID
+  record_get_failed: "no se pudo obtener el registro: {error}"
+  count_failed: no se pudo obtener el total de menús
+api:
+  create_failed: "no se pudo crear la API: {error}"
+  list_failed: "no se pudo obtener la lista de APIs: {error}"
+  count_failed: no se pudo obtener el total de APIs
+  not_found: la API no existe
+  update_failed: "no se pudo actualizar la API: {error}"
+  delete_failed: "no se pudo eliminar la API: {error}"
+operation_log:
+  list_failed: "no se pudo obtener la lista de registros de operación: {error}"
+  count_failed: no se pudo obtener el total de registros de operación
+  not_found: el registro de operación no existe
+  delete_failed: "no se pudo eliminar el registro de operación: {error}"
+  clean_failed: "no se pudieron vaciar los registros de operación: {error}"
+role:
+  name_exists: el nombre del rol ya existe
+  not_found: el rol no existe
+  current_max_sort_failed: "no se pudo obtener el nivel de rol más alto del usuario actual: {error}"
+  no_update_permission: el usuario actual no tiene permiso para actualizar roles
+  cannot_create_higher_or_equal: no se puede crear un rol con nivel superior o igual al propio
+  create_failed: "no se pudo crear el rol: {error}"
+  list_failed: "no se pudo obtener la lista de roles: {error}"
+  count_failed: no se pudo obtener el total de roles
+  info_not_found: no se pudo obtener la información del rol, no se encontró un rol coincidente
+  cannot_update_higher_or_equal: no se puede actualizar un rol con nivel superior o igual al propio
+  cannot_set_higher_or_equal: no se puede establecer el nivel del rol superior o igual al del usuario actual
+  update_failed: "no se pudo actualizar el rol: {error}"
+  keyword_policy_update_failed: el rol se actualizó, pero no se pudieron actualizar las APIs de permiso vinculadas a la clave del rol
+  keyword_policy_load_failed: el rol se actualizó, pero no se pudieron cargar las políticas de APIs vinculadas a la clave del rol
+  no_role_info: no se pudo obtener la información del rol
+  cannot_delete_higher_or_equal: no se puede eliminar un rol con nivel superior o igual al propio
+  delete_failed: "no se pudo eliminar el rol: {error}"
+  menu_list_failed: "no se pudieron obtener los menús de permiso del rol: {error}"
+  resource_failed: "no se pudo obtener el recurso: {error}"
+  cannot_update_higher_or_equal_permissions: no se pueden actualizar menús de permiso de un rol con nivel superior o igual al propio
+  current_user_menu_list_failed: "no se pudo obtener la lista de menús accesibles del usuario actual: {error}"
+  no_menu_permission: "sin permiso para asignar el menú con ID {id}"
+  menu_all_list_failed: "no se pudo obtener la lista de menús: {error}"
+  update_menus_failed: "no se pudieron actualizar los menús de permiso del rol: {error}"
+  api_info_failed: no se pudo obtener la información de la API por ID
+  no_api_permission: "sin permiso para asignar la API con ruta {path}, método {method}"
+  update_apis_failed: no se pudieron actualizar las APIs de permiso del rol
+group:
+  parent_info_failed: no se pudo obtener la información del grupo padre
+  dn_exists: el DN del grupo ya existe
+  ldap_create_failed: "no se pudo crear el grupo en LDAP: {error}"
+  mysql_create_failed: no se pudo crear el grupo en MySQL
+  add_user_failed: "no se pudo agregar el usuario al grupo: {error}"
+  user_list_failed: "no se pudo obtener la lista de usuarios: {error}"
+  list_failed: "no se pudo obtener la lista de grupos: {error}"
+  count_failed: no se pudo obtener el total de grupos
+  not_found: el grupo no existe
+  ldap_update_failed: "no se pudo actualizar el grupo en LDAP: {error}"
+  mysql_update_failed: no se pudo actualizar el grupo en MySQL
+  some_not_found: algunos grupos no existen
+  has_children: este grupo tiene subgrupos, elimina primero los subgrupos
+  ldap_delete_failed: "no se pudo eliminar el grupo en LDAP: {error}"
+  delete_failed: "no se pudo eliminar el grupo: {error}"
+  get_failed: "no se pudo obtener el grupo: {error}"
+  ou_cannot_add_user: los grupos OU no pueden contener usuarios
+  ou_has_no_user: los grupos OU no tienen usuarios
+  ldap_add_user_failed: "no se pudo agregar el usuario al grupo en LDAP: {error}"
+  user_department_failed: "no se pudo procesar los datos de departamento del usuario: {error}"
+  mysql_user_update_failed: "no se pudo actualizar el usuario en MySQL: {error}"
+  ldap_remove_user_failed: "no se pudo quitar el usuario de LDAP: {error}"
+  mysql_remove_user_failed: "no se pudo quitar el usuario de MySQL: {error}"
+field_relation:
+  exists: la relación dinámica de campos para esta plataforma ya existe
+  not_found: la relación dinámica de campos para esta plataforma no existe
+  map_to_json_failed: "no se pudo convertir el mapa a JSON: {error}"
+  create_failed: "no se pudo crear la relación dinámica de campos: {error}"
+  list_failed: "no se pudo obtener la lista de relaciones dinámicas de campos: {error}"
+  update_failed: "no se pudo actualizar la relación dinámica de campos: {error}"
+  delete_failed: "no se pudo eliminar la relación dinámica de campos: {error}"
+legacy:
+  common:
+    current_user_failed: no se pudo obtener el usuario actual
+    resource_list_failed: "no se pudo obtener la lista de recursos: {error}"
+    record_not_found: el registro no existe
+  user:
+    some_not_found: algunos usuarios no existen
+    not_found: el usuario no existe
+    old_password_incorrect: la contraseña actual es incorrecta
+    old_password_parse_failed: no se pudo analizar la contraseña actual
+    new_password_parse_failed: no se pudo analizar la contraseña nueva
+    already_active: el usuario ya está activo
+    already_inactive: el usuario ya está inactivo
+    only_admin_change_status: solo los administradores pueden cambiar el estado del usuario
+    list_failed: "no se pudo obtener la lista de usuarios: {error}"
+    count_failed: no se pudo obtener el total de usuarios
+    create_failed: "no se pudo agregar el usuario: {error}"
+    update_failed: "no se pudo actualizar el usuario: {error}"
+    info_failed: "no se pudo obtener la información del usuario: {error}"
+    ldap_delete_failed: "no se pudo eliminar el usuario en LDAP: {error}"
+    ldap_add_failed: "no se pudo agregar el usuario en LDAP: {error}"
+    ldap_password_update_failed: "no se pudo actualizar la contraseña en LDAP: {error}"
+    mysql_delete_failed: "no se pudo eliminar el usuario en MySQL: {error}"
+    mysql_password_update_failed: "no se pudo actualizar la contraseña en MySQL: {error}"
+    mysql_status_update_failed: "no se pudo actualizar el estado del usuario en MySQL: {error}"
+  api:
+    create_failed: "no se pudo crear la API: {error}"
+    list_failed: "no se pudo obtener la lista de APIs: {error}"
+    count_failed: no se pudo obtener el total de APIs
+    not_found: la API no existe
+    update_failed: "no se pudo actualizar la API: {error}"
+    delete_failed: "no se pudo eliminar la API: {error}"
+  role:
+    name_exists: el nombre del rol ya existe
+    not_found: el rol no existe
+    current_max_sort_failed: "no se pudo obtener el nivel de rol más alto del usuario actual: {error}"
+    no_update_permission: el usuario actual no tiene permiso para actualizar roles
+    cannot_create_higher_or_equal: no puedes crear un rol de nivel mayor o igual al tuyo
+    create_failed: "no se pudo crear el rol: {error}"
+    list_failed: "no se pudo obtener la lista de roles: {error}"
+    info_failed: "no se pudo obtener la información del rol: {error}"
+    cannot_update_higher_or_equal: no puedes actualizar un rol de nivel mayor o igual al tuyo
+    cannot_set_higher_or_equal: no puedes establecer un nivel de rol mayor o igual al del usuario actual
+    update_failed: "no se pudo actualizar el rol: {error}"
+    no_role_info: no se pudo obtener información del rol
+    cannot_delete_higher_or_equal: no puedes eliminar un rol de nivel mayor o igual al tuyo
+    delete_failed: "no se pudo eliminar el rol: {error}"
+    menu_list_failed: "no se pudieron obtener los menús de permisos del rol: {error}"
+    count_failed: no se pudo obtener el total de roles
+  group:
+    parent_info_failed: no se pudo obtener la información del grupo padre
+    dn_exists: el DN del grupo ya existe
+    ldap_create_failed: "no se pudo crear el grupo en LDAP: {error}"
+    mysql_create_failed: no se pudo crear el grupo en MySQL
+    add_user_failed: "no se pudo agregar el usuario al grupo: {error}"
+    list_failed: "no se pudo obtener la lista de grupos: {error}"
+    count_failed: no se pudo obtener el total de grupos
+    not_found: el grupo no existe
+    ldap_update_failed: "no se pudo actualizar el grupo en LDAP: {error}"
+    mysql_update_failed: no se pudo actualizar el grupo en MySQL
+    some_not_found: algunos grupos no existen
+    has_children: este grupo tiene subgrupos, elimina primero los subgrupos
+    ldap_delete_failed: "no se pudo eliminar el grupo en LDAP: {error}"
+    get_failed: "no se pudo obtener el grupo: {error}"
+    ou_cannot_add_user: los grupos OU no pueden contener usuarios
+    ou_has_no_user: los grupos OU no tienen usuarios
+    ldap_add_user_failed: "no se pudo agregar el usuario al grupo en LDAP: {error}"
+    user_department_failed: "no se pudieron procesar los datos de departamento del usuario: {error}"
+    mysql_user_update_failed: "no se pudo actualizar el usuario en MySQL: {error}"
+    ldap_remove_user_failed: "no se pudo quitar el usuario de LDAP: {error}"
+    mysql_remove_user_failed: "no se pudo quitar el usuario de MySQL: {error}"
+  base:
+    email_query_failed: "no se pudo consultar el usuario por correo: {error}"
+    ldap_new_password_failed: "no se pudo generar la nueva contraseña LDAP: {error}"
+  menu:
+    count_failed: no se pudo obtener el total de menús
+  log:
+    count_failed: no se pudo obtener el total de registros
+builtin:
+  creator:
+    系统: Sistema
+    system: Sistema
+  role:
+    admin:
+      name: Administrador
+      remark: ""
+    user:
+      name: Usuario estándar
+      remark: ""
+    guest:
+      name: Invitado
+      remark: ""
+  menu:
+    UserManage:
+      name: Personal
+      title: Personal
+    User:
+      name: Usuarios
+      title: Usuarios
+    Group:
+      name: Grupos
+      title: Grupos
+    FieldRelation:
+      name: Relaciones de campos
+      title: Relaciones de campos
+    System:
+      name: Sistema
+      title: Sistema
+    Role:
+      name: Roles
+      title: Roles
+    Menu:
+      name: Menús
+      title: Menús
+    Api:
+      name: APIs
+      title: APIs
+    Log:
+      name: Registros
+      title: Registros
+    OperationLog:
+      name: Registros de operación
+      title: Registros de operación
+  api:
+    category:
+      base: Base
+      user: Usuarios
+      group: Grupos
+      role: Roles
+      menu: Menús
+      api: APIs
+      fieldrelation: Relaciones de campos
+      log: Registros
+    remark:
+      get:
+        base_ping: Comprobación de estado
+        base_encryptpwd: Cifrar contraseña
+        base_decryptpwd: Descifrar contraseña
+        base_config: Obtener configuración del sistema
+        base_version: Obtener versión del sistema
+        base_dashboard: Obtener datos del panel
+        user_info: Obtener información del usuario actual
+        user_list: Obtener lista de usuarios
+        group_list: Obtener lista de grupos
+        group_tree: Obtener árbol de grupos
+        group_useringroup: Obtener usuarios del grupo
+        group_usernoingroup: Obtener usuarios fuera del grupo
+        role_list: Obtener lista de roles
+        role_getmenulist: Obtener menús de permisos del rol
+        role_getapilist: Obtener APIs de permisos del rol
+        menu_tree: Obtener árbol de menús
+        menu_access_tree: Obtener árbol de menús del usuario
+        api_list: Obtener lista de APIs
+        api_tree: Obtener árbol de APIs
+        fieldrelation_list: Obtener lista de relaciones dinámicas de campos
+        log_operation_list: Obtener lista de registros de operación
+      post:
+        base_login: Inicio de sesión de usuario
+        base_logout: Cierre de sesión de usuario
+        base_refreshtoken: Actualizar token JWT
+        base_sendcode: Enviar código de verificación al correo del usuario
+        base_changepwd: Cambiar contraseña por correo
+        user_changepwd: Cambiar contraseña de inicio de sesión
+        user_resetpassword: Restablecer contraseña de usuario
+        user_add: Crear usuario
+        user_update: Actualizar usuario
+        user_delete: Eliminar usuarios por lote
+        user_changeuserstatus: Cambiar estado laboral del usuario
+        user_syncdingtalkusers: Sincronizar usuarios desde DingTalk
+        user_syncwecomusers: Sincronizar usuarios desde WeCom
+        user_syncfeishuusers: Sincronizar usuarios desde Feishu
+        user_syncopenldapusers: Sincronizar usuarios desde OpenLDAP
+        user_syncsqlusers: Sincronizar usuarios de BD a LDAP
+        group_add: Crear grupo
+        group_update: Actualizar grupo
+        group_delete: Eliminar grupos por lote
+        group_adduser: Agregar usuarios al grupo
+        group_removeuser: Quitar usuarios del grupo
+        group_syncdingtalkdepts: Sincronizar departamentos desde DingTalk
+        group_syncwecomdepts: Sincronizar departamentos desde WeCom
+        group_syncfeishudepts: Sincronizar departamentos desde Feishu
+        group_syncopenldapdepts: Sincronizar departamentos desde OpenLDAP
+        group_syncsqlgroups: Sincronizar grupos de BD a LDAP
+        role_add: Crear rol
+        role_update: Actualizar rol
+        role_updatemenus: Actualizar menús de permisos del rol
+        role_updateapis: Actualizar APIs de permisos del rol
+        role_delete: Eliminar roles por lote
+        menu_add: Crear menú
+        menu_update: Actualizar menú
+        menu_delete: Eliminar menús por lote
+        api_add: Crear API
+        api_update: Actualizar API
+        api_delete: Eliminar APIs por lote
+        fieldrelation_add: Crear relación dinámica de campos
+        fieldrelation_update: Actualizar relación dinámica de campos
+        fieldrelation_delete: Eliminar relaciones dinámicas de campos por lote
+        log_operation_delete: Eliminar registros de operación por lote
+      delete:
+        log_operation_clean: Vaciar registros de operación
+  group:
+    name:
+      openldap:
+        root: root
+      dingtalk:
+        dingtalkroot: Departamento raíz de DingTalk
+      wecom:
+        wecomroot: Departamento raíz de WeCom
+      feishu:
+        feishuroot: Departamento raíz de Feishu
+      platform:
+        group: Grupo predeterminado
+    remark:
+      openldap:
+        root: Base
+      dingtalk:
+        dingtalkroot: Departamento raíz de DingTalk
+      wecom:
+        wecomroot: Departamento raíz de WeCom
+      feishu:
+        feishuroot: Departamento raíz de Feishu
+      platform:
+        group: Grupo predeterminado

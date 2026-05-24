@@ -1,12 +1,11 @@
 package logic
 
 import (
-	"fmt"
-
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
 	"github.com/eryajf/go-ldap-admin/public/common"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/isql"
 
@@ -25,20 +24,20 @@ func (l RoleLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	_ = c
 
 	if isql.Role.Exist(tools.H{"name": r.Name}) {
-		return nil, tools.NewValidatorError(fmt.Errorf("该角色名已存在"))
+		return nil, tools.NewValidatorI18nError("role.name_exists", nil)
 	}
 
 	// 获取当前用户最高角色等级
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前用户最高角色等级失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
 	}
 	if minSort != 1 {
-		return nil, tools.NewValidatorError(fmt.Errorf("当前用户没有权限更新角色"))
+		return nil, tools.NewValidatorI18nError("role.no_update_permission", nil)
 	}
 	// 用户不能创建比自己等级高或相同等级的角色
 	if minSort >= r.Sort {
-		return nil, tools.NewValidatorError(fmt.Errorf("不能创建比自己等级高或相同等级的角色"))
+		return nil, tools.NewValidatorI18nError("role.cannot_create_higher_or_equal", nil)
 	}
 
 	role := model.Role{
@@ -53,7 +52,7 @@ func (l RoleLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	// 创建角色
 	err = isql.Role.Add(&role)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("创建角色失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("role.create_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil, nil
 }
@@ -69,16 +68,17 @@ func (l RoleLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	// 获取数据列表
 	roles, err := isql.Role.List(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取菜单列表失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("role.list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	count, err := isql.Role.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取接口总数失败"))
+		return nil, tools.NewMySqlI18nError("role.count_failed", nil)
 	}
 
 	rets := make([]model.Role, 0)
 	for _, role := range roles {
+		localizeRole(c, role)
 		rets = append(rets, *role)
 	}
 
@@ -98,33 +98,33 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 
 	filter := tools.H{"id": r.ID}
 	if !isql.Role.Exist(filter) {
-		return nil, tools.NewValidatorError(fmt.Errorf("该角色名不已存在"))
+		return nil, tools.NewValidatorI18nError("role.not_found", nil)
 	}
 
 	// 当前用户角色排序最小值（最高等级角色）以及当前用户
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前用户最高角色等级失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
 	}
 
 	if minSort != 1 {
-		return nil, tools.NewValidatorError(fmt.Errorf("当前用户没有权限更新角色"))
+		return nil, tools.NewValidatorI18nError("role.no_update_permission", nil)
 	}
 
 	// 不能更新比自己角色等级高或相等的角色
 	// 根据path中的角色ID获取该角色信息
 	roles, _ := isql.Role.GetRolesByIds([]uint{r.ID})
 	if len(roles) == 0 {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取角色信息失败: 未找到对应角色"))
+		return nil, tools.NewMySqlI18nError("role.info_not_found", nil)
 	}
 
 	if minSort >= roles[0].Sort {
-		return nil, tools.NewValidatorError(fmt.Errorf("不能更新比自己角色等级高或相等的角色"))
+		return nil, tools.NewValidatorI18nError("role.cannot_update_higher_or_equal", nil)
 	}
 
 	// 不能把角色等级更新得比当前用户的等级高
 	if minSort >= r.Sort {
-		return nil, tools.NewValidatorError(fmt.Errorf("不能把角色等级更新得比当前用户的等级高或相同"))
+		return nil, tools.NewValidatorI18nError("role.cannot_set_higher_or_equal", nil)
 	}
 	oldData := new(model.Role)
 	err = isql.Role.Find(filter, oldData)
@@ -144,7 +144,7 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	// 更新角色
 	err = isql.Role.Update(&role)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("更新角色失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("role.update_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 如果更新成功，且更新了角色的keyword, 则更新casbin中policy
@@ -173,15 +173,15 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		// 这里需要先新增再删除（先删除再增加会出错）
 		isAdded, _ := common.CasbinEnforcer.AddPolicies(rolePolicies)
 		if !isAdded {
-			return nil, tools.NewOperationError(fmt.Errorf("更新角色成功，但角色关键字关联的权限接口更新失败"))
+			return nil, tools.NewOperationI18nError("role.keyword_policy_update_failed", nil)
 		}
 		isRemoved, _ := common.CasbinEnforcer.RemovePolicies(rolePoliciesCopy)
 		if !isRemoved {
-			return nil, tools.NewOperationError(fmt.Errorf("更新角色成功，但角色关键字关联的权限接口更新失败"))
+			return nil, tools.NewOperationI18nError("role.keyword_policy_update_failed", nil)
 		}
 		err := common.CasbinEnforcer.LoadPolicy()
 		if err != nil {
-			return nil, tools.NewOperationError(fmt.Errorf("更新角色成功，但角色关键字关联角色的权限接口策略加载失败"))
+			return nil, tools.NewOperationI18nError("role.keyword_policy_load_failed", nil)
 		}
 
 	}
@@ -206,26 +206,26 @@ func (l RoleLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	// 获取当前登陆用户最高等级角色
 	minSort, _, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前用户最高角色等级失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 获取角色信息
 	roles, _ := isql.Role.GetRolesByIds(r.RoleIds)
 	if len(roles) == 0 {
-		return nil, tools.NewMySqlError(fmt.Errorf("未能获取到角色信息"))
+		return nil, tools.NewMySqlI18nError("role.no_role_info", nil)
 	}
 
 	// 不能删除比自己角色等级高或相等的角色
 	for _, role := range roles {
 		if minSort >= role.Sort {
-			return nil, tools.NewValidatorError(fmt.Errorf("不能删除比自己角色等级高或相等的角色"))
+			return nil, tools.NewValidatorI18nError("role.cannot_delete_higher_or_equal", nil)
 		}
 	}
 
 	// 删除角色
 	err = isql.Role.Delete(r.RoleIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("删除角色失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("role.delete_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 删除角色成功直接清理缓存，让活跃的用户自己重新缓存最新用户信息
@@ -243,8 +243,9 @@ func (l RoleLogic) GetMenuList(c *gin.Context, req any) (data any, rspError any)
 
 	menus, err := isql.Role.GetRoleMenusById(r.RoleID)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取角色的权限菜单失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("role.menu_list_failed", i18n.Args{"error": err.Error()})
 	}
+	localizeMenus(c, menus)
 	return menus, nil
 }
 
@@ -259,14 +260,15 @@ func (l RoleLogic) GetApiList(c *gin.Context, req any) (data any, rspError any) 
 	role := new(model.Role)
 	err := isql.Role.Find(tools.H{"id": r.RoleID}, role)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("role.resource_failed", i18n.Args{"error": err.Error()})
 	}
+	localizeRole(c, role)
 
 	policies := common.CasbinEnforcer.GetFilteredPolicy(0, role.Keyword)
 
 	apis, err := isql.Api.ListAll()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取资源列表失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("legacy.common.resource_list_failed", i18n.Args{"error": err.Error()})
 	}
 	accessApis := make([]*model.Api, 0)
 
@@ -280,6 +282,7 @@ func (l RoleLogic) GetApiList(c *gin.Context, req any) (data any, rspError any) 
 			}
 		}
 	}
+	localizeApis(c, accessApis)
 
 	return accessApis, nil
 }
@@ -294,26 +297,26 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req any) (data any, rspError any)
 
 	roles, _ := isql.Role.GetRolesByIds([]uint{r.RoleID})
 	if len(roles) == 0 {
-		return nil, tools.NewMySqlError(fmt.Errorf("未获取到角色信息"))
+		return nil, tools.NewMySqlI18nError("role.no_role_info", nil)
 	}
 
 	// 当前用户角色排序最小值（最高等级角色）以及当前用户
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前用户最高角色等级失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// (非管理员)不能更新比自己角色等级高或相等角色的权限菜单
 	if minSort != 1 {
 		if minSort >= roles[0].Sort {
-			return nil, tools.NewValidatorError(fmt.Errorf("不能更新比自己角色等级高或相等角色的权限菜单"))
+			return nil, tools.NewValidatorI18nError("role.cannot_update_higher_or_equal_permissions", nil)
 		}
 	}
 
 	// 获取当前用户所拥有的权限菜单
 	ctxUserMenus, err := isql.Menu.GetUserMenusByUserId(ctxUser.ID)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取当前用户的可访问菜单列表失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("role.current_user_menu_list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 获取当前用户所拥有的权限菜单ID
@@ -329,7 +332,7 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req any) (data any, rspError any)
 	if minSort != 1 {
 		for _, id := range r.MenuIds {
 			if !funk.Contains(ctxUserMenusIds, id) {
-				return nil, tools.NewValidatorError(fmt.Errorf("无权设置ID为%d的菜单", id))
+				return nil, tools.NewValidatorI18nError("role.no_menu_permission", i18n.Args{"id": id})
 			}
 		}
 
@@ -346,7 +349,7 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req any) (data any, rspError any)
 		// 根据menuIds查询查询菜单
 		menus, err := isql.Menu.List()
 		if err != nil {
-			return nil, tools.NewValidatorError(fmt.Errorf("%s", "获取菜单列表失败: "+err.Error()))
+			return nil, tools.NewValidatorI18nError("role.menu_all_list_failed", i18n.Args{"error": err.Error()})
 		}
 		for _, menuId := range r.MenuIds {
 			for _, menu := range menus {
@@ -361,7 +364,7 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req any) (data any, rspError any)
 
 	err = isql.Role.UpdateRoleMenus(roles[0])
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "更新角色的权限菜单失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("role.update_menus_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -378,19 +381,19 @@ func (l RoleLogic) UpdateApis(c *gin.Context, req any) (data any, rspError any) 
 	// 根据path中的角色ID获取该角色信息
 	roles, _ := isql.Role.GetRolesByIds([]uint{r.RoleID})
 	if len(roles) == 0 {
-		return nil, tools.NewMySqlError(fmt.Errorf("未获取到角色信息"))
+		return nil, tools.NewMySqlI18nError("role.no_role_info", nil)
 	}
 
 	// 当前用户角色排序最小值（最高等级角色）以及当前用户
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前用户最高角色等级失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// (非管理员)不能更新比自己角色等级高或相等角色的权限菜单
 	if minSort != 1 {
 		if minSort >= roles[0].Sort {
-			return nil, tools.NewValidatorError(fmt.Errorf("不能更新比自己角色等级高或相等角色的权限菜单"))
+			return nil, tools.NewValidatorI18nError("role.cannot_update_higher_or_equal_permissions", nil)
 		}
 	}
 
@@ -409,7 +412,7 @@ func (l RoleLogic) UpdateApis(c *gin.Context, req any) (data any, rspError any) 
 	// 根据apiID获取接口详情
 	apis, err := isql.Api.GetApisById(r.ApiIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("根据接口ID获取接口信息失败"))
+		return nil, tools.NewMySqlI18nError("role.api_info_failed", nil)
 	}
 	// 生成前端想要设置的角色policies
 	reqRolePolicies := make([][]string, 0)
@@ -423,7 +426,7 @@ func (l RoleLogic) UpdateApis(c *gin.Context, req any) (data any, rspError any) 
 	if minSort != 1 {
 		for _, reqPolicy := range reqRolePolicies {
 			if !funk.Contains(ctxRolesPolicies, reqPolicy) {
-				return nil, tools.NewValidatorError(fmt.Errorf("无权设置路径为%s,请求方式为%s的接口", reqPolicy[1], reqPolicy[2]))
+				return nil, tools.NewValidatorI18nError("role.no_api_permission", i18n.Args{"path": reqPolicy[1], "method": reqPolicy[2]})
 			}
 		}
 	}
@@ -431,7 +434,7 @@ func (l RoleLogic) UpdateApis(c *gin.Context, req any) (data any, rspError any) 
 	// 更新角色的权限接口
 	err = isql.Role.UpdateRoleApis(roles[0].Keyword, reqRolePolicies)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("更新角色的权限接口失败"))
+		return nil, tools.NewMySqlI18nError("role.update_apis_failed", nil)
 	}
 	return nil, nil
 }

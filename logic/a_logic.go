@@ -7,6 +7,7 @@ import (
 	"github.com/eryajf/go-ldap-admin/config"
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/public/common"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/ildap"
 	"github.com/eryajf/go-ldap-admin/service/isql"
@@ -16,7 +17,7 @@ import (
 )
 
 var (
-	ReqAssertErr = tools.NewRspError(tools.SystemErr, fmt.Errorf("请求异常"))
+	ReqAssertErr = tools.NewRspI18nError(tools.SystemErr, "common.request_invalid", nil)
 
 	Api           = &ApiLogic{}
 	User          = &UserLogic{}
@@ -83,10 +84,10 @@ func CommonUpdateGroup(oldGroup, newGroup *model.Group) error {
 }
 
 // CommonAddUser 标准创建用户
-func CommonAddUser(user *model.User, groups []*model.Group) error {
+func CommonAddUser(user *model.User, groups []*model.Group, locale ...string) error {
 	// 用户信息的预置处理
 	if user.Nickname == "" {
-		user.Nickname = "佚名"
+		user.Nickname = "Anonymous"
 	}
 	if user.GivenName == "" {
 		user.GivenName = user.Nickname
@@ -106,13 +107,13 @@ func CommonAddUser(user *model.User, groups []*model.Group) error {
 		user.JobNumber = "0000"
 	}
 	if user.Departments == "" {
-		user.Departments = "默认:研发中心"
+		user.Departments = "Default: R&D Center"
 	}
 	if user.Position == "" {
-		user.Position = "默认:打工人"
+		user.Position = "Default: Staff"
 	}
 	if user.PostalAddress == "" {
-		user.PostalAddress = "默认:地球"
+		user.PostalAddress = "Default: Earth"
 	}
 	if user.Mobile == "" {
 		user.Mobile = generateMobile()
@@ -121,17 +122,17 @@ func CommonAddUser(user *model.User, groups []*model.Group) error {
 	// 先将用户添加到MySQL
 	err := isql.User.Add(user)
 	if err != nil {
-		return tools.NewMySqlError(fmt.Errorf("%s", "向MySQL创建用户失败："+err.Error()))
+		return tools.NewMySqlI18nError("common_user.mysql_create_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 发送用户创建成功通知邮件
-	if err := tools.SendUserCreationNotification(user.Username, user.Nickname, user.Mail, tools.NewParPasswd(user.Password)); err != nil {
+	if err := tools.SendUserCreationNotificationI18n(user.Username, user.Nickname, user.Mail, tools.NewParPasswd(user.Password), firstLocale(locale)); err != nil {
 		common.Log.Warnf("发送用户创建通知邮件失败，用户: %s, 邮箱: %s, 错误: %v", user.Username, user.Mail, err)
 	}
 	// 再将用户添加到ldap
 	err = ildap.User.Add(user)
 	if err != nil {
-		return tools.NewLdapError(fmt.Errorf("%s", "AddUser向LDAP创建用户失败："+err.Error()))
+		return tools.NewLdapI18nError("common_user.ldap_create_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 处理用户归属的组
@@ -142,15 +143,22 @@ func CommonAddUser(user *model.User, groups []*model.Group) error {
 		// 先将用户和部门信息维护到MySQL
 		err := isql.Group.AddUserToGroup(group, []model.User{*user})
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("%s", "向MySQL添加用户到分组关系失败："+err.Error()))
+			return tools.NewMySqlI18nError("common_user.mysql_add_group_relation_failed", i18n.Args{"error": err.Error()})
 		}
 		//根据选择的部门，添加到部门内
 		err = ildap.Group.AddUserToGroup(group.GroupDN, user.UserDN)
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("%s", "向Ldap添加用户到分组关系失败："+err.Error()))
+			return tools.NewLdapI18nError("common_user.ldap_add_group_relation_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 	return nil
+}
+
+func firstLocale(locales []string) string {
+	if len(locales) == 0 {
+		return ""
+	}
+	return locales[0]
 }
 
 // CommonUpdateUser 标准更新用户
@@ -162,12 +170,12 @@ func CommonUpdateUser(oldUser, newUser *model.User, groupId []uint) error {
 
 	err := ildap.User.Update(oldUser.Username, newUser)
 	if err != nil {
-		return tools.NewLdapError(fmt.Errorf("%s", "在LDAP更新用户失败："+err.Error()))
+		return tools.NewLdapI18nError("common_user.ldap_update_failed", i18n.Args{"error": err.Error()})
 	}
 
 	err = isql.User.Update(newUser)
 	if err != nil {
-		return tools.NewMySqlError(fmt.Errorf("%s", "在MySQL更新用户失败："+err.Error()))
+		return tools.NewMySqlI18nError("common_user.mysql_update_failed", i18n.Args{"error": err.Error()})
 	}
 
 	//判断部门信息是否有变化有变化则更新相应的数据库
@@ -177,7 +185,7 @@ func CommonUpdateUser(oldUser, newUser *model.User, groupId []uint) error {
 	// 先处理添加的部门
 	addgroups, err := isql.Group.GetGroupByIds(addDeptIds)
 	if err != nil {
-		return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
+		return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
 	}
 	for _, group := range addgroups {
 		if group.GroupDN[:3] == "ou=" {
@@ -186,19 +194,19 @@ func CommonUpdateUser(oldUser, newUser *model.User, groupId []uint) error {
 		// 先将用户和部门信息维护到MySQL
 		err := isql.Group.AddUserToGroup(group, []model.User{*newUser})
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("%s", "向MySQL添加用户到分组关系失败："+err.Error()))
+			return tools.NewMySqlI18nError("common_user.mysql_add_group_relation_failed", i18n.Args{"error": err.Error()})
 		}
 		//根据选择的部门，添加到部门内
 		err = ildap.Group.AddUserToGroup(group.GroupDN, newUser.UserDN)
 		if err != nil {
-			return tools.NewLdapError(fmt.Errorf("%s", "向Ldap添加用户到分组关系失败："+err.Error()))
+			return tools.NewLdapI18nError("common_user.ldap_add_group_relation_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 
 	// 再处理删除的部门
 	removegroups, err := isql.Group.GetGroupByIds(removeDeptIds)
 	if err != nil {
-		return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
+		return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
 	}
 	for _, group := range removegroups {
 		if group.GroupDN[:3] == "ou=" {
@@ -206,11 +214,11 @@ func CommonUpdateUser(oldUser, newUser *model.User, groupId []uint) error {
 		}
 		err := isql.Group.RemoveUserFromGroup(group, []model.User{*newUser})
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("%s", "在MySQL将用户从分组移除失败："+err.Error()))
+			return tools.NewMySqlI18nError("common_user.mysql_remove_group_relation_failed", i18n.Args{"error": err.Error()})
 		}
 		err = ildap.Group.RemoveUserFromGroup(group.GroupDN, newUser.UserDN)
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("%s", "在ldap将用户从分组移除失败："+err.Error()))
+			return tools.NewLdapI18nError("common_user.ldap_remove_group_relation_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 	return nil
@@ -322,7 +330,7 @@ func ConvertUserData(flag string, remoteData []map[string]any) (users []*model.U
 	for _, staff := range remoteData {
 		groupIds, err := isql.Group.DeptIdsToGroupIds(staff["department_ids"].([]string))
 		if err != nil {
-			return nil, tools.NewMySqlError(fmt.Errorf("将部门ids转换为内部部门id失败：%s", err.Error()))
+			return nil, tools.NewMySqlI18nError("sync.dept_ids_convert_failed", i18n.Args{"error": err.Error()})
 		}
 		user, err := BuildUserData(flag, staff)
 		if err != nil {

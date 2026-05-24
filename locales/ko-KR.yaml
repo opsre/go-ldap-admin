@@ -1,0 +1,411 @@
+common:
+  success: 성공
+  unknown_error: 알 수 없는 오류
+  request_invalid: 잘못된 요청
+error:
+  database: 데이터베이스 작업 실패
+  ldap: LDAP 작업 실패
+  operation: 작업 실패
+  validator: 유효성 검사 실패
+auth:
+  login_success: 로그인 성공
+  logout_success: 로그아웃 성공
+  refresh_success: 토큰이 성공적으로 갱신되었습니다
+  jwt_failed: "JWT 인증 실패, 코드: {code}, 메시지: {message}"
+  not_logged_in: 사용자가 로그인하지 않았습니다
+  user_not_found: 사용자가 존재하지 않습니다
+  user_disabled: 현재 사용자가 비활성화되었습니다
+  password_incorrect: 비밀번호가 올바르지 않습니다
+  no_permission: 권한이 없습니다
+rate_limit:
+  limited: 요청이 너무 많습니다
+email:
+  password_reset_subject: LDAP 비밀번호 재설정 완료
+  password_reset_body: "<li><a>변경된 비밀번호: %s </a></li>"
+  verification_code_subject: 인증 코드 - 비밀번호 재설정
+  verification_code_body: "<div><div>안녕하세요.</div><div style=\"padding: 8px 40px 8px 50px;\"><p>이번 인증 코드는 %s 입니다. 계정 보안을 위해 인증 코드는 5분간 유효합니다. 본인 작업인지 확인하고 다른 사람에게 공유하지 마세요.</p></div><div><p>이 메일은 시스템 메일입니다. 회신하지 마세요.</p></div></div>"
+  user_creation_subject: LDAP 계정 생성 완료 알림
+  user_creation_body: "<div><div>%s 님, 안녕하세요.</div><div style=\"padding: 8px 40px 8px 50px;\"><p>LDAP 계정이 생성되었습니다. 계정 정보는 다음과 같습니다.</p><ul><li>사용자 이름: %s</li><li>닉네임: %s</li><li>초기 비밀번호: %s</li></ul><p style=\"color: #ff6600;\">계정 정보를 안전하게 보관하고 첫 로그인 후 비밀번호를 변경하세요.</p></div><div><p>이 메일은 시스템 메일입니다. 회신하지 마세요.</p></div></div>"
+  admin_password_reset_subject: LDAP 비밀번호 재설정 알림
+  admin_password_reset_body: "<div><div>%s 님, 안녕하세요.</div><div style=\"padding: 8px 40px 8px 50px;\"><p>LDAP 계정 비밀번호가 재설정되었습니다. 새 비밀번호 정보는 다음과 같습니다.</p><ul><li>사용자 이름: %s</li><li>새 비밀번호: %s</li></ul><p style=\"color: #ff6600;\">계정 보안을 위해 가능한 한 빨리 로그인하여 비밀번호를 변경하세요.</p><p style=\"color: #ff0000;\">계정 정보를 안전하게 보관하고 다른 사람에게 공유하지 마세요.</p></div><div><p>이 메일은 시스템 메일입니다. 회신하지 마세요.</p></div></div>"
+dashboard:
+  user: 사용자
+  group: 그룹
+  role: 역할
+  menu: 메뉴
+  api: API
+  log: 로그
+sync:
+  dept_list_failed: "{provider} 부서 목록 조회 실패: {error}"
+  dept_convert_failed: "{provider} 부서 데이터 변환 실패: {error}"
+  empty_depts: 조회된 부서 수가 0입니다
+  dept_add_failed: "부서 [{dept}] 추가 실패: {error}"
+  child_dept_add_failed: "하위 부서 추가 실패: {error}"
+  parent_dept_query_failed: "상위 부서 조회 실패: {error}"
+  add_dept_failed: "부서 {dept} 추가 실패: {error}"
+  user_list_failed: "{provider} 사용자 목록 조회 실패: {error}"
+  user_convert_failed: "{provider} 사용자 데이터 변환 실패: {error}"
+  empty_users: 조회된 사용자 수가 0입니다
+  user_write_failed: "사용자 [{username}] 쓰기 실패: {error}"
+  leave_user_list_failed: "{provider} 퇴사 사용자 목록 조회 실패: {error}"
+  leave_user_query_failed: "MySQL에서 퇴사 사용자 [{username}] 조회 실패: {error}"
+  leave_user_ldap_delete_failed: "LDAP에서 퇴사 사용자 [{username}] 삭제 실패: {error}"
+  leave_user_status_update_failed: "MySQL에서 퇴사 사용자 [{username}] 상태 업데이트 실패: {error}"
+  role_info_failed: "역할 ID로 역할 정보 조회 실패: {error}"
+  add_user_failed: "사용자 {username} 추가 실패: {error}"
+  mysql_user_list_failed: "MySQL 사용자 목록 조회 실패: {error}"
+  dept_ids_convert_failed: "부서 ID를 내부 부서 ID로 변환 실패: {error}"
+  user_dept_ids_convert_failed: "사용자 [{username}]의 부서 ID를 내부 부서 ID로 변환 실패: {error}"
+  user_role_info_failed: "사용자 [{username}]의 역할 정보 조회 실패: {error}"
+common_user:
+  mysql_create_failed: "MySQL 사용자 생성 실패: {error}"
+  ldap_create_failed: "LDAP 사용자 생성 실패: {error}"
+  mysql_add_group_relation_failed: "MySQL 사용자-그룹 관계 추가 실패: {error}"
+  ldap_add_group_relation_failed: "LDAP 사용자-그룹 관계 추가 실패: {error}"
+  ldap_update_failed: "LDAP 사용자 업데이트 실패: {error}"
+  mysql_update_failed: "MySQL 사용자 업데이트 실패: {error}"
+  mysql_remove_group_relation_failed: "MySQL에서 그룹의 사용자 제거 실패: {error}"
+  ldap_remove_group_relation_failed: "LDAP에서 그룹의 사용자 제거 실패: {error}"
+base:
+  email_not_found: 이메일이 존재하지 않습니다. 이메일 주소를 확인하세요
+  code_expired: 인증 코드가 5분 후 만료되었습니다. 비밀번호를 다시 재설정하세요
+  code_invalid: 인증 코드가 올바르지 않습니다. 여러 번 전송했다면 마지막으로 생성된 코드를 사용하세요
+  reset_password_user_unavailable: 이 사용자는 퇴사했거나 LDAP에 동기화되지 않았습니다. 관리자에게 문의하세요
+  send_email_failed: "이메일 전송 실패: {error}"
+  email_query_failed: "이메일로 사용자 조회 실패: {error}"
+  ldap_new_password_failed: "LDAP에서 새 비밀번호 생성 실패: {error}"
+user:
+  username_exists: 사용자 이름이 이미 존재합니다. 중복 추가하지 마세요
+  mobile_exists: 휴대폰 번호가 이미 존재합니다. 중복 추가하지 마세요
+  job_number_exists: 사번이 이미 존재합니다. 중복 추가하지 마세요
+  mail_exists: 이메일이 이미 존재합니다. 중복 추가하지 마세요
+  password_encrypt_failed: 비밀번호 암호화 실패
+  password_decrypt_failed: 비밀번호 복호화 실패
+  password_min_length: 비밀번호는 최소 {min}자 이상이어야 합니다
+  cannot_delete_self: 사용자는 자신을 삭제할 수 없습니다
+  not_found: 사용자가 존재하지 않습니다
+  current_min_role_sort_failed: 현재 로그인 사용자의 최소 역할 정렬값 조회 실패
+  role_info_failed: 역할 ID로 역할 정보 조회 실패
+  cannot_create_higher_or_equal: 자신보다 높거나 같은 역할 등급의 사용자는 생성할 수 없습니다
+  department_info_failed: "부서 ID로 부서 정보 조회 실패: {error}"
+  create_failed: "사용자 추가 실패: {error}"
+  list_failed: "사용자 목록 조회 실패: {error}"
+  count_failed: "사용자 수 조회 실패: {error}"
+  cannot_change_self_role: 자신의 역할은 변경할 수 없습니다
+  min_role_sort_by_id_failed: 사용자 ID로 최소 역할 정렬값 조회 실패
+  cannot_update_higher_or_equal: 자신보다 높거나 같은 역할 등급의 사용자는 업데이트할 수 없습니다
+  update_failed: "사용자 업데이트 실패: {error}"
+  cannot_delete_higher: 자신보다 높은 역할 등급의 사용자는 삭제할 수 없습니다
+  info_failed: "사용자 정보 조회 실패: {error}"
+  ldap_delete_failed: "LDAP에서 사용자 삭제 실패: {error}"
+  mysql_delete_failed: "MySQL에서 사용자 삭제 실패: {error}"
+  ldap_password_update_failed: "LDAP에서 비밀번호 업데이트 실패: {error}"
+  mysql_password_update_failed: "MySQL에서 비밀번호 업데이트 실패: {error}"
+  mysql_query_failed: "MySQL에서 사용자 조회 실패: {error}"
+  ldap_add_failed: "LDAP에 사용자 추가 실패: {error}"
+  mysql_status_update_failed: "MySQL에서 사용자 상태 업데이트 실패: {error}"
+  current_info_failed: "현재 사용자 정보 조회 실패: {error}"
+menu:
+  name_exists: 메뉴 이름이 이미 존재합니다
+  create_failed: "레코드 생성 실패: {error}"
+  update_failed: "레코드 업데이트 실패: {error}"
+  delete_failed: "API 삭제 실패: {error}"
+  record_not_found: 이 ID에 해당하는 레코드가 존재하지 않습니다
+  record_get_failed: "레코드 조회 실패: {error}"
+  count_failed: 메뉴 수 조회 실패
+api:
+  create_failed: "API 생성 실패: {error}"
+  list_failed: "API 목록 조회 실패: {error}"
+  count_failed: API 수 조회 실패
+  not_found: API가 존재하지 않습니다
+  update_failed: "API 업데이트 실패: {error}"
+  delete_failed: "API 삭제 실패: {error}"
+operation_log:
+  list_failed: "작업 로그 목록 조회 실패: {error}"
+  count_failed: 작업 로그 수 조회 실패
+  not_found: 작업 로그 레코드가 존재하지 않습니다
+  delete_failed: "작업 로그 레코드 삭제 실패: {error}"
+  clean_failed: "작업 로그 비우기 실패: {error}"
+role:
+  name_exists: 역할 이름이 이미 존재합니다
+  not_found: 역할이 존재하지 않습니다
+  current_max_sort_failed: "현재 사용자의 최고 역할 레벨 조회 실패: {error}"
+  no_update_permission: 현재 사용자는 역할을 업데이트할 권한이 없습니다
+  cannot_create_higher_or_equal: 자신보다 높거나 같은 레벨의 역할은 생성할 수 없습니다
+  create_failed: "역할 생성 실패: {error}"
+  list_failed: "역할 목록 조회 실패: {error}"
+  count_failed: 역할 수 조회 실패
+  info_not_found: 역할 정보 조회 실패, 해당 역할을 찾을 수 없습니다
+  cannot_update_higher_or_equal: 자신보다 높거나 같은 레벨의 역할은 업데이트할 수 없습니다
+  cannot_set_higher_or_equal: 역할 레벨을 현재 사용자보다 높거나 같게 설정할 수 없습니다
+  update_failed: "역할 업데이트 실패: {error}"
+  keyword_policy_update_failed: 역할은 업데이트되었지만 역할 키워드에 연결된 권한 API 업데이트에 실패했습니다
+  keyword_policy_load_failed: 역할은 업데이트되었지만 역할 키워드에 연결된 권한 API 정책 로드에 실패했습니다
+  no_role_info: 역할 정보를 가져오지 못했습니다
+  cannot_delete_higher_or_equal: 자신보다 높거나 같은 레벨의 역할은 삭제할 수 없습니다
+  delete_failed: "역할 삭제 실패: {error}"
+  menu_list_failed: "역할 권한 메뉴 조회 실패: {error}"
+  resource_failed: "리소스 조회 실패: {error}"
+  cannot_update_higher_or_equal_permissions: 자신보다 높거나 같은 레벨 역할의 권한 메뉴는 업데이트할 수 없습니다
+  current_user_menu_list_failed: "현재 사용자의 접근 가능한 메뉴 목록 조회 실패: {error}"
+  no_menu_permission: "ID가 {id}인 메뉴를 설정할 권한이 없습니다"
+  menu_all_list_failed: "메뉴 목록 조회 실패: {error}"
+  update_menus_failed: "역할 권한 메뉴 업데이트 실패: {error}"
+  api_info_failed: API ID로 API 정보를 가져오지 못했습니다
+  no_api_permission: "경로 {path}, 요청 방식 {method} API를 설정할 권한이 없습니다"
+  update_apis_failed: 역할 권한 API 업데이트 실패
+group:
+  parent_info_failed: 상위 그룹 정보 조회 실패
+  dn_exists: 그룹 DN이 이미 존재합니다
+  ldap_create_failed: "LDAP 그룹 생성 실패: {error}"
+  mysql_create_failed: MySQL 그룹 생성 실패
+  add_user_failed: "그룹에 사용자 추가 실패: {error}"
+  user_list_failed: "사용자 목록 조회 실패: {error}"
+  list_failed: "그룹 목록 조회 실패: {error}"
+  count_failed: 그룹 수 조회 실패
+  not_found: 그룹이 존재하지 않습니다
+  ldap_update_failed: "LDAP 그룹 업데이트 실패: {error}"
+  mysql_update_failed: MySQL 그룹 업데이트 실패
+  some_not_found: 일부 그룹이 존재하지 않습니다
+  has_children: 이 그룹에는 하위 그룹이 있습니다. 먼저 하위 그룹을 삭제하세요
+  ldap_delete_failed: "LDAP 그룹 삭제 실패: {error}"
+  delete_failed: "그룹 삭제 실패: {error}"
+  get_failed: "그룹 조회 실패: {error}"
+  ou_cannot_add_user: OU 그룹에는 사용자를 추가할 수 없습니다
+  ou_has_no_user: OU 그룹에는 사용자가 없습니다
+  ldap_add_user_failed: "LDAP 그룹에 사용자 추가 실패: {error}"
+  user_department_failed: "사용자의 부서 데이터 처리 실패: {error}"
+  mysql_user_update_failed: "MySQL 사용자 업데이트 실패: {error}"
+  ldap_remove_user_failed: "LDAP에서 사용자 제거 실패: {error}"
+  mysql_remove_user_failed: "MySQL에서 사용자 제거 실패: {error}"
+field_relation:
+  exists: 해당 플랫폼의 동적 필드 관계가 이미 존재합니다
+  not_found: 해당 플랫폼의 동적 필드 관계가 존재하지 않습니다
+  map_to_json_failed: "map을 JSON으로 변환하지 못했습니다: {error}"
+  create_failed: "동적 필드 관계 생성 실패: {error}"
+  list_failed: "동적 필드 관계 목록 조회 실패: {error}"
+  update_failed: "동적 필드 관계 업데이트 실패: {error}"
+  delete_failed: "동적 필드 관계 삭제 실패: {error}"
+legacy:
+  common:
+    current_user_failed: 현재 로그인 사용자를 가져오지 못했습니다
+    resource_list_failed: "리소스 목록 조회 실패: {error}"
+    record_not_found: 레코드가 존재하지 않습니다
+  user:
+    some_not_found: 일부 사용자가 존재하지 않습니다
+    not_found: 사용자가 존재하지 않습니다
+    old_password_incorrect: 기존 비밀번호가 올바르지 않습니다
+    old_password_parse_failed: 기존 비밀번호 파싱 실패
+    new_password_parse_failed: 새 비밀번호 파싱 실패
+    already_active: 사용자가 이미 재직 상태입니다
+    already_inactive: 사용자가 이미 퇴사 상태입니다
+    only_admin_change_status: 관리자만 사용자 상태를 변경할 수 있습니다
+    list_failed: "사용자 목록 조회 실패: {error}"
+    count_failed: 사용자 수 조회 실패
+    create_failed: "사용자 추가 실패: {error}"
+    update_failed: "사용자 업데이트 실패: {error}"
+    info_failed: "사용자 정보 조회 실패: {error}"
+    ldap_delete_failed: "LDAP 사용자 삭제 실패: {error}"
+    ldap_add_failed: "LDAP 사용자 추가 실패: {error}"
+    ldap_password_update_failed: "LDAP 비밀번호 업데이트 실패: {error}"
+    mysql_delete_failed: "MySQL 사용자 삭제 실패: {error}"
+    mysql_password_update_failed: "MySQL 비밀번호 업데이트 실패: {error}"
+    mysql_status_update_failed: "MySQL 사용자 상태 업데이트 실패: {error}"
+  api:
+    create_failed: "API 생성 실패: {error}"
+    list_failed: "API 목록 조회 실패: {error}"
+    count_failed: API 수 조회 실패
+    not_found: API가 존재하지 않습니다
+    update_failed: "API 업데이트 실패: {error}"
+    delete_failed: "API 삭제 실패: {error}"
+  role:
+    name_exists: 역할 이름이 이미 존재합니다
+    not_found: 역할이 존재하지 않습니다
+    current_max_sort_failed: "현재 사용자의 최고 역할 레벨 조회 실패: {error}"
+    no_update_permission: 현재 사용자에게 역할 업데이트 권한이 없습니다
+    cannot_create_higher_or_equal: 자신보다 높거나 같은 레벨의 역할을 만들 수 없습니다
+    create_failed: "역할 생성 실패: {error}"
+    list_failed: "역할 목록 조회 실패: {error}"
+    info_failed: "역할 정보 조회 실패: {error}"
+    cannot_update_higher_or_equal: 자신보다 높거나 같은 레벨의 역할을 업데이트할 수 없습니다
+    cannot_set_higher_or_equal: 역할 레벨을 현재 사용자보다 높거나 같게 설정할 수 없습니다
+    update_failed: "역할 업데이트 실패: {error}"
+    no_role_info: 역할 정보를 가져오지 못했습니다
+    cannot_delete_higher_or_equal: 자신보다 높거나 같은 레벨의 역할을 삭제할 수 없습니다
+    delete_failed: "역할 삭제 실패: {error}"
+    menu_list_failed: "역할 권한 메뉴 조회 실패: {error}"
+    count_failed: 역할 수 조회 실패
+  group:
+    parent_info_failed: 상위 그룹 정보 조회 실패
+    dn_exists: 그룹 DN이 이미 존재합니다
+    ldap_create_failed: "LDAP 그룹 생성 실패: {error}"
+    mysql_create_failed: MySQL 그룹 생성 실패
+    add_user_failed: "그룹에 사용자 추가 실패: {error}"
+    list_failed: "그룹 목록 조회 실패: {error}"
+    count_failed: 그룹 수 조회 실패
+    not_found: 그룹이 존재하지 않습니다
+    ldap_update_failed: "LDAP 그룹 업데이트 실패: {error}"
+    mysql_update_failed: MySQL 그룹 업데이트 실패
+    some_not_found: 일부 그룹이 존재하지 않습니다
+    has_children: 하위 그룹이 있습니다. 먼저 하위 그룹을 삭제하세요
+    ldap_delete_failed: "LDAP 그룹 삭제 실패: {error}"
+    get_failed: "그룹 조회 실패: {error}"
+    ou_cannot_add_user: OU 유형 그룹에는 사용자를 추가할 수 없습니다
+    ou_has_no_user: OU 유형 그룹에는 사용자가 없습니다
+    ldap_add_user_failed: "LDAP 그룹에 사용자 추가 실패: {error}"
+    user_department_failed: "사용자 부서 데이터 처리 실패: {error}"
+    mysql_user_update_failed: "MySQL 사용자 업데이트 실패: {error}"
+    ldap_remove_user_failed: "LDAP에서 사용자 제거 실패: {error}"
+    mysql_remove_user_failed: "MySQL에서 사용자 제거 실패: {error}"
+  base:
+    email_query_failed: "이메일로 사용자 조회 실패: {error}"
+    ldap_new_password_failed: "LDAP 새 비밀번호 생성 실패: {error}"
+  menu:
+    count_failed: 메뉴 수 조회 실패
+  log:
+    count_failed: 로그 수 조회 실패
+builtin:
+  creator:
+    系统: 시스템
+    system: 시스템
+  role:
+    admin:
+      name: 관리자
+      remark: ""
+    user:
+      name: 일반 사용자
+      remark: ""
+    guest:
+      name: 게스트
+      remark: ""
+  menu:
+    UserManage:
+      name: 인사 관리
+      title: 인사 관리
+    User:
+      name: 사용자 관리
+      title: 사용자 관리
+    Group:
+      name: 그룹 관리
+      title: 그룹 관리
+    FieldRelation:
+      name: 필드 관계 관리
+      title: 필드 관계 관리
+    System:
+      name: 시스템 관리
+      title: 시스템 관리
+    Role:
+      name: 역할 관리
+      title: 역할 관리
+    Menu:
+      name: 메뉴 관리
+      title: 메뉴 관리
+    Api:
+      name: API 관리
+      title: API 관리
+    Log:
+      name: 로그 관리
+      title: 로그 관리
+    OperationLog:
+      name: 작업 로그
+      title: 작업 로그
+  api:
+    category:
+      base: 기본 관리
+      user: 사용자 관리
+      group: 그룹 관리
+      role: 역할 관리
+      menu: 메뉴 관리
+      api: API 관리
+      fieldrelation: 필드 관계 관리
+      log: 로그 관리
+    remark:
+      get:
+        base_ping: 상태 확인
+        base_encryptpwd: 비밀번호 암호화
+        base_decryptpwd: 비밀번호 복호화
+        base_config: 시스템 설정 조회
+        base_version: 시스템 버전 조회
+        base_dashboard: 대시보드 데이터 조회
+        user_info: 현재 사용자 정보 조회
+        user_list: 사용자 목록 조회
+        group_list: 그룹 목록 조회
+        group_tree: 그룹 트리 조회
+        group_useringroup: 그룹 내 사용자 조회
+        group_usernoingroup: 그룹 외 사용자 조회
+        role_list: 역할 목록 조회
+        role_getmenulist: 역할 권한 메뉴 조회
+        role_getapilist: 역할 권한 API 조회
+        menu_tree: 메뉴 트리 조회
+        menu_access_tree: 사용자 메뉴 트리 조회
+        api_list: API 목록 조회
+        api_tree: API 트리 조회
+        fieldrelation_list: 동적 필드 관계 목록 조회
+        log_operation_list: 작업 로그 목록 조회
+      post:
+        base_login: 사용자 로그인
+        base_logout: 사용자 로그아웃
+        base_refreshtoken: JWT 토큰 갱신
+        base_sendcode: 사용자 이메일로 인증 코드 전송
+        base_changepwd: 이메일로 비밀번호 변경
+        user_changepwd: 사용자 로그인 비밀번호 변경
+        user_resetpassword: 사용자 비밀번호 재설정
+        user_add: 사용자 생성
+        user_update: 사용자 업데이트
+        user_delete: 사용자 일괄 삭제
+        user_changeuserstatus: 사용자 재직 상태 변경
+        user_syncdingtalkusers: DingTalk에서 사용자 동기화
+        user_syncwecomusers: WeCom에서 사용자 동기화
+        user_syncfeishuusers: Feishu에서 사용자 동기화
+        user_syncopenldapusers: OpenLDAP에서 사용자 동기화
+        user_syncsqlusers: DB 사용자를 LDAP로 동기화
+        group_add: 그룹 생성
+        group_update: 그룹 업데이트
+        group_delete: 그룹 일괄 삭제
+        group_adduser: 그룹에 사용자 추가
+        group_removeuser: 그룹에서 사용자 제거
+        group_syncdingtalkdepts: DingTalk에서 부서 동기화
+        group_syncwecomdepts: WeCom에서 부서 동기화
+        group_syncfeishudepts: Feishu에서 부서 동기화
+        group_syncopenldapdepts: OpenLDAP에서 부서 동기화
+        group_syncsqlgroups: DB 그룹을 LDAP로 동기화
+        role_add: 역할 생성
+        role_update: 역할 업데이트
+        role_updatemenus: 역할 권한 메뉴 업데이트
+        role_updateapis: 역할 권한 API 업데이트
+        role_delete: 역할 일괄 삭제
+        menu_add: 메뉴 생성
+        menu_update: 메뉴 업데이트
+        menu_delete: 메뉴 일괄 삭제
+        api_add: API 생성
+        api_update: API 업데이트
+        api_delete: API 일괄 삭제
+        fieldrelation_add: 동적 필드 관계 생성
+        fieldrelation_update: 동적 필드 관계 업데이트
+        fieldrelation_delete: 동적 필드 관계 일괄 삭제
+        log_operation_delete: 작업 로그 일괄 삭제
+      delete:
+        log_operation_clean: 작업 로그 비우기
+  group:
+    name:
+      openldap:
+        root: root
+      dingtalk:
+        dingtalkroot: DingTalk 루트 부서
+      wecom:
+        wecomroot: WeCom 루트 부서
+      feishu:
+        feishuroot: Feishu 루트 부서
+      platform:
+        group: 기본 그룹
+    remark:
+      openldap:
+        root: Base
+      dingtalk:
+        dingtalkroot: DingTalk 루트 부서
+      wecom:
+        wecomroot: WeCom 루트 부서
+      feishu:
+        feishuroot: Feishu 루트 부서
+      platform:
+        group: 기본 그룹

@@ -31,6 +31,7 @@ type config struct {
 	// Casbin    *CasbinConfig    `mapstructure:"casbin" json:"casbin"`
 	Jwt       *JwtConfig       `mapstructure:"jwt" json:"jwt"`
 	RateLimit *RateLimitConfig `mapstructure:"rate-limit" json:"rateLimit"`
+	I18n      *I18nConfig      `mapstructure:"i18n" json:"i18n"`
 	Ldap      *LdapConfig      `mapstructure:"ldap" json:"ldap"`
 	Email     *EmailConfig     `mapstructure:"email" json:"email"`
 	DingTalk  *DingTalkConfig  `mapstructure:"dingtalk" json:"dingTalk"`
@@ -57,6 +58,7 @@ func InitConfig() {
 		if err := viper.Unmarshal(Conf); err != nil {
 			panic(fmt.Errorf("初始化配置文件失败:%s", err))
 		}
+		normalizeConfig()
 		// 读取rsa key
 		Conf.System.RSAPublicBytes = pub
 		Conf.System.RSAPrivateBytes = priv
@@ -69,6 +71,7 @@ func InitConfig() {
 	if err := viper.Unmarshal(Conf); err != nil {
 		panic(fmt.Errorf("初始化配置文件失败:%s", err))
 	}
+	normalizeConfig()
 	// 读取rsa key
 	Conf.System.RSAPublicBytes = pub
 	Conf.System.RSAPrivateBytes = priv
@@ -134,6 +137,18 @@ func InitConfig() {
 	}
 }
 
+func normalizeConfig() {
+	if Conf.I18n == nil {
+		Conf.I18n = &I18nConfig{}
+	}
+	if Conf.I18n.DefaultLocale == "" {
+		Conf.I18n.DefaultLocale = "zh-CN"
+	}
+	if len(Conf.I18n.SupportedLocales) == 0 {
+		Conf.I18n.SupportedLocales = []string{"zh-CN", "en-US", "ja-JP", "es-ES", "ko-KR"}
+	}
+}
+
 type SystemConfig struct {
 	Mode            string `mapstructure:"mode" json:"mode"`
 	UrlPathPrefix   string `mapstructure:"url-path-prefix" json:"urlPathPrefix"`
@@ -184,6 +199,11 @@ type JwtConfig struct {
 type RateLimitConfig struct {
 	FillInterval int64 `mapstructure:"fill-interval" json:"fillInterval"`
 	Capacity     int64 `mapstructure:"capacity" json:"capacity"`
+}
+
+type I18nConfig struct {
+	DefaultLocale    string   `mapstructure:"default-locale" json:"defaultLocale"`
+	SupportedLocales []string `mapstructure:"supported-locales" json:"supportedLocales"`
 }
 
 type LdapConfig struct {

@@ -1,12 +1,11 @@
 package logic
 
 import (
-	"fmt"
-
 	"github.com/eryajf/go-ldap-admin/config"
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/public/version"
 	"github.com/eryajf/go-ldap-admin/service/ildap"
@@ -28,14 +27,14 @@ func (l BaseLogic) SendCode(c *gin.Context, req any) (data any, rspError any) {
 	user := new(model.User)
 	err := isql.User.Find(tools.H{"mail": r.Mail}, user)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "通过邮箱查询用户失败"+err.Error()))
+		return nil, tools.NewMySqlI18nError("base.email_query_failed", i18n.Args{"error": err.Error()})
 	}
 	if user.Status != 1 || user.SyncState != 1 {
-		return nil, tools.NewMySqlError(fmt.Errorf("该用户已离职或者未同步在ldap，无法重置密码，如有疑问，请联系管理员"))
+		return nil, tools.NewMySqlI18nError("base.reset_password_user_unavailable", nil)
 	}
-	err = tools.SendCode([]string{r.Mail})
+	err = tools.SendCodeI18n([]string{r.Mail}, i18n.LocaleFromContext(c))
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("%s", "邮件发送失败"+err.Error()))
+		return nil, tools.NewLdapI18nError("base.send_email_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -50,38 +49,38 @@ func (l BaseLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	_ = c
 	// 判断邮箱是否正确
 	if !isql.User.Exist(tools.H{"mail": r.Mail}) {
-		return nil, tools.NewValidatorError(fmt.Errorf("邮箱不存在,请检查邮箱是否正确"))
+		return nil, tools.NewValidatorI18nError("base.email_not_found", nil)
 	}
 	// 判断验证码是否过期
 	cacheCode, ok := tools.VerificationCodeCache.Get(r.Mail)
 	if !ok {
-		return nil, tools.NewValidatorError(fmt.Errorf("对不起，该验证码已超过5分钟有效期，请重新重新密码"))
+		return nil, tools.NewValidatorI18nError("base.code_expired", nil)
 	}
 	// 判断验证码是否正确
 	if cacheCode != r.Code {
-		return nil, tools.NewValidatorError(fmt.Errorf("验证码错误，请检查邮箱中正确的验证码，如果点击多次发送验证码，请用最后一次生成的验证码来验证"))
+		return nil, tools.NewValidatorI18nError("base.code_invalid", nil)
 	}
 
 	user := new(model.User)
 	err := isql.User.Find(tools.H{"mail": r.Mail}, user)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "通过邮箱查询用户失败"+err.Error()))
+		return nil, tools.NewMySqlI18nError("base.email_query_failed", i18n.Args{"error": err.Error()})
 	}
 
 	newpass, err := ildap.User.NewPwd(user.Username)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("%s", "LDAP生成新密码失败"+err.Error()))
+		return nil, tools.NewLdapI18nError("base.ldap_new_password_failed", i18n.Args{"error": err.Error()})
 	}
 
-	err = tools.SendMail([]string{user.Mail}, newpass)
+	err = tools.SendMailI18n([]string{user.Mail}, newpass, i18n.LocaleFromContext(c))
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("%s", "邮件发送失败"+err.Error()))
+		return nil, tools.NewLdapI18nError("base.send_email_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 更新数据库密码
 	err = isql.User.ChangePwd(user.Username, tools.NewGenPasswd(newpass))
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL更新密码失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.mysql_password_update_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -97,27 +96,27 @@ func (l BaseLogic) Dashboard(c *gin.Context, req any) (data any, rspError any) {
 
 	userCount, err := isql.User.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取用户总数失败"))
+		return nil, tools.NewMySqlI18nError("user.count_failed", i18n.Args{"error": err.Error()})
 	}
 	groupCount, err := isql.Group.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取分组总数失败"))
+		return nil, tools.NewMySqlI18nError("group.count_failed", nil)
 	}
 	roleCount, err := isql.Role.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取角色总数失败"))
+		return nil, tools.NewMySqlI18nError("role.count_failed", nil)
 	}
 	menuCount, err := isql.Menu.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取菜单总数失败"))
+		return nil, tools.NewMySqlI18nError("menu.count_failed", nil)
 	}
 	apiCount, err := isql.Api.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取接口总数失败"))
+		return nil, tools.NewMySqlI18nError("api.count_failed", nil)
 	}
 	logCount, err := isql.OperationLog.Count()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取日志总数失败"))
+		return nil, tools.NewMySqlI18nError("operation_log.count_failed", nil)
 	}
 
 	rst := make([]*response.DashboardList, 0)
@@ -125,42 +124,42 @@ func (l BaseLogic) Dashboard(c *gin.Context, req any) (data any, rspError any) {
 	rst = append(rst,
 		&response.DashboardList{
 			DataType:  "user",
-			DataName:  "用户",
+			DataName:  i18n.TC(c, "dashboard.user", nil),
 			DataCount: userCount,
 			Icon:      "people",
 			Path:      "#/personnel/user",
 		},
 		&response.DashboardList{
 			DataType:  "group",
-			DataName:  "分组",
+			DataName:  i18n.TC(c, "dashboard.group", nil),
 			DataCount: groupCount,
 			Icon:      "peoples",
 			Path:      "#/personnel/group",
 		},
 		&response.DashboardList{
 			DataType:  "role",
-			DataName:  "角色",
+			DataName:  i18n.TC(c, "dashboard.role", nil),
 			DataCount: roleCount,
 			Icon:      "eye-open",
 			Path:      "#/system/role",
 		},
 		&response.DashboardList{
 			DataType:  "menu",
-			DataName:  "菜单",
+			DataName:  i18n.TC(c, "dashboard.menu", nil),
 			DataCount: menuCount,
 			Icon:      "tree-table",
 			Path:      "#/system/menu",
 		},
 		&response.DashboardList{
 			DataType:  "api",
-			DataName:  "接口",
+			DataName:  i18n.TC(c, "dashboard.api", nil),
 			DataCount: apiCount,
 			Icon:      "tree",
 			Path:      "#/system/api",
 		},
 		&response.DashboardList{
 			DataType:  "log",
-			DataName:  "日志",
+			DataName:  i18n.TC(c, "dashboard.log", nil),
 			DataCount: logCount,
 			Icon:      "documentation",
 			Path:      "#/log/operation-log",
@@ -178,7 +177,11 @@ func (l BaseLogic) EncryptPasswd(c *gin.Context, req any) (data any, rspError an
 	}
 	_ = c
 
-	return tools.NewGenPasswd(r.Passwd), nil
+	passwd, err := tools.RSAEncrypt([]byte(r.Passwd), config.Conf.System.RSAPublicBytes)
+	if err != nil {
+		return nil, tools.NewValidatorI18nError("user.password_encrypt_failed", nil)
+	}
+	return string(passwd), nil
 }
 
 // DecryptPasswd
@@ -189,7 +192,11 @@ func (l BaseLogic) DecryptPasswd(c *gin.Context, req any) (data any, rspError an
 	}
 	_ = c
 
-	return tools.NewParPasswd(r.Passwd), nil
+	passwd, err := tools.RSADecrypt([]byte(r.Passwd), config.Conf.System.RSAPrivateBytes)
+	if err != nil {
+		return nil, tools.NewValidatorI18nError("user.password_decrypt_failed", nil)
+	}
+	return string(passwd), nil
 }
 
 // GetConfig 获取系统配置

@@ -37,6 +37,8 @@ func InitRoutes() *gin.Engine {
 		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
 	})
 
+	r.Use(middleware.LocaleMiddleware())
+
 	// 启用限流中间件
 	// 默认每50毫秒填充一个令牌，最多填充200个
 	fillInterval := time.Duration(config.Conf.RateLimit.FillInterval)

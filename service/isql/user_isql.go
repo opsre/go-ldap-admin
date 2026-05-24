@@ -164,7 +164,7 @@ func (s UserService) GetUserMinRoleSortsByIds(ids []uint) ([]int, error) {
 		return []int{}, err
 	}
 	if len(userList) == 0 {
-		return []int{}, errors.New("未获取到任何用户信息")
+		return []int{}, errors.New("no user information found")
 	}
 	var roleMinSortList []int
 	for _, user := range userList {
@@ -210,7 +210,7 @@ func (s UserService) Delete(ids []uint) error {
 		user := new(model.User)
 		err := s.Find(filter, user)
 		if err != nil {
-			return fmt.Errorf("获取用户信息失败，err: %v", err)
+			return fmt.Errorf("failed to get user information: %v", err)
 		}
 		users = append(users, *user)
 	}
@@ -312,9 +312,6 @@ func (s UserService) Login(user *model.User) (*model.User, error) {
 	// 	Where("username = ?", user.Username).
 	// 	Preload("Roles").
 	// 	First(&firstUser).Error
-	// if err != nil {
-	// 	return nil, errors.New("用户不存在")
-	// }
 	err := s.Find(tools.H{"username": user.Username}, &firstUser)
 	if err != nil {
 		return nil, errors.New("用户不存在")
@@ -336,19 +333,10 @@ func (s UserService) Login(user *model.User) (*model.User, error) {
 	// 	}
 	// }
 
-	// if !isValidate {
-	// 	return nil, errors.New("用户角色被禁用")
-	// }
-
 	if tools.NewParPasswd(firstUser.Password) != user.Password {
 		return nil, errors.New("密码错误")
 	}
 
-	// 校验密码
-	// err = tools.ComparePasswd(firstUser.Password, user.Password)
-	// if err != nil {
-	// 	return &firstUser, errors.New("密码错误")
-	// }
 	return &firstUser, nil
 }
 

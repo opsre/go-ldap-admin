@@ -2,10 +2,26 @@ package tools
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/eryajf/go-ldap-admin/config"
 )
 
 func TestGenPass(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	root := filepath.Clean(filepath.Join(wd, "..", ".."))
+	if err := os.Chdir(root); err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		_ = os.Chdir(wd)
+	}()
+	config.InitConfig()
 	fmt.Printf("密码为：%s\n", NewGenPasswd("123456"))
 	// err := ComparePasswd("$2a$10$Fy8p0nCixgWKzLfO3SgdhOzAF7YolSt6dHj6QidDGYlzLJDpniXB6", "123456")
 	// if err != nil {

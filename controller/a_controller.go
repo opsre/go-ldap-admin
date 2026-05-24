@@ -3,15 +3,13 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	"regexp"
 
+	"github.com/eryajf/go-ldap-admin/public/common"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/locales/zh"
-	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	zht "github.com/go-playground/validator/v10/translations/zh"
 )
 
 var (
@@ -23,23 +21,7 @@ var (
 	OperationLog  = &OperationLogController{}
 	Base          = &BaseController{}
 	FieldRelation = &FieldRelationController{}
-
-	validate = validator.New()
-	trans    ut.Translator
 )
-
-func init() {
-	uni := ut.New(zh.New())
-	trans, _ = uni.GetTranslator("zh")
-	_ = zht.RegisterDefaultTranslations(validate, trans)
-	_ = validate.RegisterValidation("checkMobile", checkMobile)
-}
-
-func checkMobile(fl validator.FieldLevel) bool {
-	reg := `1\d{10}`
-	rgx := regexp.MustCompile(reg)
-	return rgx.MatchString(fl.Field().String())
-}
 
 func Run(c *gin.Context, req any, fn func() (any, any)) {
 	var err error
@@ -50,8 +32,9 @@ func Run(c *gin.Context, req any, fn func() (any, any)) {
 		return
 	}
 	// 校验
-	err = validate.Struct(req)
+	err = common.Validate.Struct(req)
 	if err != nil {
+		trans := common.TranslatorForLocale(i18n.LocaleFromContext(c))
 		for _, err := range err.(validator.ValidationErrors) {
 			tools.Err(c, tools.NewValidatorError(fmt.Errorf("%s", err.Translate(trans))), nil)
 			return

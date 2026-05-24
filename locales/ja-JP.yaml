@@ -1,0 +1,411 @@
+common:
+  success: 成功しました
+  unknown_error: 不明なエラー
+  request_invalid: 無効なリクエスト
+error:
+  database: データベース操作に失敗しました
+  ldap: LDAP操作に失敗しました
+  operation: 操作に失敗しました
+  validator: 入力内容の検証に失敗しました
+auth:
+  login_success: ログインしました
+  logout_success: ログアウトしました
+  refresh_success: トークンを更新しました
+  jwt_failed: "JWT認証に失敗しました。コード: {code}, メッセージ: {message}"
+  not_logged_in: ログインしていません
+  user_not_found: ユーザーが存在しません
+  user_disabled: 現在のユーザーは無効化されています
+  password_incorrect: パスワードが正しくありません
+  no_permission: 権限がありません
+rate_limit:
+  limited: リクエストが多すぎます
+email:
+  password_reset_subject: LDAPパスワードのリセットが完了しました
+  password_reset_body: "<li><a>変更後のパスワード: %s </a></li>"
+  verification_code_subject: 確認コード - パスワードリセット
+  verification_code_body: "<div><div>こんにちは。</div><div style=\"padding: 8px 40px 8px 50px;\"><p>今回の確認コードは %s です。アカウント保護のため、このコードの有効期限は5分です。ご本人の操作であることを確認し、他人に共有しないでください。</p></div><div><p>このメールはシステムから送信されています。返信しないでください。</p></div></div>"
+  user_creation_subject: LDAPアカウント作成完了のお知らせ
+  user_creation_body: "<div><div>%s 様、こんにちは。</div><div style=\"padding: 8px 40px 8px 50px;\"><p>LDAPアカウントが作成されました。アカウント情報は以下の通りです。</p><ul><li>ユーザー名: %s</li><li>ニックネーム: %s</li><li>初期パスワード: %s</li></ul><p style=\"color: #ff6600;\">アカウント情報を安全に保管し、初回ログイン後に速やかにパスワードを変更してください。</p></div><div><p>このメールはシステムから送信されています。返信しないでください。</p></div></div>"
+  admin_password_reset_subject: LDAPパスワードリセットのお知らせ
+  admin_password_reset_body: "<div><div>%s 様、こんにちは。</div><div style=\"padding: 8px 40px 8px 50px;\"><p>LDAPアカウントのパスワードがリセットされました。新しいパスワード情報は以下の通りです。</p><ul><li>ユーザー名: %s</li><li>新しいパスワード: %s</li></ul><p style=\"color: #ff6600;\">アカウント保護のため、できるだけ早くログインしてパスワードを変更してください。</p><p style=\"color: #ff0000;\">アカウント情報を安全に保管し、他人に共有しないでください。</p></div><div><p>このメールはシステムから送信されています。返信しないでください。</p></div></div>"
+dashboard:
+  user: ユーザー
+  group: グループ
+  role: ロール
+  menu: メニュー
+  api: API
+  log: ログ
+sync:
+  dept_list_failed: "{provider}の部署一覧取得に失敗しました: {error}"
+  dept_convert_failed: "{provider}の部署データ変換に失敗しました: {error}"
+  empty_depts: 取得した部署数が0です
+  dept_add_failed: "部署[{dept}]の追加に失敗しました: {error}"
+  child_dept_add_failed: "子部署の追加に失敗しました: {error}"
+  parent_dept_query_failed: "親部署の検索に失敗しました: {error}"
+  add_dept_failed: "部署{dept}の追加に失敗しました: {error}"
+  user_list_failed: "{provider}のユーザー一覧取得に失敗しました: {error}"
+  user_convert_failed: "{provider}のユーザーデータ変換に失敗しました: {error}"
+  empty_users: 取得したユーザー数が0です
+  user_write_failed: "ユーザー[{username}]の書き込みに失敗しました: {error}"
+  leave_user_list_failed: "{provider}の退職ユーザー一覧取得に失敗しました: {error}"
+  leave_user_query_failed: "MySQLで退職ユーザー[{username}]の検索に失敗しました: {error}"
+  leave_user_ldap_delete_failed: "LDAPで退職ユーザー[{username}]の削除に失敗しました: {error}"
+  leave_user_status_update_failed: "MySQLで退職ユーザー[{username}]の状態更新に失敗しました: {error}"
+  role_info_failed: "ロールIDによるロール情報の取得に失敗しました: {error}"
+  add_user_failed: "ユーザー{username}の追加に失敗しました: {error}"
+  mysql_user_list_failed: "MySQLユーザー一覧の取得に失敗しました: {error}"
+  dept_ids_convert_failed: "部署IDを内部部署IDへ変換できませんでした: {error}"
+  user_dept_ids_convert_failed: "ユーザー[{username}]の部署IDを内部部署IDへ変換できませんでした: {error}"
+  user_role_info_failed: "ユーザー[{username}]のロール情報取得に失敗しました: {error}"
+common_user:
+  mysql_create_failed: "MySQLでのユーザー作成に失敗しました: {error}"
+  ldap_create_failed: "LDAPでのユーザー作成に失敗しました: {error}"
+  mysql_add_group_relation_failed: "MySQLでのユーザーとグループの関連付け追加に失敗しました: {error}"
+  ldap_add_group_relation_failed: "LDAPでのユーザーとグループの関連付け追加に失敗しました: {error}"
+  ldap_update_failed: "LDAPでのユーザー更新に失敗しました: {error}"
+  mysql_update_failed: "MySQLでのユーザー更新に失敗しました: {error}"
+  mysql_remove_group_relation_failed: "MySQLでのグループからのユーザー削除に失敗しました: {error}"
+  ldap_remove_group_relation_failed: "LDAPでのグループからのユーザー削除に失敗しました: {error}"
+base:
+  email_not_found: メールアドレスが存在しません。正しいか確認してください
+  code_expired: 確認コードは5分で期限切れになりました。もう一度パスワードをリセットしてください
+  code_invalid: 確認コードが正しくありません。複数回送信した場合は最新のコードを使用してください
+  reset_password_user_unavailable: このユーザーは退職済み、またはLDAPに同期されていません。管理者に連絡してください
+  send_email_failed: "メール送信に失敗しました: {error}"
+  email_query_failed: "メールアドレスによるユーザー検索に失敗しました: {error}"
+  ldap_new_password_failed: "LDAPでの新しいパスワード生成に失敗しました: {error}"
+user:
+  username_exists: ユーザー名は既に存在します。重複して追加しないでください
+  mobile_exists: 携帯番号は既に存在します。重複して追加しないでください
+  job_number_exists: 社員番号は既に存在します。重複して追加しないでください
+  mail_exists: メールアドレスは既に存在します。重複して追加しないでください
+  password_encrypt_failed: パスワードの暗号化に失敗しました
+  password_decrypt_failed: パスワードの復号に失敗しました
+  password_min_length: パスワードは少なくとも{min}文字必要です
+  cannot_delete_self: 自分自身を削除することはできません
+  not_found: ユーザーが存在しません
+  current_min_role_sort_failed: 現在ログイン中のユーザーの最小ロール順序の取得に失敗しました
+  role_info_failed: ロールIDによるロール情報の取得に失敗しました
+  cannot_create_higher_or_equal: 自分以上の権限レベルのユーザーは作成できません
+  department_info_failed: "部署IDによる部署情報の取得に失敗しました: {error}"
+  create_failed: "ユーザーの追加に失敗しました: {error}"
+  list_failed: "ユーザー一覧の取得に失敗しました: {error}"
+  count_failed: "ユーザー数の取得に失敗しました: {error}"
+  cannot_change_self_role: 自分のロールは変更できません
+  min_role_sort_by_id_failed: ユーザーIDによる最小ロール順序の取得に失敗しました
+  cannot_update_higher_or_equal: 自分以上の権限レベルのユーザーは更新できません
+  update_failed: "ユーザーの更新に失敗しました: {error}"
+  cannot_delete_higher: 自分より高い権限レベルのユーザーは削除できません
+  info_failed: "ユーザー情報の取得に失敗しました: {error}"
+  ldap_delete_failed: "LDAPでのユーザー削除に失敗しました: {error}"
+  mysql_delete_failed: "MySQLでのユーザー削除に失敗しました: {error}"
+  ldap_password_update_failed: "LDAPでのパスワード更新に失敗しました: {error}"
+  mysql_password_update_failed: "MySQLでのパスワード更新に失敗しました: {error}"
+  mysql_query_failed: "MySQLでのユーザー検索に失敗しました: {error}"
+  ldap_add_failed: "LDAPでのユーザー追加に失敗しました: {error}"
+  mysql_status_update_failed: "MySQLでのユーザー状態更新に失敗しました: {error}"
+  current_info_failed: "現在のユーザー情報の取得に失敗しました: {error}"
+menu:
+  name_exists: メニュー名は既に存在します
+  create_failed: "レコードの作成に失敗しました: {error}"
+  update_failed: "レコードの更新に失敗しました: {error}"
+  delete_failed: "APIの削除に失敗しました: {error}"
+  record_not_found: このIDに対応するレコードは存在しません
+  record_get_failed: "レコードの取得に失敗しました: {error}"
+  count_failed: メニュー数の取得に失敗しました
+api:
+  create_failed: "APIの作成に失敗しました: {error}"
+  list_failed: "API一覧の取得に失敗しました: {error}"
+  count_failed: API数の取得に失敗しました
+  not_found: APIが存在しません
+  update_failed: "APIの更新に失敗しました: {error}"
+  delete_failed: "APIの削除に失敗しました: {error}"
+operation_log:
+  list_failed: "操作ログ一覧の取得に失敗しました: {error}"
+  count_failed: 操作ログ数の取得に失敗しました
+  not_found: 操作ログレコードが存在しません
+  delete_failed: "操作ログレコードの削除に失敗しました: {error}"
+  clean_failed: "操作ログのクリアに失敗しました: {error}"
+role:
+  name_exists: ロール名は既に存在します
+  not_found: ロールが存在しません
+  current_max_sort_failed: "現在のユーザーの最高ロールレベル取得に失敗しました: {error}"
+  no_update_permission: 現在のユーザーにはロール更新権限がありません
+  cannot_create_higher_or_equal: 自分以上のレベルのロールは作成できません
+  create_failed: "ロール作成に失敗しました: {error}"
+  list_failed: "ロール一覧の取得に失敗しました: {error}"
+  count_failed: ロール数の取得に失敗しました
+  info_not_found: ロール情報の取得に失敗しました。該当ロールが見つかりません
+  cannot_update_higher_or_equal: 自分以上のレベルのロールは更新できません
+  cannot_set_higher_or_equal: ロールレベルを現在のユーザー以上に設定できません
+  update_failed: "ロール更新に失敗しました: {error}"
+  keyword_policy_update_failed: ロールは更新されましたが、ロールキーワードに紐づく権限APIの更新に失敗しました
+  keyword_policy_load_failed: ロールは更新されましたが、ロールキーワードに紐づく権限APIポリシーの読み込みに失敗しました
+  no_role_info: ロール情報を取得できませんでした
+  cannot_delete_higher_or_equal: 自分以上のレベルのロールは削除できません
+  delete_failed: "ロール削除に失敗しました: {error}"
+  menu_list_failed: "ロール権限メニューの取得に失敗しました: {error}"
+  resource_failed: "リソース取得に失敗しました: {error}"
+  cannot_update_higher_or_equal_permissions: 自分以上のレベルのロール権限メニューは更新できません
+  current_user_menu_list_failed: "現在のユーザーがアクセス可能なメニュー一覧の取得に失敗しました: {error}"
+  no_menu_permission: "ID {id} のメニューを設定する権限がありません"
+  menu_all_list_failed: "メニュー一覧の取得に失敗しました: {error}"
+  update_menus_failed: "ロール権限メニューの更新に失敗しました: {error}"
+  api_info_failed: API IDからAPI情報を取得できませんでした
+  no_api_permission: "パス {path}、方式 {method} のAPIを設定する権限がありません"
+  update_apis_failed: ロール権限APIの更新に失敗しました
+group:
+  parent_info_failed: 親グループ情報の取得に失敗しました
+  dn_exists: グループDNは既に存在します
+  ldap_create_failed: "LDAPでのグループ作成に失敗しました: {error}"
+  mysql_create_failed: MySQLでのグループ作成に失敗しました
+  add_user_failed: "グループへのユーザー追加に失敗しました: {error}"
+  user_list_failed: "ユーザー一覧の取得に失敗しました: {error}"
+  list_failed: "グループ一覧の取得に失敗しました: {error}"
+  count_failed: グループ数の取得に失敗しました
+  not_found: グループが存在しません
+  ldap_update_failed: "LDAPでのグループ更新に失敗しました: {error}"
+  mysql_update_failed: MySQLでのグループ更新に失敗しました
+  some_not_found: 存在しないグループがあります
+  has_children: このグループには子グループがあります。先に子グループを削除してください
+  ldap_delete_failed: "LDAPでのグループ削除に失敗しました: {error}"
+  delete_failed: "グループ削除に失敗しました: {error}"
+  get_failed: "グループ取得に失敗しました: {error}"
+  ou_cannot_add_user: OUグループにはユーザーを追加できません
+  ou_has_no_user: OUグループにはユーザーがいません
+  ldap_add_user_failed: "LDAPでのグループへのユーザー追加に失敗しました: {error}"
+  user_department_failed: "ユーザー部署データの処理に失敗しました: {error}"
+  mysql_user_update_failed: "MySQLでのユーザー更新に失敗しました: {error}"
+  ldap_remove_user_failed: "LDAPからのユーザー削除に失敗しました: {error}"
+  mysql_remove_user_failed: "MySQLからのユーザー削除に失敗しました: {error}"
+field_relation:
+  exists: このプラットフォームの動的フィールド関連は既に存在します
+  not_found: このプラットフォームの動的フィールド関連は存在しません
+  map_to_json_failed: "mapからJSONへの変換に失敗しました: {error}"
+  create_failed: "動的フィールド関連の作成に失敗しました: {error}"
+  list_failed: "動的フィールド関連一覧の取得に失敗しました: {error}"
+  update_failed: "動的フィールド関連の更新に失敗しました: {error}"
+  delete_failed: "動的フィールド関連の削除に失敗しました: {error}"
+legacy:
+  common:
+    current_user_failed: 現在ログイン中のユーザー取得に失敗しました
+    resource_list_failed: "リソース一覧の取得に失敗しました: {error}"
+    record_not_found: レコードが存在しません
+  user:
+    some_not_found: 存在しないユーザーがあります
+    not_found: ユーザーが存在しません
+    old_password_incorrect: 現在のパスワードが正しくありません
+    old_password_parse_failed: 現在のパスワードの解析に失敗しました
+    new_password_parse_failed: 新しいパスワードの解析に失敗しました
+    already_active: ユーザーは既に在職状態です
+    already_inactive: ユーザーは既に離職状態です
+    only_admin_change_status: 管理者のみユーザー状態を変更できます
+    list_failed: "ユーザー一覧の取得に失敗しました: {error}"
+    count_failed: ユーザー数の取得に失敗しました
+    create_failed: "ユーザー追加に失敗しました: {error}"
+    update_failed: "ユーザー更新に失敗しました: {error}"
+    info_failed: "ユーザー情報の取得に失敗しました: {error}"
+    ldap_delete_failed: "LDAPでのユーザー削除に失敗しました: {error}"
+    ldap_add_failed: "LDAPでのユーザー追加に失敗しました: {error}"
+    ldap_password_update_failed: "LDAPでのパスワード更新に失敗しました: {error}"
+    mysql_delete_failed: "MySQLでのユーザー削除に失敗しました: {error}"
+    mysql_password_update_failed: "MySQLでのパスワード更新に失敗しました: {error}"
+    mysql_status_update_failed: "MySQLでのユーザー状態更新に失敗しました: {error}"
+  api:
+    create_failed: "APIの作成に失敗しました: {error}"
+    list_failed: "API一覧の取得に失敗しました: {error}"
+    count_failed: API数の取得に失敗しました
+    not_found: APIが存在しません
+    update_failed: "APIの更新に失敗しました: {error}"
+    delete_failed: "APIの削除に失敗しました: {error}"
+  role:
+    name_exists: ロール名は既に存在します
+    not_found: ロールが存在しません
+    current_max_sort_failed: "現在ユーザーの最高ロールレベル取得に失敗しました: {error}"
+    no_update_permission: 現在のユーザーにはロール更新権限がありません
+    cannot_create_higher_or_equal: 自分以上のレベルのロールは作成できません
+    create_failed: "ロール作成に失敗しました: {error}"
+    list_failed: "ロール一覧の取得に失敗しました: {error}"
+    info_failed: "ロール情報の取得に失敗しました: {error}"
+    cannot_update_higher_or_equal: 自分以上のレベルのロールは更新できません
+    cannot_set_higher_or_equal: ロールレベルを現在ユーザー以上に設定できません
+    update_failed: "ロール更新に失敗しました: {error}"
+    no_role_info: ロール情報を取得できませんでした
+    cannot_delete_higher_or_equal: 自分以上のレベルのロールは削除できません
+    delete_failed: "ロール削除に失敗しました: {error}"
+    menu_list_failed: "ロール権限メニュー取得に失敗しました: {error}"
+    count_failed: ロール数の取得に失敗しました
+  group:
+    parent_info_failed: 親グループ情報の取得に失敗しました
+    dn_exists: グループDNは既に存在します
+    ldap_create_failed: "LDAPでのグループ作成に失敗しました: {error}"
+    mysql_create_failed: MySQLでのグループ作成に失敗しました
+    add_user_failed: "グループへのユーザー追加に失敗しました: {error}"
+    list_failed: "グループ一覧の取得に失敗しました: {error}"
+    count_failed: グループ数の取得に失敗しました
+    not_found: グループが存在しません
+    ldap_update_failed: "LDAPでのグループ更新に失敗しました: {error}"
+    mysql_update_failed: MySQLでのグループ更新に失敗しました
+    some_not_found: 存在しないグループがあります
+    has_children: 子グループが存在します。先に子グループを削除してください
+    ldap_delete_failed: "LDAPでのグループ削除に失敗しました: {error}"
+    get_failed: "グループ取得に失敗しました: {error}"
+    ou_cannot_add_user: OUタイプのグループにはユーザーを追加できません
+    ou_has_no_user: OUタイプのグループにはユーザーがありません
+    ldap_add_user_failed: "LDAPでのグループへのユーザー追加に失敗しました: {error}"
+    user_department_failed: "ユーザー部署データの処理に失敗しました: {error}"
+    mysql_user_update_failed: "MySQLでのユーザー更新に失敗しました: {error}"
+    ldap_remove_user_failed: "LDAPからのユーザー削除に失敗しました: {error}"
+    mysql_remove_user_failed: "MySQLからのユーザー削除に失敗しました: {error}"
+  base:
+    email_query_failed: "メールによるユーザー検索に失敗しました: {error}"
+    ldap_new_password_failed: "LDAP新規パスワード生成に失敗しました: {error}"
+  menu:
+    count_failed: メニュー数の取得に失敗しました
+  log:
+    count_failed: ログ数の取得に失敗しました
+builtin:
+  creator:
+    系统: システム
+    system: システム
+  role:
+    admin:
+      name: 管理者
+      remark: ""
+    user:
+      name: 標準ユーザー
+      remark: ""
+    guest:
+      name: ゲスト
+      remark: ""
+  menu:
+    UserManage:
+      name: 人員管理
+      title: 人員管理
+    User:
+      name: ユーザー管理
+      title: ユーザー管理
+    Group:
+      name: グループ管理
+      title: グループ管理
+    FieldRelation:
+      name: フィールド関連管理
+      title: フィールド関連管理
+    System:
+      name: システム管理
+      title: システム管理
+    Role:
+      name: ロール管理
+      title: ロール管理
+    Menu:
+      name: メニュー管理
+      title: メニュー管理
+    Api:
+      name: API管理
+      title: API管理
+    Log:
+      name: ログ管理
+      title: ログ管理
+    OperationLog:
+      name: 操作ログ
+      title: 操作ログ
+  api:
+    category:
+      base: 基本管理
+      user: ユーザー管理
+      group: グループ管理
+      role: ロール管理
+      menu: メニュー管理
+      api: API管理
+      fieldrelation: フィールド関連管理
+      log: ログ管理
+    remark:
+      get:
+        base_ping: ヘルスチェック
+        base_encryptpwd: パスワード暗号化
+        base_decryptpwd: パスワード復号
+        base_config: システム設定取得
+        base_version: システムバージョン取得
+        base_dashboard: ダッシュボードデータ取得
+        user_info: 現在ユーザー情報取得
+        user_list: ユーザー一覧取得
+        group_list: グループ一覧取得
+        group_tree: グループツリー取得
+        group_useringroup: グループ内ユーザー取得
+        group_usernoingroup: グループ外ユーザー取得
+        role_list: ロール一覧取得
+        role_getmenulist: ロール権限メニュー取得
+        role_getapilist: ロール権限API取得
+        menu_tree: メニューツリー取得
+        menu_access_tree: ユーザーメニューツリー取得
+        api_list: API一覧取得
+        api_tree: APIツリー取得
+        fieldrelation_list: 動的フィールド関連一覧取得
+        log_operation_list: 操作ログ一覧取得
+      post:
+        base_login: ユーザーログイン
+        base_logout: ユーザーログアウト
+        base_refreshtoken: JWTトークン更新
+        base_sendcode: ユーザーメールへ確認コード送信
+        base_changepwd: メールによるパスワード変更
+        user_changepwd: ユーザーログインパスワード変更
+        user_resetpassword: ユーザーパスワードリセット
+        user_add: ユーザー作成
+        user_update: ユーザー更新
+        user_delete: ユーザー一括削除
+        user_changeuserstatus: ユーザー在職状態変更
+        user_syncdingtalkusers: DingTalkからユーザー同期
+        user_syncwecomusers: WeComからユーザー同期
+        user_syncfeishuusers: Feishuからユーザー同期
+        user_syncopenldapusers: OpenLDAPからユーザー同期
+        user_syncsqlusers: DBユーザーをLDAPへ同期
+        group_add: グループ作成
+        group_update: グループ更新
+        group_delete: グループ一括削除
+        group_adduser: ユーザーをグループへ追加
+        group_removeuser: ユーザーをグループから削除
+        group_syncdingtalkdepts: DingTalkから部署同期
+        group_syncwecomdepts: WeComから部署同期
+        group_syncfeishudepts: Feishuから部署同期
+        group_syncopenldapdepts: OpenLDAPから部署同期
+        group_syncsqlgroups: DBグループをLDAPへ同期
+        role_add: ロール作成
+        role_update: ロール更新
+        role_updatemenus: ロール権限メニュー更新
+        role_updateapis: ロール権限API更新
+        role_delete: ロール一括削除
+        menu_add: メニュー作成
+        menu_update: メニュー更新
+        menu_delete: メニュー一括削除
+        api_add: API作成
+        api_update: API更新
+        api_delete: API一括削除
+        fieldrelation_add: 動的フィールド関連作成
+        fieldrelation_update: 動的フィールド関連更新
+        fieldrelation_delete: 動的フィールド関連一括削除
+        log_operation_delete: 操作ログ一括削除
+      delete:
+        log_operation_clean: 操作ログをクリア
+  group:
+    name:
+      openldap:
+        root: root
+      dingtalk:
+        dingtalkroot: DingTalkルート部署
+      wecom:
+        wecomroot: WeComルート部署
+      feishu:
+        feishuroot: Feishuルート部署
+      platform:
+        group: デフォルトグループ
+    remark:
+      openldap:
+        root: Base
+      dingtalk:
+        dingtalkroot: DingTalkルート部署
+      wecom:
+        wecomroot: WeComルート部署
+      feishu:
+        feishuroot: Feishuルート部署
+      platform:
+        group: デフォルトグループ

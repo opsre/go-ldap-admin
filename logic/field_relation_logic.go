@@ -1,10 +1,9 @@
 package logic
 
 import (
-	"fmt"
-
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/model/request"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/isql"
 	"gorm.io/datatypes"
@@ -23,12 +22,12 @@ func (l FieldRelationLogic) Add(c *gin.Context, req any) (data any, rspError any
 	_ = c
 
 	if isql.FieldRelation.Exist(tools.H{"flag": r.Flag}) {
-		return nil, tools.NewValidatorError(fmt.Errorf("对应平台的动态字段关系已存在，请勿重复添加"))
+		return nil, tools.NewValidatorI18nError("field_relation.exists", nil)
 	}
 
 	attr, err := tools.MapToJson(r.Attributes)
 	if err != nil {
-		return nil, tools.NewOperationError(fmt.Errorf("将map转成json失败: %s", err.Error()))
+		return nil, tools.NewOperationI18nError("field_relation.map_to_json_failed", i18n.Args{"error": err.Error()})
 	}
 
 	frObj := model.FieldRelation{
@@ -39,7 +38,7 @@ func (l FieldRelationLogic) Add(c *gin.Context, req any) (data any, rspError any
 	// 创建接口
 	err = isql.FieldRelation.Add(&frObj)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("创建动态字段关系失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("field_relation.create_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -56,7 +55,7 @@ func (l FieldRelationLogic) List(c *gin.Context, req any) (data any, rspError an
 	// 获取数据列表
 	frs, err := isql.FieldRelation.List()
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("字段动态关系: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("field_relation.list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return frs, nil
@@ -73,7 +72,7 @@ func (l FieldRelationLogic) Update(c *gin.Context, req any) (data any, rspError 
 	filter := tools.H{"flag": r.Flag}
 
 	if !isql.FieldRelation.Exist(filter) {
-		return nil, tools.NewValidatorError(fmt.Errorf("对应平台的动态字段关系不存在"))
+		return nil, tools.NewValidatorI18nError("field_relation.not_found", nil)
 	}
 
 	oldData := new(model.FieldRelation)
@@ -84,7 +83,7 @@ func (l FieldRelationLogic) Update(c *gin.Context, req any) (data any, rspError 
 
 	attr, err := tools.MapToJson(r.Attributes)
 	if err != nil {
-		return nil, tools.NewOperationError(fmt.Errorf("将map转成json失败: %s", err.Error()))
+		return nil, tools.NewOperationI18nError("field_relation.map_to_json_failed", i18n.Args{"error": err.Error()})
 	}
 
 	frObj := model.FieldRelation{
@@ -95,7 +94,7 @@ func (l FieldRelationLogic) Update(c *gin.Context, req any) (data any, rspError 
 
 	err = isql.FieldRelation.Update(&frObj)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("更新动态字段关系失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("field_relation.update_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil, nil
 }
@@ -111,13 +110,13 @@ func (l FieldRelationLogic) Delete(c *gin.Context, req any) (data any, rspError 
 	for _, id := range r.FieldRelationIds {
 		filter := tools.H{"id": int(id)}
 		if !isql.FieldRelation.Exist(filter) {
-			return nil, tools.NewMySqlError(fmt.Errorf("动态字段关系不存在"))
+			return nil, tools.NewMySqlI18nError("field_relation.not_found", nil)
 		}
 	}
 	// 删除
 	err := isql.FieldRelation.Delete(r.FieldRelationIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("删除动态字段关系失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("field_relation.delete_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil, nil
 }

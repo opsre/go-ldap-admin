@@ -1,11 +1,10 @@
 package ildap
 
 import (
-	"errors"
-
 	"github.com/eryajf/go-ldap-admin/config"
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/public/common"
+	"github.com/eryajf/go-ldap-admin/public/tools"
 
 	ldap "github.com/go-ldap/ldap/v3"
 )
@@ -83,7 +82,7 @@ func (x GroupService) Delete(gdn string) error {
 func (x GroupService) AddUserToGroup(dn, udn string) error {
 	//判断dn是否以ou开头
 	if dn[:3] == "ou=" {
-		return errors.New("不能添加用户到OU组织单元")
+		return tools.NewLdapI18nError("group.ou_cannot_add_user", nil)
 	}
 	newmr := ldap.NewModifyRequest(dn, nil)
 	newmr.Add("uniqueMember", []string{udn})

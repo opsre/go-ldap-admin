@@ -67,7 +67,7 @@ func (s ApiService) Update(api *model.Api) error {
 	var oldApi model.Api
 	err := common.DB.First(&oldApi, api.ID).Error
 	if err != nil {
-		return errors.New("根据接口ID获取接口信息失败")
+		return errors.New("failed to get API information by API ID")
 	}
 	err = common.DB.Model(api).Where("id = ?", api.ID).Updates(api).Error
 	if err != nil {
@@ -81,7 +81,7 @@ func (s ApiService) Update(api *model.Api) error {
 			// 先删除
 			isRemoved, _ := common.CasbinEnforcer.RemovePolicies(policies)
 			if !isRemoved {
-				return errors.New("更新权限接口失败")
+				return errors.New("failed to update permission API")
 			}
 			for _, policy := range policies {
 				policy[1] = api.Path
@@ -90,12 +90,12 @@ func (s ApiService) Update(api *model.Api) error {
 			// 新增
 			isAdded, _ := common.CasbinEnforcer.AddPolicies(policies)
 			if !isAdded {
-				return errors.New("更新权限接口失败")
+				return errors.New("failed to update permission API")
 			}
 			// 加载policy
 			err := common.CasbinEnforcer.LoadPolicy()
 			if err != nil {
-				return errors.New("更新权限接口成功，权限接口策略加载失败")
+				return errors.New("permission API updated, but failed to load permission API policy")
 			} else {
 				return err
 			}
@@ -124,7 +124,7 @@ func (s ApiService) Delete(ids []uint) error {
 		api := new(model.Api)
 		err := s.Find(tools.H{"id": id}, api)
 		if err != nil {
-			return fmt.Errorf("根据ID获取接口信息失败: %v", err)
+			return fmt.Errorf("failed to get API information by ID: %v", err)
 		}
 		apis = append(apis, *api)
 	}
@@ -137,14 +137,14 @@ func (s ApiService) Delete(ids []uint) error {
 			if len(policies) > 0 {
 				isRemoved, _ := common.CasbinEnforcer.RemovePolicies(policies)
 				if !isRemoved {
-					return errors.New("删除权限接口失败")
+					return errors.New("failed to delete permission API")
 				}
 			}
 		}
 		// 重新加载策略
 		err := common.CasbinEnforcer.LoadPolicy()
 		if err != nil {
-			return errors.New("删除权限接口成功，权限接口策略加载失败")
+			return errors.New("permission API deleted, but failed to load permission API policy")
 		} else {
 			return err
 		}

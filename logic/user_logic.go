@@ -9,6 +9,7 @@ import (
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
 	"github.com/eryajf/go-ldap-admin/public/common"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/ildap"
 	"github.com/eryajf/go-ldap-admin/service/isql"
@@ -28,16 +29,16 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	_ = c
 
 	if isql.User.Exist(tools.H{"username": r.Username}) {
-		return nil, tools.NewValidatorError(fmt.Errorf("用户名已存在,请勿重复添加"))
+		return nil, tools.NewValidatorI18nError("user.username_exists", nil)
 	}
 	if isql.User.Exist(tools.H{"mobile": r.Mobile}) {
-		return nil, tools.NewValidatorError(fmt.Errorf("手机号已存在,请勿重复添加"))
+		return nil, tools.NewValidatorI18nError("user.mobile_exists", nil)
 	}
 	if isql.User.Exist(tools.H{"job_number": r.JobNumber}) {
-		return nil, tools.NewValidatorError(fmt.Errorf("工号已存在,请勿重复添加"))
+		return nil, tools.NewValidatorI18nError("user.job_number_exists", nil)
 	}
 	if isql.User.Exist(tools.H{"mail": r.Mail}) {
-		return nil, tools.NewValidatorError(fmt.Errorf("邮箱已存在,请勿重复添加"))
+		return nil, tools.NewValidatorI18nError("user.mail_exists", nil)
 	}
 
 	// 密码通过RSA解密
@@ -45,11 +46,11 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	if r.Password != "" {
 		decodeData, err := tools.RSADecrypt([]byte(r.Password), config.Conf.System.RSAPrivateBytes)
 		if err != nil {
-			return nil, tools.NewValidatorError(fmt.Errorf("密码解密失败"))
+			return nil, tools.NewValidatorI18nError("user.password_decrypt_failed", nil)
 		}
 		r.Password = string(decodeData)
 		if len(r.Password) < 6 {
-			return nil, tools.NewValidatorError(fmt.Errorf("密码长度至少为6位"))
+			return nil, tools.NewValidatorI18nError("user.password_min_length", i18n.Args{"min": 6})
 		}
 	} else {
 		r.Password = config.Conf.Ldap.UserInitPassword
@@ -58,7 +59,7 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	// 当前登陆用户角色排序最小值（最高等级角色）以及当前登陆的用户
 	currentRoleSortMin, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
-		return nil, tools.NewValidatorError(fmt.Errorf("获取当前登陆用户角色排序最小值失败"))
+		return nil, tools.NewValidatorI18nError("user.current_min_role_sort_failed", nil)
 	}
 
 	// 根据角色id获取角色
@@ -68,7 +69,7 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 
 	roles, err := isql.Role.GetRolesByIds(r.RoleIds)
 	if err != nil {
-		return nil, tools.NewValidatorError(fmt.Errorf("根据角色ID获取角色信息失败"))
+		return nil, tools.NewValidatorI18nError("user.role_info_failed", nil)
 	}
 
 	var reqRoleSorts []int
@@ -82,7 +83,7 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	if currentRoleSortMin != 1 {
 		// 当前用户的角色排序最小值 需要小于 前端传来的角色排序最小值（用户不能创建比自己等级高的或者相同等级的用户）
 		if currentRoleSortMin >= reqRoleSortMin {
-			return nil, tools.NewValidatorError(fmt.Errorf("用户不能创建比自己等级高的或者相同等级的用户"))
+			return nil, tools.NewValidatorI18nError("user.cannot_create_higher_or_equal", nil)
 		}
 	}
 	user := model.User{
@@ -113,12 +114,12 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	// 获取用户将要添加的分组
 	groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
 	}
 
-	err = CommonAddUser(&user, groups)
+	err = CommonAddUser(&user, groups, i18n.LocaleFromContext(c))
 	if err != nil {
-		return nil, tools.NewOperationError(fmt.Errorf("%s", "添加用户失败"+err.Error()))
+		return nil, tools.NewOperationI18nError("user.create_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil, nil
 }
@@ -133,7 +134,7 @@ func (l UserLogic) List(c *gin.Context, req any) (data any, rspError any) {
 
 	users, err := isql.User.List(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取用户列表失败："+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.list_failed", i18n.Args{"error": err.Error()})
 	}
 
 	rets := make([]model.User, 0)
@@ -142,7 +143,7 @@ func (l UserLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	}
 	count, err := isql.User.ListCount(r)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取用户总数失败："+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.count_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return response.UserListRsp{
@@ -160,13 +161,13 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	_ = c
 
 	if !isql.User.Exist(tools.H{"id": r.ID}) {
-		return nil, tools.NewMySqlError(fmt.Errorf("该记录不存在"))
+		return nil, tools.NewMySqlI18nError("legacy.common.record_not_found", nil)
 	}
 
 	// 获取当前登陆用户
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前登陆用户失败"))
+		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
 	}
 
 	// 获取当前登陆用户角色ID集合
@@ -179,7 +180,7 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	var reqRoleSorts []int
 	roles, _ := isql.Role.GetRolesByIds(r.RoleIds)
 	if len(roles) == 0 {
-		return nil, tools.NewValidatorError(fmt.Errorf("根据角色ID获取角色信息失败"))
+		return nil, tools.NewValidatorI18nError("user.role_info_failed", nil)
 	}
 	for _, role := range roles {
 		reqRoleSorts = append(reqRoleSorts, int(role.Sort))
@@ -197,17 +198,17 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 			// 不能更改自己的角色
 			reqDiff, currentDiff := funk.Difference(reqRoleSorts, currentRoleSorts)
 			if len(reqDiff.([]int)) > 0 || len(currentDiff.([]int)) > 0 {
-				return nil, tools.NewValidatorError(fmt.Errorf("不能更改自己的角色"))
+				return nil, tools.NewValidatorI18nError("user.cannot_change_self_role", nil)
 			}
 		}
 
 		// 如果是更新别人，操作者不能更新比自己角色等级高的或者相同等级的用户
 		minRoleSorts, err := isql.User.GetUserMinRoleSortsByIds([]uint{uint(r.ID)}) // 根据userIdID获取用户角色排序最小值
 		if err != nil || len(minRoleSorts) == 0 {
-			return nil, tools.NewValidatorError(fmt.Errorf("根据用户ID获取用户角色排序最小值失败"))
+			return nil, tools.NewValidatorI18nError("user.min_role_sort_by_id_failed", nil)
 		}
 		if currentRoleSortMin >= minRoleSorts[0] || currentRoleSortMin >= reqRoleSortMin {
-			return nil, tools.NewValidatorError(fmt.Errorf("用户不能更新比自己角色等级高的或者相同等级的用户"))
+			return nil, tools.NewValidatorI18nError("user.cannot_update_higher_or_equal", nil)
 		}
 	}
 
@@ -256,7 +257,7 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	}
 
 	if err = CommonUpdateUser(oldData, &user, r.DepartmentId); err != nil {
-		return nil, tools.NewOperationError(fmt.Errorf("%s", "更新用户失败"+err.Error()))
+		return nil, tools.NewOperationI18nError("user.update_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -273,51 +274,51 @@ func (l UserLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	for _, id := range r.UserIds {
 		filter := tools.H{"id": int(id)}
 		if !isql.User.Exist(filter) {
-			return nil, tools.NewMySqlError(fmt.Errorf("有用户不存在"))
+			return nil, tools.NewMySqlI18nError("legacy.user.some_not_found", nil)
 		}
 	}
 
 	// 根据用户ID获取用户角色排序最小值
 	roleMinSortList, err := isql.User.GetUserMinRoleSortsByIds(r.UserIds)
 	if err != nil || len(roleMinSortList) == 0 {
-		return nil, tools.NewValidatorError(fmt.Errorf("根据用户ID获取用户角色排序最小值失败"))
+		return nil, tools.NewValidatorI18nError("user.min_role_sort_by_id_failed", nil)
 	}
 
 	// 获取当前登陆用户角色排序最小值（最高等级角色）以及当前用户
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
-		return nil, tools.NewValidatorError(fmt.Errorf("获取当前登陆用户角色排序最小值失败"))
+		return nil, tools.NewValidatorI18nError("user.current_min_role_sort_failed", nil)
 	}
 
 	// 不能删除自己
 	if funk.Contains(r.UserIds, ctxUser.ID) {
-		return nil, tools.NewValidatorError(fmt.Errorf("用户不能删除自己"))
+		return nil, tools.NewValidatorI18nError("user.cannot_delete_self", nil)
 	}
 
 	// 不能删除比自己(登陆用户)角色排序低(等级高)的用户
 	for _, sort := range roleMinSortList {
 		if int(minSort) > sort {
-			return nil, tools.NewValidatorError(fmt.Errorf("用户不能删除比自己角色等级高的用户"))
+			return nil, tools.NewValidatorI18nError("user.cannot_delete_higher", nil)
 		}
 	}
 
 	users, err := isql.User.GetUserByIds(r.UserIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取用户信息失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.info_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 先将用户从ldap中删除
 	for _, user := range users {
 		err := ildap.User.Delete(user.UserDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("%s", "在LDAP删除用户失败"+err.Error()))
+			return nil, tools.NewLdapI18nError("user.ldap_delete_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 
 	// 再将用户从MySQL中删除
 	err = isql.User.Delete(r.UserIds)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL删除用户失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.mysql_delete_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -334,39 +335,36 @@ func (l UserLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	// 密码通过RSA解密
 	decodeOldPassword, err := tools.RSADecrypt([]byte(r.OldPassword), config.Conf.System.RSAPrivateBytes)
 	if err != nil {
-		return nil, tools.NewValidatorError(fmt.Errorf("原密码解析失败"))
+		return nil, tools.NewValidatorI18nError("legacy.user.old_password_parse_failed", nil)
 	}
 	decodeNewPassword, err := tools.RSADecrypt([]byte(r.NewPassword), config.Conf.System.RSAPrivateBytes)
 	if err != nil {
-		return nil, tools.NewValidatorError(fmt.Errorf("新密码解析失败"))
+		return nil, tools.NewValidatorI18nError("legacy.user.new_password_parse_failed", nil)
 	}
 	r.OldPassword = string(decodeOldPassword)
 	r.NewPassword = string(decodeNewPassword)
 	// 获取当前用户
 	user, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取当前登陆用户失败"))
+		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
 	}
 	// 获取用户的真实正确密码
 	// correctPasswd := user.Password
 	// 判断前端请求的密码是否等于真实密码
 	// err = tools.ComparePasswd(correctPasswd, r.OldPassword)
-	// if err != nil {
-	// 	return nil, tools.NewValidatorError(fmt.Errorf("原密码错误"))
-	// }
 	if tools.NewParPasswd(user.Password) != r.OldPassword {
-		return nil, tools.NewValidatorError(fmt.Errorf("原密码错误"))
+		return nil, tools.NewValidatorI18nError("legacy.user.old_password_incorrect", nil)
 	}
 	// ldap更新密码时可以直接指定用户DN和新密码即可更改成功
 	err = ildap.User.ChangePwd(user.UserDN, "", r.NewPassword)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("%s", "在LDAP更新密码失败"+err.Error()))
+		return nil, tools.NewLdapI18nError("user.ldap_password_update_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 更新密码
 	err = isql.User.ChangePwd(user.Username, tools.NewGenPasswd(r.NewPassword))
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL更新密码失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.mysql_password_update_failed", i18n.Args{"error": err.Error()})
 	}
 
 	return nil, nil
@@ -382,14 +380,14 @@ func (l UserLogic) ResetPassword(c *gin.Context, req any) (data any, rspError an
 
 	// 检查用户是否存在
 	if !isql.User.Exist(tools.H{"username": r.Username}) {
-		return nil, tools.NewValidatorError(fmt.Errorf("用户不存在"))
+		return nil, tools.NewValidatorI18nError("user.not_found", nil)
 	}
 
 	// 获取用户信息
 	user := new(model.User)
 	err := isql.User.Find(tools.H{"username": r.Username}, user)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("获取用户信息失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("user.info_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 生成随机密码
@@ -398,17 +396,17 @@ func (l UserLogic) ResetPassword(c *gin.Context, req any) (data any, rspError an
 	// 在LDAP中更新密码
 	err = ildap.User.ChangePwd(user.UserDN, "", newPassword)
 	if err != nil {
-		return nil, tools.NewLdapError(fmt.Errorf("在LDAP更新密码失败: %s", err.Error()))
+		return nil, tools.NewLdapI18nError("user.ldap_password_update_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 在MySQL中更新密码
 	err = isql.User.ChangePwd(user.Username, tools.NewGenPasswd(newPassword))
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("在MySQL更新密码失败: %s", err.Error()))
+		return nil, tools.NewMySqlI18nError("user.mysql_password_update_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 发送密码重置通知邮件
-	if err := tools.SendPasswordResetNotification(user.Username, user.Nickname, user.Mail, newPassword); err != nil {
+	if err := tools.SendPasswordResetNotificationI18n(user.Username, user.Nickname, user.Mail, newPassword, i18n.LocaleFromContext(c)); err != nil {
 		common.Log.Warnf("发送密码重置通知邮件失败，用户: %s, 邮箱: %s, 错误: %v", user.Username, user.Mail, err)
 	}
 
@@ -425,46 +423,46 @@ func (l UserLogic) ChangeUserStatus(c *gin.Context, req any) (data any, rspError
 	// 校验工作
 	filter := tools.H{"id": r.ID}
 	if !isql.User.Exist(filter) {
-		return nil, tools.NewValidatorError(fmt.Errorf("该用户不存在"))
+		return nil, tools.NewValidatorI18nError("legacy.user.not_found", nil)
 	}
 	user := new(model.User)
 	err := isql.User.Find(filter, user)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL查询用户失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.mysql_query_failed", i18n.Args{"error": err.Error()})
 	}
 
 	if r.Status == 1 && r.Status == user.Status {
-		return nil, tools.NewValidatorError(fmt.Errorf("用户已经是在职状态"))
+		return nil, tools.NewValidatorI18nError("legacy.user.already_active", nil)
 	}
 	if r.Status == 2 && r.Status == user.Status {
-		return nil, tools.NewValidatorError(fmt.Errorf("用户已经是离职状态"))
+		return nil, tools.NewValidatorI18nError("legacy.user.already_inactive", nil)
 	}
 
 	// 获取当前登录用户，只有管理员才能够将用户状态改变
 	// 获取当前登陆用户角色排序最小值（最高等级角色）以及当前用户
 	minSort, _, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
-		return nil, tools.NewValidatorError(fmt.Errorf("获取当前登陆用户角色排序最小值失败"))
+		return nil, tools.NewValidatorI18nError("user.current_min_role_sort_failed", nil)
 	}
 
 	if int(minSort) != 1 {
-		return nil, tools.NewValidatorError(fmt.Errorf("只有管理员才能更改用户状态"))
+		return nil, tools.NewValidatorI18nError("legacy.user.only_admin_change_status", nil)
 	}
 
 	if r.Status == 2 {
 		err = ildap.User.Delete(user.UserDN)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("%s", "在LDAP删除用户失败"+err.Error()))
+			return nil, tools.NewLdapI18nError("user.ldap_delete_failed", i18n.Args{"error": err.Error()})
 		}
 	} else {
 		err = ildap.User.Add(user)
 		if err != nil {
-			return nil, tools.NewLdapError(fmt.Errorf("%s", "在LDAP添加用户失败"+err.Error()))
+			return nil, tools.NewLdapI18nError("user.ldap_add_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 	err = isql.User.ChangeStatus(int(r.ID), int(r.Status))
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "在MySQL更新用户状态失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.mysql_status_update_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil, nil
 }
@@ -481,7 +479,7 @@ func (l UserLogic) GetUserInfo(c *gin.Context, req any) (data any, rspError any)
 
 	user, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
-		return nil, tools.NewMySqlError(fmt.Errorf("%s", "获取当前用户信息失败: "+err.Error()))
+		return nil, tools.NewMySqlI18nError("user.current_info_failed", i18n.Args{"error": err.Error()})
 	}
 	return user, nil
 }

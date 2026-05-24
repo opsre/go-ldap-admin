@@ -7,8 +7,11 @@ import (
 type Group struct {
 	gorm.Model
 	GroupName          string   `gorm:"type:varchar(128);comment:'分组名称'" json:"groupName"`
+	GroupNameDisplay   string   `gorm:"-" json:"groupNameDisplay,omitempty"`
 	Remark             string   `gorm:"type:varchar(128);comment:'分组中文说明'" json:"remark"`
+	RemarkDisplay      string   `gorm:"-" json:"remarkDisplay,omitempty"`
 	Creator            string   `gorm:"type:varchar(20);comment:'创建人'" json:"creator"`
+	CreatorDisplay     string   `gorm:"-" json:"creatorDisplay,omitempty"`
 	GroupType          string   `gorm:"type:varchar(20);comment:'分组类型：cn、ou'" json:"groupType"`
 	Users              []*User  `gorm:"many2many:group_users" json:"users"`
 	ParentId           uint     `gorm:"default:0;comment:'父组编号(编号为0时表示根组)'" json:"parentId"`

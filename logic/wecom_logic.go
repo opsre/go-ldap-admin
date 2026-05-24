@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -9,6 +8,7 @@ import (
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/public/client/wechat"
 	"github.com/eryajf/go-ldap-admin/public/common"
+	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/ildap"
 	"github.com/eryajf/go-ldap-admin/service/isql"
@@ -25,18 +25,18 @@ func (d *WeComLogic) SyncWeComDepts(c *gin.Context, req any) (data any, rspError
 	if err != nil {
 		errMsg := fmt.Sprintf("获取企业微信部门列表失败：%s", err.Error())
 		common.Log.Errorf("SyncWeComDepts: %s", errMsg)
-		return nil, tools.NewOperationError(errors.New(errMsg))
+		return nil, tools.NewOperationI18nError("sync.dept_list_failed", i18n.Args{"provider": "WeCom", "error": err.Error()})
 	}
 	depts, err := ConvertDeptData(config.Conf.WeCom.Flag, deptSource)
 	if err != nil {
 		errMsg := fmt.Sprintf("转换企业微信部门数据失败：%s", err.Error())
 		common.Log.Errorf("SyncWeComDepts: %s", errMsg)
-		return nil, tools.NewOperationError(errors.New(errMsg))
+		return nil, tools.NewOperationI18nError("sync.dept_convert_failed", i18n.Args{"provider": "WeCom", "error": err.Error()})
 	}
 	if len(depts) == 0 {
 		errMsg := "获取到的部门数量为0"
 		common.Log.Errorf("SyncWeComDepts: %s", errMsg)
-		return nil, tools.NewOperationError(errors.New(errMsg))
+		return nil, tools.NewOperationI18nError("sync.empty_depts", nil)
 	}
 
 	// 2.将远程数据转换成树
@@ -61,14 +61,14 @@ func (d WeComLogic) addDepts(depts []*model.Group) error {
 		if err != nil {
 			errMsg := fmt.Sprintf("DsyncWeComDepts添加部门[%s]失败: %s", dept.GroupName, err.Error())
 			common.Log.Errorf("%s", errMsg)
-			return tools.NewOperationError(errors.New(errMsg))
+			return tools.NewOperationI18nError("sync.dept_add_failed", i18n.Args{"dept": dept.GroupName, "error": err.Error()})
 		}
 		if len(dept.Children) != 0 {
 			err = d.addDepts(dept.Children)
 			if err != nil {
 				errMsg := fmt.Sprintf("DsyncWeComDepts添加子部门失败: %s", err.Error())
 				common.Log.Errorf("%s", errMsg)
-				return tools.NewOperationError(errors.New(errMsg))
+				return tools.NewOperationI18nError("sync.child_dept_add_failed", i18n.Args{"error": err.Error()})
 			}
 		}
 	}
@@ -81,7 +81,7 @@ func (d WeComLogic) AddDepts(group *model.Group) error {
 	parentGroup := new(model.Group)
 	err := isql.Group.Find(tools.H{"source_dept_id": group.SourceDeptParentId}, parentGroup)
 	if err != nil {
-		return tools.NewMySqlError(fmt.Errorf("查询父级部门失败：%s", err.Error()))
+		return tools.NewMySqlI18nError("sync.parent_dept_query_failed", i18n.Args{"error": err.Error()})
 	}
 
 	// 此时的 group 已经附带了Build后动态关联好的字段，接下来将一些确定性的其他字段值添加上，就可以创建这个分组了
@@ -94,7 +94,7 @@ func (d WeComLogic) AddDepts(group *model.Group) error {
 	if !isql.Group.Exist(tools.H{"group_dn": group.GroupDN}) {
 		err = CommonAddGroup(group)
 		if err != nil {
-			return tools.NewOperationError(fmt.Errorf("添加部门: %s, 失败: %s", group.GroupName, err.Error()))
+			return tools.NewOperationI18nError("sync.add_dept_failed", i18n.Args{"dept": group.GroupName, "error": err.Error()})
 		}
 	}
 	return nil
@@ -107,18 +107,18 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 	if err != nil {
 		errMsg := fmt.Sprintf("获取企业微信用户列表失败：%s", err.Error())
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
-		return nil, tools.NewOperationError(errors.New(errMsg))
+		return nil, tools.NewOperationI18nError("sync.user_list_failed", i18n.Args{"provider": "WeCom", "error": err.Error()})
 	}
 	staffs, err := ConvertUserData(config.Conf.WeCom.Flag, staffSource)
 	if err != nil {
 		errMsg := fmt.Sprintf("转换企业微信用户数据失败：%s", err.Error())
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
-		return nil, tools.NewOperationError(errors.New(errMsg))
+		return nil, tools.NewOperationI18nError("sync.user_convert_failed", i18n.Args{"provider": "WeCom", "error": err.Error()})
 	}
 	if len(staffs) == 0 {
 		errMsg := "获取到的用户数量为0"
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
-		return nil, tools.NewOperationError(errors.New(errMsg))
+		return nil, tools.NewOperationI18nError("sync.empty_users", nil)
 	}
 	// 2.遍历用户，开始写入
 	for i, staff := range staffs {
@@ -127,7 +127,7 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 		if err != nil {
 			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Username, err.Error())
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
-			return nil, tools.NewOperationError(errors.New(errMsg))
+			return nil, tools.NewOperationI18nError("sync.user_write_failed", i18n.Args{"username": staff.Username, "error": err.Error()})
 		}
 		common.Log.Infof("SyncWeComUsers: 成功同步用户[%s] (%d/%d)", staff.Username, i+1, len(staffs))
 	}
@@ -140,7 +140,7 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 	if err != nil {
 		errMsg := fmt.Sprintf("获取MySQL用户列表失败：%s", err.Error())
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
-		return nil, tools.NewMySqlError(errors.New(errMsg))
+		return nil, tools.NewMySqlI18nError("sync.mysql_user_list_failed", i18n.Args{"error": err.Error()})
 	}
 	for _, user := range users {
 		if user.Source != config.Conf.WeCom.Flag {
@@ -165,21 +165,21 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 		if err != nil {
 			errMsg := fmt.Sprintf("在MySQL查询离职用户[%s]失败: %s", userTmp.Username, err.Error())
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
-			return nil, tools.NewMySqlError(errors.New(errMsg))
+			return nil, tools.NewMySqlI18nError("sync.leave_user_query_failed", i18n.Args{"username": userTmp.Username, "error": err.Error()})
 		}
 		// 先从ldap删除用户
 		err = ildap.User.Delete(user.UserDN)
 		if err != nil {
 			errMsg := fmt.Sprintf("在LDAP删除离职用户[%s]失败: %s", user.Username, err.Error())
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
-			return nil, tools.NewLdapError(errors.New(errMsg))
+			return nil, tools.NewLdapI18nError("sync.leave_user_ldap_delete_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 		}
 		// 然后更新MySQL中用户状态
 		err = isql.User.ChangeStatus(int(user.ID), 2)
 		if err != nil {
 			errMsg := fmt.Sprintf("在MySQL更新离职用户[%s]状态失败: %s", user.Username, err.Error())
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
-			return nil, tools.NewMySqlError(errors.New(errMsg))
+			return nil, tools.NewMySqlI18nError("sync.leave_user_status_update_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 		}
 		processedCount++
 		common.Log.Infof("SyncWeComUsers: 成功处理离职用户[%s]", user.Username)
@@ -194,7 +194,7 @@ func (d WeComLogic) AddUsers(user *model.User) error {
 	// 根据角色id获取角色
 	roles, err := isql.Role.GetRolesByIds([]uint{2})
 	if err != nil {
-		return tools.NewValidatorError(fmt.Errorf("根据角色ID获取角色信息失败:%s", err.Error()))
+		return tools.NewValidatorI18nError("sync.role_info_failed", i18n.Args{"error": err.Error()})
 	}
 	user.Creator = "system"
 	user.Roles = roles
@@ -207,7 +207,7 @@ func (d WeComLogic) AddUsers(user *model.User) error {
 		// 获取用户将要添加的分组
 		groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
+			return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
 		}
 		var deptTmp string
 		for _, group := range groups {
@@ -218,7 +218,7 @@ func (d WeComLogic) AddUsers(user *model.User) error {
 		// 创建用户
 		err = CommonAddUser(user, groups)
 		if err != nil {
-			return tools.NewOperationError(fmt.Errorf("添加用户: %s, 失败: %s", user.Username, err.Error()))
+			return tools.NewOperationI18nError("sync.add_user_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 		}
 	} else {
 		// 此处逻辑未经实际验证，如在使用中有问题，请反馈
@@ -232,7 +232,7 @@ func (d WeComLogic) AddUsers(user *model.User) error {
 			// 获取用户将要添加的分组
 			groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 			if err != nil {
-				return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
+				return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
 			}
 			var deptTmp string
 			for _, group := range groups {
