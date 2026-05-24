@@ -76,9 +76,9 @@ func (l RoleLogic) List(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewMySqlI18nError("role.count_failed", nil)
 	}
 
+	localizeRoles(c, roles)
 	rets := make([]model.Role, 0)
 	for _, role := range roles {
-		localizeRole(c, role)
 		rets = append(rets, *role)
 	}
 
