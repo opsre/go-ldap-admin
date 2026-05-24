@@ -1,7 +1,7 @@
 <div align="center">
 <h1>Go Ldap Admin</h1>
 
-[简体中文](./README.md) | **English**
+[简体中文](../README.md) | **English**
 
 [![Auth](https://img.shields.io/badge/Auth-eryajf-ff69b4)](https://github.com/eryajf)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/eryajf-world/go-ldap-admin)](https://github.com/eryajf/go-ldap-admin)
