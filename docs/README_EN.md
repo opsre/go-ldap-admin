@@ -14,12 +14,12 @@
 
 <p>🌉 An OpenLDAP administration platform built with Go + Vue 🌉</p>
 
-<img src="https://t.eryajf.net/imgs/2026/05/1779616913241.gif" width="800"  height="3">
+<img src="./docs/img/00.webp" width="800"  height="3">
 </div><br>
 
 <p align="center">
   <a href="" rel="noopener">
- <img src="https://t.eryajf.net/imgs/2026/05/1779616857104.webp" alt="Project logo"></a>
+ <img src="./docs/img/01.webp" alt="Project logo"></a>
 </p>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -48,7 +48,7 @@
 
 ## ❤️ Sponsors
 
-[![](https://t.eryajf.net/imgs/2026/05/1779617466378.webp)](https://aiserve.top/)
+[![](./docs/img/12.webp)](https://aiserve.top/)
 
 - An API relay platform for developers and teams that need API access.
 - An AI mirror platform for individuals, operations teams, and content teams that want to use AI directly from the browser.
@@ -66,12 +66,12 @@ The online demo is available at:
 
 **Feature overview:**
 
-|    ![Login page](https://t.eryajf.net/imgs/2026/05/1779616936508.webp)    | ![Home](https://t.eryajf.net/imgs/2026/05/1779616959188.webp)      |
+|    ![Login page](./docs/img/02.webp)    | ![Home](./docs/img/03.webp)      |
 | :----------------------------------------------------------------------------------: | --------------------------------------------------------------------------------- |
-|   ![User management](https://t.eryajf.net/imgs/2026/05/1779616980877.webp)   | ![Group management](https://t.eryajf.net/imgs/2026/05/1779616997346.webp)  |
-| ![Field relation management](https://t.eryajf.net/imgs/2026/05/1779617008861.webp) | ![Menu management](https://t.eryajf.net/imgs/2026/05/1779617019378.webp)  |
-|   ![API management](https://t.eryajf.net/imgs/2026/05/1779617030695.webp)   | ![Operation logs](https://t.eryajf.net/imgs/2026/05/1779617041356.webp)  |
-|  ![Swagger](https://t.eryajf.net/imgs/2026/05/1779617051795.webp)   | ![Swagger](https://t.eryajf.net/imgs/2026/05/1779617061638.webp) |
+|   ![User management](./docs/img/04.webp)   | ![Group management](./docs/img/05.webp)  |
+| ![Field relation management](./docs/img/06.webp) | ![Menu management](./docs/img/07.webp)  |
+|   ![API management](./docs/img/08.webp)   | ![Operation logs](./docs/img/09.webp)  |
+|  ![Swagger](./docs/img/10.webp)   | ![Swagger](./docs/img/11.webp) |
 
 ## 👨‍💻 Project Repositories
 

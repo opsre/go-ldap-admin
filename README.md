@@ -14,12 +14,12 @@
 
 <p> 🌉 基于Go+Vue实现的openLDAP后台管理项目 🌉</p>
 
-<img src="https://t.eryajf.net/imgs/2026/05/1779616913241.gif" width="800"  height="3">
+<img src="./docs/img/00.webp" width="800"  height="3">
 </div><br>
 
 <p align="center">
   <a href="" rel="noopener">
- <img src="https://t.eryajf.net/imgs/2026/05/1779616857104.webp" alt="Project logo"></a>
+ <img src="./docs/img/01.webp" alt="Project logo"></a>
 </p>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -48,7 +48,7 @@
 
 ## ❤️ 赞助商
 
-[![](https://t.eryajf.net/imgs/2026/05/1779617466378.webp)](https://aiserve.top/)
+[![](./docs/img/12.webp)](https://aiserve.top/)
 
 
 - 是 API 中转站: 适合开发者和有接口接入需求的团队。
@@ -68,12 +68,12 @@
 
 **页面功能概览：**
 
-|    ![登录页](https://t.eryajf.net/imgs/2026/05/1779616936508.webp)    | ![首页](https://t.eryajf.net/imgs/2026/05/1779616959188.webp)      |
+|    ![登录页](./docs/img/02.webp)    | ![首页](./docs/img/03.webp)      |
 | :----------------------------------------------------------------------------------: | --------------------------------------------------------------------------------- |
-|   ![用户管理](https://t.eryajf.net/imgs/2026/05/1779616980877.webp)   | ![分组管理](https://t.eryajf.net/imgs/2026/05/1779616997346.webp)  |
-| ![字段关系管理](https://t.eryajf.net/imgs/2026/05/1779617008861.webp) | ![菜单管理](https://t.eryajf.net/imgs/2026/05/1779617019378.webp)  |
-|   ![接口管理](https://t.eryajf.net/imgs/2026/05/1779617030695.webp)   | ![操作日志](https://t.eryajf.net/imgs/2026/05/1779617041356.webp)  |
-|  ![swag](https://t.eryajf.net/imgs/2026/05/1779617051795.webp)   | ![swag](https://t.eryajf.net/imgs/2026/05/1779617061638.webp) |
+|   ![用户管理](./docs/img/04.webp)   | ![分组管理](./docs/img/05.webp)  |
+| ![字段关系管理](./docs/img/06.webp) | ![菜单管理](./docs/img/07.webp)  |
+|   ![接口管理](./docs/img/08.webp)   | ![操作日志](./docs/img/09.webp)  |
+|  ![swag](./docs/img/10.webp)   | ![swag](./docs/img/11.webp) |
 
 ## 👨‍💻 项目地址
 
