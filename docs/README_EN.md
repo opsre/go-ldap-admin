@@ -48,7 +48,7 @@
 
 ## ❤️ Sponsors
 
-[![](https://wsrv.nl/?url=https://raw.githubusercontent.com/eryajf/tu/refs/heads/main/img/image_20260422_094140.png)](https://aiserve.top/)
+[![](https://t.eryajf.net/imgs/2026/05/1779617466378.webp)](https://aiserve.top/)
 
 - An API relay platform for developers and teams that need API access.
 - An AI mirror platform for individuals, operations teams, and content teams that want to use AI directly from the browser.

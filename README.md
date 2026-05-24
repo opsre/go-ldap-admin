@@ -48,7 +48,7 @@
 
 ## ❤️ 赞助商
 
-[![](https://wsrv.nl/?url=https://raw.githubusercontent.com/eryajf/tu/refs/heads/main/img/image_20260422_094140.png)](https://aiserve.top/)
+[![](https://t.eryajf.net/imgs/2026/05/1779617466378.webp)](https://aiserve.top/)
 
 
 - 是 API 中转站: 适合开发者和有接口接入需求的团队。
