@@ -1,6 +1,8 @@
 <div align="center">
 <h1>Go Ldap Admin</h1>
 
+**简体中文** | [English](./README_EN.md)
+
 [![Auth](https://img.shields.io/badge/Auth-eryajf-ff69b4)](https://github.com/eryajf)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/eryajf-world/go-ldap-admin)](https://github.com/eryajf/go-ldap-admin)
 [![Gin Version](https://img.shields.io/badge/Gin-1.6.3-brightgreen)](https://github.com/eryajf/go-ldap-admin)
@@ -12,12 +14,12 @@
 
 <p> 🌉 基于Go+Vue实现的openLDAP后台管理项目 🌉</p>
 
-<img src="https://cdn.jsdelivr.net/gh/eryajf/tu@main/img/image_20240420_214408.gif" width="800"  height="3">
+<img src="https://t.eryajf.net/imgs/2026/05/1779616913241.gif" width="800"  height="3">
 </div><br>
 
 <p align="center">
   <a href="" rel="noopener">
- <img src="https://cdn.jsdelivr.net/gh/eryajf/tu/img/image_20220614_131521.jpg" alt="Project logo"></a>
+ <img src="https://t.eryajf.net/imgs/2026/05/1779616857104.webp" alt="Project logo"></a>
 </p>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -66,12 +68,12 @@
 
 **页面功能概览：**
 
-|    ![登录页](https://cdn.jsdelivr.net/gh/eryajf/tu/img/image_20220724_165411.png)    | ![首页](https://cdn.jsdelivr.net/gh/eryajf/tu/img/image_20220724_165545.png)      |
+|    ![登录页](https://t.eryajf.net/imgs/2026/05/1779616936508.webp)    | ![首页](https://t.eryajf.net/imgs/2026/05/1779616959188.webp)      |
 | :----------------------------------------------------------------------------------: | --------------------------------------------------------------------------------- |
-|   ![用户管理](https://cdn.jsdelivr.net/gh/eryajf/tu/img/image_20220724_165623.png)   | ![分组管理](https://cdn.jsdelivr.net/gh/eryajf/tu/img/image_20220724_165701.png)  |
-| ![字段关系管理](https://cdn.jsdelivr.net/gh/eryajf/tu/img/image_20220724_165853.png) | ![菜单管理](https://cdn.jsdelivr.net/gh/eryajf/tu/img/image_20220724_165954.png)  |
-|   ![接口管理](https://cdn.jsdelivr.net/gh/eryajf/tu/img/image_20220724_170015.png)   | ![操作日志](https://cdn.jsdelivr.net/gh/eryajf/tu/img/image_20220724_170035.png)  |
-|  ![swag](https://cdn.jsdelivr.net/gh/eryajf/tu@main/img/image_20240521_213841.png)   | ![swag](https://cdn.jsdelivr.net/gh/eryajf/tu@main/img/image_20240521_214025.png) |
+|   ![用户管理](https://t.eryajf.net/imgs/2026/05/1779616980877.webp)   | ![分组管理](https://t.eryajf.net/imgs/2026/05/1779616997346.webp)  |
+| ![字段关系管理](https://t.eryajf.net/imgs/2026/05/1779617008861.webp) | ![菜单管理](https://t.eryajf.net/imgs/2026/05/1779617019378.webp)  |
+|   ![接口管理](https://t.eryajf.net/imgs/2026/05/1779617030695.webp)   | ![操作日志](https://t.eryajf.net/imgs/2026/05/1779617041356.webp)  |
+|  ![swag](https://t.eryajf.net/imgs/2026/05/1779617051795.webp)   | ![swag](https://t.eryajf.net/imgs/2026/05/1779617061638.webp) |
 
 ## 👨‍💻 项目地址
 
