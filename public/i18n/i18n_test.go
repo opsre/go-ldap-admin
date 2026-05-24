@@ -1,6 +1,9 @@
 package i18n
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestNormalizeLocale(t *testing.T) {
 	SetSupportedLocales([]string{"zh-CN", "en-US", "ja-JP", "es-ES", "ko-KR"}, "zh-CN")
@@ -76,5 +79,27 @@ func TestEmailTemplatesLoadForAllLocales(t *testing.T) {
 				t.Fatalf("%s %s = %q", locale, key, got)
 			}
 		}
+	}
+}
+
+func TestInitLoadsLocalesWhenWorkingDirectoryHasNoLocaleFiles(t *testing.T) {
+	originalDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		if err := os.Chdir(originalDir); err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	if err := os.Chdir(t.TempDir()); err != nil {
+		t.Fatal(err)
+	}
+	if err := Init("zh-CN", []string{"zh-CN"}); err != nil {
+		t.Fatal(err)
+	}
+	if got := T("zh-CN", "common.success", nil); got != "成功" {
+		t.Fatalf("T common.success = %q, want 成功", got)
 	}
 }

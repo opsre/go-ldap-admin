@@ -133,6 +133,16 @@ configs:
         fill-interval: 50
         # 桶容量
         capacity: 200
+      i18n:
+        # 默认语言
+        default-locale: zh-CN
+        # 支持语言列表
+        supported-locales:
+          - zh-CN
+          - en-US
+          - ja-JP
+          - es-ES
+          - ko-KR
       # email configuration
       email:
         port: '465'

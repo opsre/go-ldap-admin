@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 
+	localeFiles "github.com/eryajf/go-ldap-admin/locales"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
 )
@@ -62,7 +63,7 @@ func readLocaleFile(locale string) ([]byte, error) {
 		}
 		dir = parent
 	}
-	return nil, os.ErrNotExist
+	return localeFiles.Files.ReadFile(locale + ".yaml")
 }
 
 func SetSupportedLocales(locales []string, defaultLoc string) {
