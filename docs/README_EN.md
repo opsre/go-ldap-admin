@@ -24,10 +24,10 @@
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
+**目录**
 
-- [ℹ️ Introduction](#%EF%B8%8F-introduction)
-- [❤️ Sponsors](#%EF%B8%8F-sponsors)
+- [ℹ️ Introduction](#-introduction)
+- [❤️ Sponsors](#-sponsors)
 - [🏊 Online Demo](#-online-demo)
 - [👨‍💻 Project Repositories](#-project-repositories)
 - [🔗 Documentation Links](#-documentation-links)
