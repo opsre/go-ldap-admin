@@ -10,6 +10,7 @@ import (
 	"github.com/eryajf/go-ldap-admin/model"
 	"github.com/eryajf/go-ldap-admin/model/request"
 	"github.com/eryajf/go-ldap-admin/model/response"
+	"github.com/eryajf/go-ldap-admin/public/common"
 	"github.com/eryajf/go-ldap-admin/public/i18n"
 	"github.com/eryajf/go-ldap-admin/public/tools"
 	"github.com/eryajf/go-ldap-admin/service/ildap"
@@ -301,6 +302,10 @@ func (l GroupLogic) updataUser(oldUser, newUser *model.User) error {
 		return tools.NewLdapI18nError("group.ldap_user_update_failed", i18n.Args{"error": err.Error()})
 	}
 	if err := isql.User.Update(newUser); err != nil {
+		// MySQL更新失败时，尽力将LDAP恢复为原值，避免两边数据不一致
+		if rbErr := ildap.User.Update(oldUser.Username, oldUser); rbErr != nil {
+			common.Log.Errorf("回滚LDAP用户[%s]的部门信息失败: %s", oldUser.Username, rbErr.Error())
+		}
 		return tools.NewMySqlI18nError("group.mysql_user_update_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil
