@@ -176,6 +176,7 @@ group:
   ldap_add_user_failed: "LDAPでのグループへのユーザー追加に失敗しました: {error}"
   user_department_failed: "ユーザー部署データの処理に失敗しました: {error}"
   mysql_user_update_failed: "MySQLでのユーザー更新に失敗しました: {error}"
+  ldap_user_update_failed: "LDAPでのユーザー更新に失敗しました: {error}"
   ldap_remove_user_failed: "LDAPからのユーザー削除に失敗しました: {error}"
   mysql_remove_user_failed: "MySQLからのユーザー削除に失敗しました: {error}"
 field_relation:

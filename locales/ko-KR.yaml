@@ -176,6 +176,7 @@ group:
   ldap_add_user_failed: "LDAP 그룹에 사용자 추가 실패: {error}"
   user_department_failed: "사용자의 부서 데이터 처리 실패: {error}"
   mysql_user_update_failed: "MySQL 사용자 업데이트 실패: {error}"
+  ldap_user_update_failed: "LDAP 사용자 업데이트 실패: {error}"
   ldap_remove_user_failed: "LDAP에서 사용자 제거 실패: {error}"
   mysql_remove_user_failed: "MySQL에서 사용자 제거 실패: {error}"
 field_relation:

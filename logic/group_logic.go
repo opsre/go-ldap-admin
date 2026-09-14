@@ -281,11 +281,11 @@ func (l GroupLogic) AddUser(c *gin.Context, req any) (data any, rspError any) {
 		if err != nil {
 			return nil, tools.NewMySqlError(err)
 		}
-		newData := oldData
+		newData := *oldData
 		// 添加新增的分组ID与部门
 		newData.DepartmentId = oldData.DepartmentId + "," + strconv.Itoa(int(r.GroupID))
 		newData.Departments = oldData.Departments + "," + group.GroupName
-		err = l.updataUser(newData)
+		err = l.updataUser(oldData, &newData)
 		if err != nil {
 			return nil, tools.NewOperationI18nError("group.user_department_failed", i18n.Args{"error": err.Error()})
 		}
@@ -294,9 +294,13 @@ func (l GroupLogic) AddUser(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-func (l GroupLogic) updataUser(newUser *model.User) error {
-	err := isql.User.Update(newUser)
-	if err != nil {
+// updataUser 更新用户的部门信息，用户的部门信息在MySQL与LDAP中都有存储，需要同时更新
+func (l GroupLogic) updataUser(oldUser, newUser *model.User) error {
+	// 用户在LDAP中的businessCategory属性来源于部门信息，因此这里需要同步更新LDAP
+	if err := ildap.User.Update(oldUser.Username, newUser); err != nil {
+		return tools.NewLdapI18nError("group.ldap_user_update_failed", i18n.Args{"error": err.Error()})
+	}
+	if err := isql.User.Update(newUser); err != nil {
 		return tools.NewMySqlI18nError("group.mysql_user_update_failed", i18n.Args{"error": err.Error()})
 	}
 	return nil
@@ -351,7 +355,7 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any)
 		if err != nil {
 			return nil, tools.NewMySqlError(err)
 		}
-		newData := oldData
+		newData := *oldData
 
 		var newDepts []string
 		var newDeptIds []string
@@ -370,7 +374,7 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any)
 
 		newData.Departments = strings.Join(newDepts, ",")
 		newData.DepartmentId = strings.Join(newDeptIds, ",")
-		err = l.updataUser(newData)
+		err = l.updataUser(oldData, &newData)
 		if err != nil {
 			return nil, tools.NewOperationI18nError("group.user_department_failed", i18n.Args{"error": err.Error()})
 		}
