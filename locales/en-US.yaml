@@ -176,6 +176,7 @@ group:
   ldap_add_user_failed: "failed to add user to group in LDAP: {error}"
   user_department_failed: "failed to process user's department data: {error}"
   mysql_user_update_failed: "failed to update user in MySQL: {error}"
+  ldap_user_update_failed: "failed to update user in LDAP: {error}"
   ldap_remove_user_failed: "failed to remove user from LDAP: {error}"
   mysql_remove_user_failed: "failed to remove user from MySQL: {error}"
 field_relation:

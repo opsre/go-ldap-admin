@@ -176,6 +176,7 @@ group:
   ldap_add_user_failed: "向LDAP添加用户到分组失败{error}"
   user_department_failed: "处理用户的部门数据失败:{error}"
   mysql_user_update_failed: "在MySQL更新用户失败：{error}"
+  ldap_user_update_failed: "向LDAP更新用户失败：{error}"
   ldap_remove_user_failed: "将用户从ldap移除失败{error}"
   mysql_remove_user_failed: "将用户从MySQL移除失败: {error}"
 field_relation:

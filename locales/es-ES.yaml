@@ -176,6 +176,7 @@ group:
   ldap_add_user_failed: "no se pudo agregar el usuario al grupo en LDAP: {error}"
   user_department_failed: "no se pudo procesar los datos de departamento del usuario: {error}"
   mysql_user_update_failed: "no se pudo actualizar el usuario en MySQL: {error}"
+  ldap_user_update_failed: "no se pudo actualizar el usuario en LDAP: {error}"
   ldap_remove_user_failed: "no se pudo quitar el usuario de LDAP: {error}"
   mysql_remove_user_failed: "no se pudo quitar el usuario de MySQL: {error}"
 field_relation:
