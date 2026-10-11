@@ -84,7 +84,7 @@ i18n:
 email:
   port: '465'
   user: 'eryajf@163.com'
-  from: 'go-ldap-admin后台'
+  from: 'go-ldap-admin'
   host: 'smtp.163.com'
   # is-ssl: true
   pass: 'your password'
