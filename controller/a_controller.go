@@ -31,7 +31,7 @@ func Run(c *gin.Context, req any, fn func() (any, any)) {
 		tools.Err(c, tools.NewValidatorError(err), nil)
 		return
 	}
-	// 校验
+	// Validate
 	err = common.Validate.Struct(req)
 	if err != nil {
 		trans := common.TranslatorForLocale(i18n.LocaleFromContext(c))
@@ -49,14 +49,14 @@ func Run(c *gin.Context, req any, fn func() (any, any)) {
 }
 
 // Demo
-// @Summary 健康检测
-// @Tags 基础管理
+// @Summary Health check
+// @Tags Basic management
 // @Produce json
-// @Description 健康检测
+// @Description Health check
 // @Success 200 {object} response.ResponseBody
 // @router /base/ping [get]
 func Demo(c *gin.Context) {
-	// 健康检测
+	// Health check
 	CodeDebug()
 	c.JSON(http.StatusOK, tools.H{"code": 200, "msg": "ok", "data": "pong"})
 }

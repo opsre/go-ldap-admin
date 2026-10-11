@@ -36,21 +36,21 @@ var (
 	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
-// CommonAddGroup 标准创建分组
+// CommonAddGroup creates a group using the standard flow
 func CommonAddGroup(group *model.Group) error {
-	// 先在ldap中创建组
+	// First create the group in LDAP
 	err := ildap.Group.Add(group)
 	if err != nil {
 		return err
 	}
 
-	// 然后在数据库中创建组
+	// Then create the group in the database
 	err = isql.Group.Add(group)
 	if err != nil {
 		return err
 	}
 
-	// 默认创建分组之后，需要将admin添加到分组中
+	// By default, add admin to the group after creating it
 	adminInfo := new(model.User)
 	err = isql.User.Find(tools.H{"id": 1}, adminInfo)
 	if err != nil {
@@ -65,9 +65,9 @@ func CommonAddGroup(group *model.Group) error {
 	return nil
 }
 
-// CommonUpdateGroup 标准更新分组
+// CommonUpdateGroup updates a group using the standard flow
 func CommonUpdateGroup(oldGroup, newGroup *model.Group) error {
-	//若配置了不允许修改分组名称，则不更新分组名称
+	//If group name changes are disabled in the configuration, do not update the group name
 	if !config.Conf.Ldap.GroupNameModify {
 		newGroup.GroupName = oldGroup.GroupName
 	}
@@ -83,9 +83,9 @@ func CommonUpdateGroup(oldGroup, newGroup *model.Group) error {
 	return nil
 }
 
-// CommonAddUser 标准创建用户
+// CommonAddUser creates a user using the standard flow
 func CommonAddUser(user *model.User, groups []*model.Group, locale ...string) error {
-	// 用户信息的预置处理
+	// Preprocess user information
 	if user.Nickname == "" {
 		user.Nickname = "Anonymous"
 	}
@@ -96,7 +96,7 @@ func CommonAddUser(user *model.User, groups []*model.Group, locale ...string) er
 		user.Introduction = user.Nickname
 	}
 	if user.Mail == "" {
-		// 兼容
+		// Compatibility handling
 		if len(config.Conf.Ldap.DefaultEmailSuffix) > 0 {
 			user.Mail = user.Username + "@" + config.Conf.Ldap.DefaultEmailSuffix
 		} else {
@@ -119,33 +119,33 @@ func CommonAddUser(user *model.User, groups []*model.Group, locale ...string) er
 		user.Mobile = generateMobile()
 	}
 
-	// 先将用户添加到MySQL
+	// First add the user to MySQL
 	err := isql.User.Add(user)
 	if err != nil {
 		return tools.NewMySqlI18nError("common_user.mysql_create_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 发送用户创建成功通知邮件
+	// Send the user creation success notification email
 	if err := tools.SendUserCreationNotificationI18n(user.Username, user.Nickname, user.Mail, tools.NewParPasswd(user.Password), firstLocale(locale)); err != nil {
-		common.Log.Warnf("发送用户创建通知邮件失败，用户: %s, 邮箱: %s, 错误: %v", user.Username, user.Mail, err)
+		common.Log.Warnf("Failed to send user creation notification email, user: %s, email: %s, error: %v", user.Username, user.Mail, err)
 	}
-	// 再将用户添加到ldap
+	// Then add the user to LDAP
 	err = ildap.User.Add(user)
 	if err != nil {
 		return tools.NewLdapI18nError("common_user.ldap_create_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 处理用户归属的组
+	// Handle the groups the user belongs to
 	for _, group := range groups {
 		if group.GroupDN[:3] == "ou=" {
 			continue
 		}
-		// 先将用户和部门信息维护到MySQL
+		// First save the user and department information in MySQL
 		err := isql.Group.AddUserToGroup(group, []model.User{*user})
 		if err != nil {
 			return tools.NewMySqlI18nError("common_user.mysql_add_group_relation_failed", i18n.Args{"error": err.Error()})
 		}
-		//根据选择的部门，添加到部门内
+		//Add the user to the selected departments
 		err = ildap.Group.AddUserToGroup(group.GroupDN, user.UserDN)
 		if err != nil {
 			return tools.NewLdapI18nError("common_user.ldap_add_group_relation_failed", i18n.Args{"error": err.Error()})
@@ -161,9 +161,9 @@ func firstLocale(locales []string) string {
 	return locales[0]
 }
 
-// CommonUpdateUser 标准更新用户
+// CommonUpdateUser updates a user using the standard flow
 func CommonUpdateUser(oldUser, newUser *model.User, groupId []uint) error {
-	// 更新用户
+	// Update the user
 	if !config.Conf.Ldap.UserNameModify {
 		newUser.Username = oldUser.Username
 	}
@@ -178,11 +178,11 @@ func CommonUpdateUser(oldUser, newUser *model.User, groupId []uint) error {
 		return tools.NewMySqlI18nError("common_user.mysql_update_failed", i18n.Args{"error": err.Error()})
 	}
 
-	//判断部门信息是否有变化有变化则更新相应的数据库
+	//Check whether department information changed; if so, update the corresponding database
 	oldDeptIds := tools.StringToSlice(oldUser.DepartmentId, ",")
 	addDeptIds, removeDeptIds := tools.ArrUintCmp(oldDeptIds, groupId)
 
-	// 先处理添加的部门
+	// First handle added departments
 	addgroups, err := isql.Group.GetGroupByIds(addDeptIds)
 	if err != nil {
 		return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
@@ -191,19 +191,19 @@ func CommonUpdateUser(oldUser, newUser *model.User, groupId []uint) error {
 		if group.GroupDN[:3] == "ou=" {
 			continue
 		}
-		// 先将用户和部门信息维护到MySQL
+		// First save the user and department information in MySQL
 		err := isql.Group.AddUserToGroup(group, []model.User{*newUser})
 		if err != nil {
 			return tools.NewMySqlI18nError("common_user.mysql_add_group_relation_failed", i18n.Args{"error": err.Error()})
 		}
-		//根据选择的部门，添加到部门内
+		//Add the user to the selected departments
 		err = ildap.Group.AddUserToGroup(group.GroupDN, newUser.UserDN)
 		if err != nil {
 			return tools.NewLdapI18nError("common_user.ldap_add_group_relation_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 
-	// 再处理删除的部门
+	// Then handle removed departments
 	removegroups, err := isql.Group.GetGroupByIds(removeDeptIds)
 	if err != nil {
 		return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
@@ -224,7 +224,7 @@ func CommonUpdateUser(oldUser, newUser *model.User, groupId []uint) error {
 	return nil
 }
 
-// BuildGroupData 根据数据与动态字段组装成分组数据
+// BuildGroupData assembles group data from data and dynamic fields
 func BuildGroupData(flag string, remoteData map[string]any) (*model.Group, error) {
 	output, err := json.Marshal(&remoteData)
 	if err != nil {
@@ -257,7 +257,7 @@ func BuildGroupData(flag string, remoteData map[string]any) (*model.Group, error
 	return g, nil
 }
 
-// BuildUserData 根据数据与动态字段组装成用户数据
+// BuildUserData assembles user data from data and dynamic fields
 func BuildUserData(flag string, remoteData map[string]any) (*model.User, error) {
 	output, err := json.Marshal(&remoteData)
 	if err != nil {
@@ -274,10 +274,10 @@ func BuildUserData(flag string, remoteData map[string]any) (*model.User, error) 
 		return nil, tools.NewOperationError(err)
 	}
 
-	// 校验username是否为空，username为必填项
+	// Check that username is not empty; it is required
 	name := gjson.Get(string(output), fieldRelation["username"]).String()
 	if len(name) == 0 {
-		common.Log.Warnf("%s 该用户未填写username", output)
+		common.Log.Warnf("%s user has no username", output)
 		return nil, nil
 	}
 
@@ -313,7 +313,7 @@ func BuildUserData(flag string, remoteData map[string]any) (*model.User, error) 
 	return u, nil
 }
 
-// ConvertDeptData 将部门信息转成本地结构体
+// ConvertDeptData converts department information to a local struct
 func ConvertDeptData(flag string, remoteData []map[string]any) (groups []*model.Group, err error) {
 	for _, dept := range remoteData {
 		group, err := BuildGroupData(flag, dept)
@@ -325,7 +325,7 @@ func ConvertDeptData(flag string, remoteData []map[string]any) (groups []*model.
 	return
 }
 
-// ConvertUserData 将用户信息转成本地结构体
+// ConvertUserData converts user information to a local struct
 func ConvertUserData(flag string, remoteData []map[string]any) (users []*model.User, err error) {
 	for _, staff := range remoteData {
 		groupIds, err := isql.Group.DeptIdsToGroupIds(staff["department_ids"].([]string))
@@ -348,19 +348,19 @@ func InitCron() {
 	c := cron.New(cron.WithSeconds())
 
 	if config.Conf.DingTalk.EnableSync {
-		//启动定时任务
+		//Start scheduled tasks
 		_, err := c.AddFunc(config.Conf.DingTalk.DeptSyncTime, func() {
 			DingTalk.SyncDingTalkDepts(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步部门的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start department sync schedule: %v", err)
 		}
-		//每天凌晨1点执行一次
+		//Run once daily at 1 a.m.
 		_, err = c.AddFunc(config.Conf.DingTalk.UserSyncTime, func() {
 			DingTalk.SyncDingTalkUsers(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步用户的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start user sync schedule: %v", err)
 		}
 	}
 	if config.Conf.WeCom.EnableSync {
@@ -368,14 +368,14 @@ func InitCron() {
 			WeCom.SyncWeComDepts(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步部门的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start department sync schedule: %v", err)
 		}
-		//每天凌晨1点执行一次
+		//Run once daily at 1 a.m.
 		_, err = c.AddFunc(config.Conf.WeCom.UserSyncTime, func() {
 			WeCom.SyncWeComUsers(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步用户的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start user sync schedule: %v", err)
 		}
 	}
 	if config.Conf.FeiShu.EnableSync {
@@ -383,32 +383,32 @@ func InitCron() {
 			FeiShu.SyncFeiShuDepts(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步部门的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start department sync schedule: %v", err)
 		}
-		//每天凌晨1点执行一次
+		//Run once daily at 1 a.m.
 		_, err = c.AddFunc(config.Conf.FeiShu.UserSyncTime, func() {
 			FeiShu.SyncFeiShuUsers(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步用户的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start user sync schedule: %v", err)
 		}
 	}
 
-	// 自动检索未同步数据
+	// Automatically search for unsynchronized data
 	_, err := c.AddFunc("0 */2 * * * *", func() {
-		// 开发调试时调整为10秒执行一次
+		// During development, change the interval to 10 seconds
 		// _, err := c.AddFunc("*/10 * * * * *", func() {
 		_ = SearchGroupDiff()
 		_ = SearchUserDiff()
 	})
 	if err != nil {
-		common.Log.Errorf("启动同步任务状态检查任务失败: %v", err)
+		common.Log.Errorf("Failed to start sync status check schedule: %v", err)
 	}
 	c.Start()
 }
 
 func GroupListToTree(rootId string, groupList []*model.Group) *model.Group {
-	// 创建空根节点
+	// Create an empty root node
 	rootGroup := &model.Group{SourceDeptId: rootId}
 	rootGroup.Children = groupListToTree(rootGroup, groupList)
 	return rootGroup

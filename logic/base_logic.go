@@ -16,14 +16,14 @@ import (
 
 type BaseLogic struct{}
 
-// SendCode 发送验证码
+// SendCode sends a verification code
 func (l BaseLogic) SendCode(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.BaseSendCodeReq)
 	if !ok {
 		return nil, ReqAssertErr
 	}
 	_ = c
-	// 判断邮箱是否正确
+	// Check whether the email address is valid
 	user := new(model.User)
 	err := isql.User.Find(tools.H{"mail": r.Mail}, user)
 	if err != nil {
@@ -40,23 +40,23 @@ func (l BaseLogic) SendCode(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// ChangePwd 重置密码
+// ChangePwd resets the password
 func (l BaseLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.BaseChangePwdReq)
 	if !ok {
 		return nil, ReqAssertErr
 	}
 	_ = c
-	// 判断邮箱是否正确
+	// Check whether the email address is valid
 	if !isql.User.Exist(tools.H{"mail": r.Mail}) {
 		return nil, tools.NewValidatorI18nError("base.email_not_found", nil)
 	}
-	// 判断验证码是否过期
+	// Check whether the verification code has expired
 	cacheCode, ok := tools.VerificationCodeCache.Get(r.Mail)
 	if !ok {
 		return nil, tools.NewValidatorI18nError("base.code_expired", nil)
 	}
-	// 判断验证码是否正确
+	// Check whether the verification code is correct
 	if cacheCode != r.Code {
 		return nil, tools.NewValidatorI18nError("base.code_invalid", nil)
 	}
@@ -77,7 +77,7 @@ func (l BaseLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewLdapI18nError("base.send_email_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 更新数据库密码
+	// Update the database password
 	err = isql.User.ChangePwd(user.Username, tools.NewGenPasswd(newpass))
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("user.mysql_password_update_failed", i18n.Args{"error": err.Error()})
@@ -86,7 +86,7 @@ func (l BaseLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// Dashboard 仪表盘
+// Dashboard
 func (l BaseLogic) Dashboard(c *gin.Context, req any) (data any, rspError any) {
 	_, ok := req.(*request.BaseDashboardReq)
 	if !ok {
@@ -199,7 +199,7 @@ func (l BaseLogic) DecryptPasswd(c *gin.Context, req any) (data any, rspError an
 	return string(passwd), nil
 }
 
-// GetConfig 获取系统配置
+// GetConfig gets the system configuration
 func (l BaseLogic) GetConfig(c *gin.Context, req any) (data any, rspError any) {
 	_, ok := req.(*request.BaseConfigReq)
 	if !ok {
@@ -207,7 +207,7 @@ func (l BaseLogic) GetConfig(c *gin.Context, req any) (data any, rspError any) {
 	}
 	_ = c
 
-	// 安全获取配置值，防止配置段缺失导致空指针
+	// Safely get a configuration value to prevent nil pointers when a section is missing
 	rsp := &response.BaseConfigRsp{}
 	if config.Conf.Ldap != nil {
 		rsp.LdapEnableSync = config.Conf.Ldap.EnableSync
@@ -225,7 +225,7 @@ func (l BaseLogic) GetConfig(c *gin.Context, req any) (data any, rspError any) {
 	return rsp, nil
 }
 
-// GetVersion 获取版本信息
+// GetVersion gets version information
 func (l BaseLogic) GetVersion(c *gin.Context, req any) (data any, rspError any) {
 	_, ok := req.(*request.BaseVersionReq)
 	if !ok {

@@ -10,9 +10,9 @@ import (
 
 func InitApiRoutes(r *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) gin.IRoutes {
 	api := r.Group("/api")
-	// 开启jwt认证中间件
+	// Enable JWT authentication middleware
 	api.Use(authMiddleware.MiddlewareFunc())
-	// 开启casbin鉴权中间件
+	// Enable Casbin authorization middleware
 	api.Use(middleware.CasbinMiddleware())
 	{
 		api.GET("/tree", controller.Api.GetTree)

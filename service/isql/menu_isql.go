@@ -12,63 +12,63 @@ import (
 
 type MenuService struct{}
 
-// Exist 判断资源是否存在
+// Exist checks whether the resource exists
 func (s MenuService) Exist(filter map[string]any) bool {
 	var dataObj model.Menu
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
 }
 
-// Count 获取资源总数
+// Count gets the total number of resources
 func (s MenuService) Count() (int64, error) {
 	var count int64
 	err := common.DB.Model(&model.Menu{}).Count(&count).Error
 	return count, err
 }
 
-// Add 创建资源
+// Add creates a resource
 func (s MenuService) Add(menu *model.Menu) error {
 	return common.DB.Create(menu).Error
 }
 
-// Update 更新资源
+// Update a resource
 func (s MenuService) Update(menu *model.Menu) error {
 	return common.DB.Model(&model.Menu{}).Where("id = ?", menu.ID).Updates(menu).Error
 }
 
-// Find 获取单个资源
+// Find a single resource
 func (s MenuService) Find(filter map[string]any, data *model.Menu) error {
 	return common.DB.Where(filter).First(&data).Error
 }
 
-// List 获取数据列表
+// List gets the data list
 func (s MenuService) List() (menus []*model.Menu, err error) {
 	err = common.DB.Order("sort").Find(&menus).Error
 	return menus, err
 }
 
-// List 获取数据列表
+// List gets the data list
 func (s MenuService) ListUserMenus(roleIds []uint) (menus []*model.Menu, err error) {
 	err = common.DB.Where("id IN (select menu_id as id from role_menus where role_id IN (?))", roleIds).Order("sort").Find(&menus).Error
 	return menus, err
 }
 
-// 批量删除资源
+// Delete multiple resources
 func (s MenuService) Delete(menuIds []uint) error {
 	return common.DB.Where("id IN (?)", menuIds).Select("Roles").Unscoped().Delete(&model.Menu{}).Error
 }
 
-// GetUserMenusByUserId 根据用户ID获取用户的权限(可访问)菜单列表
+// GetUserMenusByUserId gets the permission (accessible) menu list for a user ID
 func (s MenuService) GetUserMenusByUserId(userId uint) ([]*model.Menu, error) {
-	// 获取用户
+	// Get the user
 	var user model.User
 	err := common.DB.Where("id = ?", userId).Preload("Roles").First(&user).Error
 	if err != nil {
 		return nil, err
 	}
-	// 获取角色
+	// Get the role
 	roles := user.Roles
-	// 所有角色的菜单集合
+	// The combined menus for all roles
 	allRoleMenus := make([]*model.Menu, 0)
 	for _, role := range roles {
 		var userRole model.Role
@@ -76,12 +76,12 @@ func (s MenuService) GetUserMenusByUserId(userId uint) ([]*model.Menu, error) {
 		if err != nil {
 			return nil, err
 		}
-		// 获取角色的菜单
+		// Get the role menus
 		menus := userRole.Menus
 		allRoleMenus = append(allRoleMenus, menus...)
 	}
 
-	// 所有角色的菜单集合去重
+	// Deduplicate the combined menus for all roles
 	allRoleMenusId := make([]int, 0)
 	for _, menu := range allRoleMenus {
 		allRoleMenusId = append(allRoleMenusId, int(menu.ID))
@@ -97,7 +97,7 @@ func (s MenuService) GetUserMenusByUserId(userId uint) ([]*model.Menu, error) {
 		}
 	}
 
-	// 获取状态status为1的菜单
+	// Get menus with status 1
 	accessMenus := make([]*model.Menu, 0)
 	for _, menu := range allRoleMenusUniq {
 		if menu.Status == 1 {
@@ -108,7 +108,7 @@ func (s MenuService) GetUserMenusByUserId(userId uint) ([]*model.Menu, error) {
 	return accessMenus, err
 }
 
-// GenMenuTree 生成菜单树
+// GenMenuTree generates the menu tree
 func GenMenuTree(parentId uint, menus []*model.Menu) []*model.Menu {
 	tree := make([]*model.Menu, 0)
 
@@ -122,10 +122,10 @@ func GenMenuTree(parentId uint, menus []*model.Menu) []*model.Menu {
 	return tree
 }
 
-// // GetMenuTree 获取菜单树
+// // GetMenuTree gets the menu tree
 // func (s MenuService) GetMenuTree() ([]*model.Menu, error) {
 // 	var menus []*model.Menu
 // 	err := common.DB.Order("sort").Find(&menus).Error
-// 	// parentId为0的是根菜单
+// 	// parentId 0 indicates a root menu
 // 	return GenMenuTree(0, menus), err
 // }

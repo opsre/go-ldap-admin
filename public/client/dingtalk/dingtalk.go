@@ -11,8 +11,8 @@ import (
 	"github.com/zhaoyunxing92/dingtalk/v2/request"
 )
 
-// 官方文档地址： https://open.dingtalk.com/document/orgapp-server/obtain-the-department-list
-// GetAllDepts 获取所有部门
+// Official documentation: https://open.dingtalk.com/document/orgapp-server/obtain-the-department-list
+// GetAllDepts gets all departments
 func GetAllDepts() (ret []map[string]any, err error) {
 	depts, err := InitDingTalkClient().FetchDeptList(1, true, "zh_CN")
 	if err != nil {
@@ -31,8 +31,8 @@ func GetAllDepts() (ret []map[string]any, err error) {
 		}
 	} else {
 
-		// 遍历配置的部门ID列表获取数据进行处理
-		// 从取得的所有部门列表中将配置的部门ID筛选出来再去请求其子部门过滤为1和为配置值的部门ID
+		// Iterate over the configured department IDs, retrieve their data, and process it
+		// Filter the configured department IDs from the full department list, then request their children using the configured filter value
 		ret = make([]map[string]any, 0)
 
 		for _, dept := range depts.Dept {
@@ -83,8 +83,8 @@ func GetAllDepts() (ret []map[string]any, err error) {
 	return
 }
 
-// 官方文档地址： https://open.dingtalk.com/document/orgapp-server/queries-the-complete-information-of-a-department-user
-// GetAllUsers 获取所有员工信息
+// Official documentation: https://open.dingtalk.com/document/orgapp-server/queries-the-complete-information-of-a-department-user
+// GetAllUsers gets all employee information
 func GetAllUsers() (ret []map[string]any, err error) {
 	depts, err := GetAllDepts()
 	if err != nil {
@@ -98,7 +98,7 @@ func GetAllUsers() (ret []map[string]any, err error) {
 			Language: "zh_CN",
 		}
 		for {
-			//获取钉钉部门人员信息
+			//Get users in the DingTalk department
 			rsp, err := InitDingTalkClient().GetDeptDetailUserInfo(&r)
 			if err != nil {
 				return nil, err
@@ -124,7 +124,7 @@ func GetAllUsers() (ret []map[string]any, err error) {
 				if user.Email != "" {
 					ele["custom_nickname_email"] = strings.Split(user.Email, "@")[0]
 				}
-				// 部门ids
+				// Department IDs
 				var sourceDeptIds []string
 				for _, deptId := range user.DeptIds {
 					sourceDeptIds = append(sourceDeptIds, fmt.Sprintf("%s_%d", config.Conf.DingTalk.Flag, deptId))
@@ -141,8 +141,8 @@ func GetAllUsers() (ret []map[string]any, err error) {
 	return
 }
 
-// 官方文档：https://open.dingtalk.com/document/orgapp-server/intelligent-personnel-query-company-turnover-list
-// GetLeaveUserIds 获取离职人员ID列表
+// Official documentation: https://open.dingtalk.com/document/orgapp-server/intelligent-personnel-query-company-turnover-list
+// GetLeaveUserIds gets the IDs of departed employees
 func GetLeaveUserIds() ([]string, error) {
 	var ids []string
 	ReqParm := struct {
@@ -167,12 +167,12 @@ func GetLeaveUserIds() ([]string, error) {
 	return ids, nil
 }
 
-// 官方文档：https://open.dingtalk.com/document/orgapp/query-the-details-of-employees-who-have-left-office
-// GetLeaveUserIdsByDateRange 新接口根据时间范围获取离职人员ID列表
+// Official documentation: https://open.dingtalk.com/document/orgapp/query-the-details-of-employees-who-have-left-office
+// GetLeaveUserIdsByDateRange gets departed employee IDs by date range using the new API
 // GetHrmempLeaveRecordsKey    = "/v1.0/contact/empLeaveRecords"
 func GetLeaveUserIdsDateRange(pushDays uint) ([]string, error) {
 	var ids []string
-	// 配置值为正数,往前推转为负数
+	// The configured value is positive; negate it to look backward
 	var leaveDays = int(0 - pushDays)
 	startTime := time.Now().AddDate(0, 0, leaveDays).Format("2006-01-02T15:04:05Z")
 	endTime := time.Now().Format("2006-01-02T15:04:05Z")
@@ -187,7 +187,7 @@ func GetLeaveUserIdsDateRange(pushDays uint) ([]string, error) {
 		NextToken:  "0",
 		MaxResults: 50,
 	}
-	// 使用新的使用时间范围查询离职人员接口获取离职用户ID
+	// Get departed user IDs using the new date-range API
 	for {
 		rsp, err := InitDingTalkClient().GetHrmEmpLeaveRecords(ReqParm.StartTime, ReqParm.EndTime, ReqParm.NextToken, ReqParm.MaxResults)
 		if err != nil {

@@ -9,8 +9,8 @@ import (
 	"github.com/wenerme/go-wecom/wecom"
 )
 
-// 官方文档： https://developer.work.weixin.qq.com/document/path/90208
-// GetAllDepts 获取所有部门
+// Official documentation: https://developer.work.weixin.qq.com/document/path/90208
+// GetAllDepts gets all departments
 func GetAllDepts() (ret []map[string]any, err error) {
 	depts, err := InitWeComClient().ListDepartment(
 		&wecom.ListDepartmentRequest{},
@@ -30,8 +30,8 @@ func GetAllDepts() (ret []map[string]any, err error) {
 	return ret, nil
 }
 
-// 官方文档： https://developer.work.weixin.qq.com/document/path/90201
-// GetAllUsers 获取所有员工信息
+// Official documentation: https://developer.work.weixin.qq.com/document/path/90201
+// GetAllUsers gets all employee information
 func GetAllUsers() (ret []map[string]any, err error) {
 	depts, err := GetAllDepts()
 	if err != nil {
@@ -71,7 +71,7 @@ func GetAllUsers() (ret []map[string]any, err error) {
 			ele["open_userid"] = user.OpenUserID
 			ele["main_department"] = user.MainDepartment
 			ele["english_name"] = user.EnglishName
-			// 部门ids
+			// Department IDs
 			var sourceDeptIds []string
 			for _, deptId := range user.Department {
 				sourceDeptIds = append(sourceDeptIds, fmt.Sprintf("%s_%d", config.Conf.WeCom.Flag, deptId))

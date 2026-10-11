@@ -13,42 +13,42 @@ import (
 	"gorm.io/gorm"
 )
 
-// 初始化mysql数据
+// Initialize MySQL data
 func InitData() {
-	// 是否初始化数据
+	// Whether to initialize data
 	if !config.Conf.System.InitData {
 		return
 	}
 
-	// 1.写入角色数据
+	// 1. Insert role data
 	newRoles := make([]*model.Role, 0)
 	roles := []*model.Role{
 		{
 			Model:   gorm.Model{ID: 1},
-			Name:    "管理员",
+			Name:    "Administrator",
 			Keyword: "admin",
 			Remark:  "",
 			Sort:    1,
 			Status:  1,
-			Creator: "系统",
+			Creator: "system",
 		},
 		{
 			Model:   gorm.Model{ID: 2},
-			Name:    "普通用户",
+			Name:    "User",
 			Keyword: "user",
 			Remark:  "",
 			Sort:    3,
 			Status:  1,
-			Creator: "系统",
+			Creator: "system",
 		},
 		{
 			Model:   gorm.Model{ID: 3},
-			Name:    "访客",
+			Name:    "Guest",
 			Keyword: "guest",
 			Remark:  "",
 			Sort:    5,
 			Status:  1,
-			Creator: "系统",
+			Creator: "system",
 		},
 	}
 
@@ -62,11 +62,11 @@ func InitData() {
 	if len(newRoles) > 0 {
 		err := DB.Create(&newRoles).Error
 		if err != nil {
-			Log.Errorf("写入系统角色数据失败：%v", err)
+			Log.Errorf("Failed to write system role data: %v", err)
 		}
 	}
 
-	// 2写入菜单
+	// 2. Insert menus
 	newMenus := make([]model.Menu, 0)
 	var uint0 uint = 0
 	var uint1 uint = 1
@@ -89,7 +89,7 @@ func InitData() {
 		{
 			Model:     gorm.Model{ID: 1},
 			Name:      "UserManage",
-			Title:     "人员管理",
+			Title:     "Personnel",
 			Icon:      userStr,
 			Path:      "/personnel",
 			Component: "Layout",
@@ -97,24 +97,24 @@ func InitData() {
 			Sort:      5,
 			ParentId:  uint0,
 			Roles:     roles[:1],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 		{
 			Model:     gorm.Model{ID: 2},
 			Name:      "User",
-			Title:     "用户管理",
+			Title:     "Users",
 			Icon:      peopleStr,
 			Path:      "user",
 			Component: "/personnel/user/index",
 			Sort:      6,
 			ParentId:  uint1,
 			Roles:     roles[:1],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 		{
 			Model:     gorm.Model{ID: 3},
 			Name:      "Group",
-			Title:     "分组管理",
+			Title:     "Groups",
 			Icon:      groupStr,
 			Path:      "group",
 			Component: "/personnel/group/index",
@@ -122,24 +122,24 @@ func InitData() {
 			ParentId:  uint1,
 			NoCache:   1,
 			Roles:     roles[:1],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 		{
 			Model:     gorm.Model{ID: 4},
 			Name:      "FieldRelation",
-			Title:     "字段关系管理",
+			Title:     "Field Relations",
 			Icon:      fieldRelationStr,
 			Path:      "fieldRelation",
 			Component: "/personnel/fieldRelation/index",
 			Sort:      8,
 			ParentId:  uint1,
 			Roles:     roles[:1],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 		{
 			Model:     gorm.Model{ID: 5},
 			Name:      "System",
-			Title:     "系统管理",
+			Title:     "System",
 			Icon:      componentStr,
 			Path:      "/system",
 			Component: "Layout",
@@ -147,48 +147,48 @@ func InitData() {
 			Sort:      9,
 			ParentId:  uint0,
 			Roles:     roles[:1],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 		{
 			Model:     gorm.Model{ID: 6},
 			Name:      "Role",
-			Title:     "角色管理",
+			Title:     "Roles",
 			Icon:      roleStr,
 			Path:      "role",
 			Component: "/system/role/index",
 			Sort:      10,
 			ParentId:  uint4,
 			Roles:     roles[:1],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 		{
 			Model:     gorm.Model{ID: 7},
 			Name:      "Menu",
-			Title:     "菜单管理",
+			Title:     "Menus",
 			Icon:      treeTableStr,
 			Path:      "menu",
 			Component: "/system/menu/index",
 			Sort:      13,
 			ParentId:  uint4,
 			Roles:     roles[:1],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 		{
 			Model:     gorm.Model{ID: 8},
 			Name:      "Api",
-			Title:     "接口管理",
+			Title:     "APIs",
 			Icon:      treeStr,
 			Path:      "api",
 			Component: "/system/api/index",
 			Sort:      14,
 			ParentId:  uint4,
 			Roles:     roles[:1],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 		{
 			Model:     gorm.Model{ID: 9},
 			Name:      "Log",
-			Title:     "日志管理",
+			Title:     "Logs",
 			Icon:      exampleStr,
 			Path:      "/log",
 			Component: "Layout",
@@ -196,19 +196,19 @@ func InitData() {
 			Sort:      20,
 			ParentId:  uint0,
 			Roles:     roles[:2],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 		{
 			Model:     gorm.Model{ID: 10},
 			Name:      "OperationLog",
-			Title:     "操作日志",
+			Title:     "Operation Logs",
 			Icon:      documentationStr,
 			Path:      "operation-log",
 			Component: "/log/operation-log/index",
 			Sort:      21,
 			ParentId:  uint8,
 			Roles:     roles[:2],
-			Creator:   "系统",
+			Creator:   "system",
 		},
 	}
 	for _, menu := range menus {
@@ -220,29 +220,29 @@ func InitData() {
 	if len(newMenus) > 0 {
 		err := DB.Create(&newMenus).Error
 		if err != nil {
-			Log.Errorf("写入系统菜单数据失败：%v", err)
+			Log.Errorf("Failed to write system menu data: %v", err)
 		}
 	}
 
-	// 3.写入用户
+	// 3. Insert users
 	newUsers := make([]*model.User, 0)
 	users := []*model.User{
 		{
 			Model:         gorm.Model{ID: 1},
 			Username:      "admin",
 			Password:      tools.NewGenPasswd(config.Conf.Ldap.AdminPass),
-			Nickname:      "管理员",
-			GivenName:     "最强后台",
+			Nickname:      "Administrator",
+			GivenName:     "Go LDAP Admin",
 			Mail:          "admin@" + config.Conf.Ldap.DefaultEmailSuffix,
 			JobNumber:     "0000",
 			Mobile:        "18888888888",
 			Avatar:        "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
-			PostalAddress: "地球",
-			Departments:   "研发中心",
-			Position:      "打工人",
-			Introduction:  "最强后台的管理员",
+			PostalAddress: "Earth",
+			Departments:   "R&D Center",
+			Position:      "Employee",
+			Introduction:  "Go LDAP Admin administrator",
 			Status:        1,
-			Creator:       "系统",
+			Creator:       "system",
 			Roles:         roles[:1],
 			UserDN:        config.Conf.Ldap.AdminDN,
 		},
@@ -258,456 +258,456 @@ func InitData() {
 	if len(newUsers) > 0 {
 		err := DB.Create(&newUsers).Error
 		if err != nil {
-			Log.Errorf("写入用户数据失败：%v", err)
+			Log.Errorf("Failed to write user data: %v", err)
 		}
 	}
 
-	// 4.写入api
+	// 4. Insert APIs
 	apis := []model.Api{
 		{
 			Method:   "GET",
 			Path:     "/base/ping",
 			Category: "base",
-			Remark:   "测试接口",
-			Creator:  "系统",
+			Remark:   "Test endpoint",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/base/encryptpwd",
 			Category: "base",
-			Remark:   "加密密码",
-			Creator:  "系统",
+			Remark:   "Encrypt password",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/base/decryptpwd",
 			Category: "base",
-			Remark:   "解密密码",
-			Creator:  "系统",
+			Remark:   "Decrypt password",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/base/config",
 			Category: "base",
-			Remark:   "获取系统配置",
-			Creator:  "系统",
+			Remark:   "Get system configuration",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/base/version",
 			Category: "base",
-			Remark:   "获取系统版本信息",
-			Creator:  "系统",
+			Remark:   "Get system version",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/base/dashboard",
 			Category: "base",
-			Remark:   "获取系统首页展示数据",
-			Creator:  "系统",
+			Remark:   "Get dashboard data",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/base/login",
 			Category: "base",
-			Remark:   "用户登录",
-			Creator:  "系统",
+			Remark:   "User login",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/base/logout",
 			Category: "base",
-			Remark:   "用户登出",
-			Creator:  "系统",
+			Remark:   "User logout",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/base/refreshToken",
 			Category: "base",
-			Remark:   "刷新JWT令牌",
-			Creator:  "系统",
+			Remark:   "Refresh JWT token",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/base/sendcode",
 			Category: "base",
-			Remark:   "给用户邮箱发送验证码",
-			Creator:  "系统",
+			Remark:   "Send verification code by email",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/base/changePwd",
 			Category: "base",
-			Remark:   "通过邮箱修改密码",
-			Creator:  "系统",
+			Remark:   "Change password by email",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/user/info",
 			Category: "user",
-			Remark:   "获取当前登录用户信息",
-			Creator:  "系统",
+			Remark:   "Get current user information",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/user/list",
 			Category: "user",
-			Remark:   "获取用户列表",
-			Creator:  "系统",
+			Remark:   "Get user list",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/changePwd",
 			Category: "user",
-			Remark:   "更新用户登录密码",
-			Creator:  "系统",
+			Remark:   "Change user password",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/resetPassword",
 			Category: "user",
-			Remark:   "重置用户密码",
-			Creator:  "系统",
+			Remark:   "Reset user password",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/add",
 			Category: "user",
-			Remark:   "创建用户",
-			Creator:  "系统",
+			Remark:   "Create user",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/update",
 			Category: "user",
-			Remark:   "更新用户",
-			Creator:  "系统",
+			Remark:   "Update user",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/delete",
 			Category: "user",
-			Remark:   "批量删除用户",
-			Creator:  "系统",
+			Remark:   "Delete users",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/changeUserStatus",
 			Category: "user",
-			Remark:   "更改用户在职状态",
-			Creator:  "系统",
+			Remark:   "Change user status",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/syncDingTalkUsers",
 			Category: "user",
-			Remark:   "从钉钉拉取用户信息",
-			Creator:  "系统",
+			Remark:   "Sync users from DingTalk",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/syncWeComUsers",
 			Category: "user",
-			Remark:   "从企业微信拉取用户信息",
-			Creator:  "系统",
+			Remark:   "Sync users from WeCom",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/syncFeiShuUsers",
 			Category: "user",
-			Remark:   "从飞书拉取用户信息",
-			Creator:  "系统",
+			Remark:   "Sync users from Feishu",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/syncOpenLdapUsers",
 			Category: "user",
-			Remark:   "从openldap拉取用户信息",
-			Creator:  "系统",
+			Remark:   "Sync users from OpenLDAP",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/user/syncSqlUsers",
 			Category: "user",
-			Remark:   "将数据库中的用户同步到Ldap",
-			Creator:  "系统",
+			Remark:   "Sync database users to LDAP",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/group/list",
 			Category: "group",
-			Remark:   "获取分组列表",
-			Creator:  "系统",
+			Remark:   "Get group list",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/group/tree",
 			Category: "group",
-			Remark:   "获取分组列表树",
-			Creator:  "系统",
+			Remark:   "Get group tree",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/add",
 			Category: "group",
-			Remark:   "创建分组",
-			Creator:  "系统",
+			Remark:   "Create group",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/update",
 			Category: "group",
-			Remark:   "更新分组",
-			Creator:  "系统",
+			Remark:   "Update group",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/delete",
 			Category: "group",
-			Remark:   "批量删除分组",
-			Creator:  "系统",
+			Remark:   "Delete groups",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/adduser",
 			Category: "group",
-			Remark:   "添加用户到分组",
-			Creator:  "系统",
+			Remark:   "Add user to group",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/removeuser",
 			Category: "group",
-			Remark:   "将用户从分组移出",
-			Creator:  "系统",
+			Remark:   "Remove user from group",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/group/useringroup",
 			Category: "group",
-			Remark:   "获取在分组内的用户列表",
-			Creator:  "系统",
+			Remark:   "Get users in group",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/group/usernoingroup",
 			Category: "group",
-			Remark:   "获取不在分组内的用户列表",
-			Creator:  "系统",
+			Remark:   "Get users outside group",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/syncDingTalkDepts",
 			Category: "group",
-			Remark:   "从钉钉拉取部门信息",
-			Creator:  "系统",
+			Remark:   "Sync departments from DingTalk",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/syncWeComDepts",
 			Category: "group",
-			Remark:   "从企业微信拉取部门信息",
-			Creator:  "系统",
+			Remark:   "Sync departments from WeCom",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/syncFeiShuDepts",
 			Category: "group",
-			Remark:   "从飞书拉取部门信息",
-			Creator:  "系统",
+			Remark:   "Sync departments from Feishu",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/syncOpenLdapDepts",
 			Category: "group",
-			Remark:   "从openldap拉取部门信息",
-			Creator:  "系统",
+			Remark:   "Sync departments from OpenLDAP",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/group/syncSqlGroups",
 			Category: "group",
-			Remark:   "将数据库中的分组同步到Ldap",
-			Creator:  "系统",
+			Remark:   "Sync database groups to LDAP",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/role/list",
 			Category: "role",
-			Remark:   "获取角色列表",
-			Creator:  "系统",
+			Remark:   "Get role list",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/role/add",
 			Category: "role",
-			Remark:   "创建角色",
-			Creator:  "系统",
+			Remark:   "Create role",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/role/update",
 			Category: "role",
-			Remark:   "更新角色",
-			Creator:  "系统",
+			Remark:   "Update role",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/role/getmenulist",
 			Category: "role",
-			Remark:   "获取角色的权限菜单",
-			Creator:  "系统",
+			Remark:   "Get role menus",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/role/updatemenus",
 			Category: "role",
-			Remark:   "更新角色的权限菜单",
-			Creator:  "系统",
+			Remark:   "Update role menus",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/role/getapilist",
 			Category: "role",
-			Remark:   "获取角色的权限接口",
-			Creator:  "系统",
+			Remark:   "Get role APIs",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/role/updateapis",
 			Category: "role",
-			Remark:   "更新角色的权限接口",
-			Creator:  "系统",
+			Remark:   "Update role APIs",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/role/delete",
 			Category: "role",
-			Remark:   "批量删除角色",
-			Creator:  "系统",
+			Remark:   "Delete roles",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/menu/tree",
 			Category: "menu",
-			Remark:   "获取菜单树",
-			Creator:  "系统",
+			Remark:   "Get menu tree",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/menu/access/tree",
 			Category: "menu",
-			Remark:   "获取用户菜单树",
-			Creator:  "系统",
+			Remark:   "Get user menu tree",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/menu/add",
 			Category: "menu",
-			Remark:   "创建菜单",
-			Creator:  "系统",
+			Remark:   "Create menu",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/menu/update",
 			Category: "menu",
-			Remark:   "更新菜单",
-			Creator:  "系统",
+			Remark:   "Update menu",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/menu/delete",
 			Category: "menu",
-			Remark:   "批量删除菜单",
-			Creator:  "系统",
+			Remark:   "Delete menus",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/api/list",
 			Category: "api",
-			Remark:   "获取接口列表",
-			Creator:  "系统",
+			Remark:   "Get API list",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/api/tree",
 			Category: "api",
-			Remark:   "获取接口树",
-			Creator:  "系统",
+			Remark:   "Get API tree",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/api/add",
 			Category: "api",
-			Remark:   "创建接口",
-			Creator:  "系统",
+			Remark:   "Create API",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/api/update",
 			Category: "api",
-			Remark:   "更新接口",
-			Creator:  "系统",
+			Remark:   "Update API",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/api/delete",
 			Category: "api",
-			Remark:   "批量删除接口",
-			Creator:  "系统",
+			Remark:   "Delete APIs",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/fieldrelation/list",
 			Category: "fieldrelation",
-			Remark:   "获取字段动态关系列表",
-			Creator:  "系统",
+			Remark:   "Get field relation list",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/fieldrelation/add",
 			Category: "fieldrelation",
-			Remark:   "创建字段动态关系",
-			Creator:  "系统",
+			Remark:   "Create field relation",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/fieldrelation/update",
 			Category: "fieldrelation",
-			Remark:   "更新字段动态关系",
-			Creator:  "系统",
+			Remark:   "Update field relation",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/fieldrelation/delete",
 			Category: "fieldrelation",
-			Remark:   "批量删除字段动态关系",
-			Creator:  "系统",
+			Remark:   "Delete field relations",
+			Creator:  "system",
 		},
 		{
 			Method:   "GET",
 			Path:     "/log/operation/list",
 			Category: "log",
-			Remark:   "获取操作日志列表",
-			Creator:  "系统",
+			Remark:   "Get operation log list",
+			Creator:  "system",
 		},
 		{
 			Method:   "POST",
 			Path:     "/log/operation/delete",
 			Category: "log",
-			Remark:   "批量删除操作日志",
-			Creator:  "系统",
+			Remark:   "Delete operation logs",
+			Creator:  "system",
 		},
 		{
 			Method:   "DELETE",
 			Path:     "/log/operation/clean",
 			Category: "log",
-			Remark:   "清空操作日志",
-			Creator:  "系统",
+			Remark:   "Clear operation logs",
+			Creator:  "system",
 		},
 	}
 
-	// 5. 将角色绑定给菜单
+	// 5. Assign roles to menus
 	newApi := make([]model.Api, 0)
 	newRoleCasbin := make([]model.RoleCasbin, 0)
 	for i, api := range apis {
@@ -716,14 +716,14 @@ func InitData() {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			newApi = append(newApi, api)
 
-			// 管理员拥有所有API权限
+			// Admins have all API permissions
 			newRoleCasbin = append(newRoleCasbin, model.RoleCasbin{
 				Keyword: roles[0].Keyword,
 				Path:    api.Path,
 				Method:  api.Method,
 			})
 
-			// 非管理员拥有基础权限
+			// Non-admins have basic permissions
 			basePaths := []string{
 				"/base/login",
 				"/base/logout",
@@ -749,7 +749,7 @@ func InitData() {
 
 	if len(newApi) > 0 {
 		if err := DB.Create(&newApi).Error; err != nil {
-			Log.Errorf("写入api数据失败：%v", err)
+			Log.Errorf("Failed to write API data: %v", err)
 		}
 	}
 
@@ -762,11 +762,11 @@ func InitData() {
 		}
 		isAdd, err := CasbinEnforcer.AddPolicies(rules)
 		if !isAdd {
-			Log.Errorf("写入casbin数据失败：%v", err)
+			Log.Errorf("Failed to write Casbin data: %v", err)
 		}
 	}
 
-	// 6.写入分组
+	// 6. Insert groups
 	newGroups := make([]model.Group, 0)
 	groups := []model.Group{
 		{
@@ -784,7 +784,7 @@ func InitData() {
 		{
 			Model:              gorm.Model{ID: 2},
 			GroupName:          config.Conf.DingTalk.Flag + "root",
-			Remark:             "钉钉根部门",
+			Remark:             "DingTalk root department",
 			Creator:            "system",
 			GroupType:          "ou",
 			ParentId:           1,
@@ -796,7 +796,7 @@ func InitData() {
 		{
 			Model:              gorm.Model{ID: 3},
 			GroupName:          "wecomroot",
-			Remark:             "企业微信根部门",
+			Remark:             "WeCom root department",
 			Creator:            "system",
 			GroupType:          "ou",
 			ParentId:           1,
@@ -808,7 +808,7 @@ func InitData() {
 		{
 			Model:              gorm.Model{ID: 4},
 			GroupName:          config.Conf.FeiShu.Flag + "root",
-			Remark:             "飞书根部门",
+			Remark:             "Feishu root department",
 			Creator:            "system",
 			GroupType:          "ou",
 			ParentId:           1,
@@ -820,7 +820,7 @@ func InitData() {
 		{
 			Model:              gorm.Model{ID: 5},
 			GroupName:          "group",
-			Remark:             "默认分组",
+			Remark:             "Default group",
 			Creator:            "system",
 			GroupType:          "cn",
 			ParentId:           1,
@@ -840,11 +840,11 @@ func InitData() {
 	if len(newGroups) > 0 {
 		err := DB.Create(&newGroups).Error
 		if err != nil {
-			Log.Errorf("写入分组数据失败：%v", err)
+			Log.Errorf("Failed to write group data: %v", err)
 		}
 	}
 
-	// 7.写入关系管理
+	// 7. Insert field relations
 	filedRelation := []model.FieldRelation{
 		{
 			Flag:       "dingtalk_group",
@@ -883,7 +883,7 @@ func InitData() {
 
 	if len(newFieldRelations) > 0 {
 		if err := DB.Create(&newFieldRelations).Error; err != nil {
-			Log.Errorf("写入关系数据失败：%v", err)
+			Log.Errorf("Failed to write field relation data: %v", err)
 		}
 	}
 }

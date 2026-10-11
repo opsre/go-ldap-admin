@@ -12,7 +12,7 @@ import (
 
 type MenuLogic struct{}
 
-// Add 添加数据
+// Add data
 func (l MenuLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.MenuAddReq)
 	if !ok {
@@ -25,7 +25,7 @@ func (l MenuLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 
 	}
 
-	// 获取当前用户
+	// Get the current user
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
@@ -57,7 +57,7 @@ func (l MenuLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// Update 更新数据
+// Update data
 func (l MenuLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.MenuUpdateReq)
 	if !ok {
@@ -70,7 +70,7 @@ func (l MenuLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewMySqlI18nError("menu.record_not_found", nil)
 	}
 
-	// 获取当前登陆用户
+	// Get the currently logged-in user
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
@@ -109,7 +109,7 @@ func (l MenuLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// Delete 删除数据
+// Delete data
 func (l MenuLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.MenuDeleteReq)
 	if !ok {
@@ -124,7 +124,7 @@ func (l MenuLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 		}
 	}
 
-	// 删除接口
+	// Delete the API
 	err := isql.Menu.Delete(r.MenuIds)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("menu.delete_failed", i18n.Args{"error": err.Error()})
@@ -132,7 +132,7 @@ func (l MenuLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// GetTree 数据树
+// Get the data tree
 func (l MenuLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	_, ok := req.(*request.MenuGetTreeReq)
 	if !ok {
@@ -150,14 +150,14 @@ func (l MenuLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	return tree, nil
 }
 
-// GetAccessTree 获取用户菜单树
+// GetAccessTree gets the user menu tree
 func (l MenuLogic) GetAccessTree(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.MenuGetAccessTreeReq)
 	if !ok {
 		return nil, ReqAssertErr
 	}
 	_ = c
-	// 校验
+	// Validate
 	filter := tools.H{"id": r.ID}
 	if !isql.User.Exist(filter) {
 		return nil, tools.NewValidatorI18nError("legacy.user.not_found", nil)

@@ -17,15 +17,15 @@ import (
 	ch_translations "github.com/go-playground/validator/v10/translations/zh"
 )
 
-// 全局Validate数据校验实列
+// Global Validate data validation instance
 var Validate *validator.Validate
 
-// 全局翻译器
+// Global translator
 var Trans ut.Translator
 
 var TransByLocale map[string]ut.Translator
 
-// 初始化Validator数据校验
+// Initialize Validator data validation
 func InitValidate() {
 	Validate = validator.New()
 	TransByLocale = map[string]ut.Translator{}
@@ -34,7 +34,7 @@ func InitValidate() {
 	english := en.New()
 	japanese := ja.New()
 	spanish := es.New()
-	uni := ut.New(chinese, chinese, english, japanese, spanish)
+	uni := ut.New(english, english, chinese, japanese, spanish)
 
 	register := func(locale string, registerFn func(*validator.Validate, ut.Translator) error) {
 		trans, _ := uni.GetTranslator(locale)
@@ -48,9 +48,9 @@ func InitValidate() {
 	register("es", es_translations.RegisterDefaultTranslations)
 	TransByLocale["ko"] = TransByLocale["en"]
 
-	Trans = TransByLocale["zh"]
+	Trans = TransByLocale["en"]
 	_ = Validate.RegisterValidation("checkMobile", checkMobile)
-	Log.Infof("初始化validator.v10数据校验器完成")
+	Log.Infof("validator.v10 validator initialized")
 }
 
 func TranslatorForLocale(locale string) ut.Translator {

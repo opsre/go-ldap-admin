@@ -15,7 +15,7 @@ import (
 
 type RoleLogic struct{}
 
-// Add 添加数据
+// Add data
 func (l RoleLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleAddReq)
 	if !ok {
@@ -27,7 +27,7 @@ func (l RoleLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewValidatorI18nError("role.name_exists", nil)
 	}
 
-	// 获取当前用户最高角色等级
+	// Get the current user highest role level
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
@@ -35,7 +35,7 @@ func (l RoleLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	if minSort != 1 {
 		return nil, tools.NewValidatorI18nError("role.no_update_permission", nil)
 	}
-	// 用户不能创建比自己等级高或相同等级的角色
+	// Users cannot create roles at or above their own level
 	if minSort >= r.Sort {
 		return nil, tools.NewValidatorI18nError("role.cannot_create_higher_or_equal", nil)
 	}
@@ -49,7 +49,7 @@ func (l RoleLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 		Creator: ctxUser.Username,
 	}
 
-	// 创建角色
+	// Create the role
 	err = isql.Role.Add(&role)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.create_failed", i18n.Args{"error": err.Error()})
@@ -57,7 +57,7 @@ func (l RoleLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// List 数据列表
+// List data
 func (l RoleLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleListReq)
 	if !ok {
@@ -65,7 +65,7 @@ func (l RoleLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	}
 	_ = c
 
-	// 获取数据列表
+	// Get the data list
 	roles, err := isql.Role.List(r)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.list_failed", i18n.Args{"error": err.Error()})
@@ -88,7 +88,7 @@ func (l RoleLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	}, nil
 }
 
-// Update 更新数据
+// Update data
 func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleUpdateReq)
 	if !ok {
@@ -101,7 +101,7 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewValidatorI18nError("role.not_found", nil)
 	}
 
-	// 当前用户角色排序最小值（最高等级角色）以及当前用户
+	// The current user and their minimum role sort value (highest role level)
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
@@ -111,8 +111,8 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewValidatorI18nError("role.no_update_permission", nil)
 	}
 
-	// 不能更新比自己角色等级高或相等的角色
-	// 根据path中的角色ID获取该角色信息
+	// Cannot update roles at or above your own level
+	// Get the role information using the role ID in the path
 	roles, _ := isql.Role.GetRolesByIds([]uint{r.ID})
 	if len(roles) == 0 {
 		return nil, tools.NewMySqlI18nError("role.info_not_found", nil)
@@ -122,7 +122,7 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewValidatorI18nError("role.cannot_update_higher_or_equal", nil)
 	}
 
-	// 不能把角色等级更新得比当前用户的等级高
+	// Cannot raise the role level above the current user level
 	if minSort >= r.Sort {
 		return nil, tools.NewValidatorI18nError("role.cannot_set_higher_or_equal", nil)
 	}
@@ -141,21 +141,21 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		Creator: ctxUser.Username,
 	}
 
-	// 更新角色
+	// Update the role
 	err = isql.Role.Update(&role)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.update_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 如果更新成功，且更新了角色的keyword, 则更新casbin中policy
+	// If the update succeeds and the role keyword changed, update the policy in Casbin
 	if r.Keyword != roles[0].Keyword {
-		// 获取policy
+		// Get the policy
 		rolePolicies := common.CasbinEnforcer.GetFilteredPolicy(0, roles[0].Keyword)
 		if len(rolePolicies) == 0 {
 			return
 		}
 		rolePoliciesCopy := make([][]string, 0)
-		// 替换keyword
+		// Replace the keyword
 		for _, policy := range rolePolicies {
 			policyCopy := make([]string, len(policy))
 			copy(policyCopy, policy)
@@ -163,14 +163,14 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 			policy[0] = r.Keyword
 		}
 
-		//gormadapter未实现UpdatePolicies方法，等gorm更新---
+		//gormadapter does not implement UpdatePolicies; wait for a GORM update---
 		//isUpdated, _ := common.CasbinEnforcer.UpdatePolicies(rolePoliciesCopy, rolePolicies)
 		//if !isUpdated {
 		//	response.Fail(c, nil, "更新角色成功，但角色关键字关联的权限接口更新失败！")
 		//	return
 		//}
 
-		// 这里需要先新增再删除（先删除再增加会出错）
+		// Add first and then delete here (deleting first and then adding causes an error)
 		isAdded, _ := common.CasbinEnforcer.AddPolicies(rolePolicies)
 		if !isAdded {
 			return nil, tools.NewOperationI18nError("role.keyword_policy_update_failed", nil)
@@ -186,16 +186,16 @@ func (l RoleLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 
 	}
 
-	// 更新角色成功处理用户信息缓存有两种做法:（这里使用第二种方法，因为一个角色下用户数量可能很多，第二种方法可以分散数据库压力）
-	// 1.可以帮助用户更新拥有该角色的用户信息缓存,使用下面方法
+	// There are two ways to handle user information caches after a successful role update. This uses the second to spread database load when a role has many users
+	// 1. Update the information caches for users with this role using the method below
 	// err = ur.UpdateUserInfoCacheByRoleId(uint(roleId))
-	// 2.直接清理缓存，让活跃的用户自己重新缓存最新用户信息
+	// 2. Clear the caches and let active users cache their latest information again
 	isql.User.ClearUserInfoCache()
 
 	return nil, nil
 }
 
-// Delete 删除数据
+// Delete data
 func (l RoleLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleDeleteReq)
 	if !ok {
@@ -203,37 +203,37 @@ func (l RoleLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	}
 	_ = c
 
-	// 获取当前登陆用户最高等级角色
+	// Get the highest-level role of the currently logged-in user
 	minSort, _, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 获取角色信息
+	// Get the role information
 	roles, _ := isql.Role.GetRolesByIds(r.RoleIds)
 	if len(roles) == 0 {
 		return nil, tools.NewMySqlI18nError("role.no_role_info", nil)
 	}
 
-	// 不能删除比自己角色等级高或相等的角色
+	// Cannot delete roles at or above your own level
 	for _, role := range roles {
 		if minSort >= role.Sort {
 			return nil, tools.NewValidatorI18nError("role.cannot_delete_higher_or_equal", nil)
 		}
 	}
 
-	// 删除角色
+	// Delete the role
 	err = isql.Role.Delete(r.RoleIds)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.delete_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 删除角色成功直接清理缓存，让活跃的用户自己重新缓存最新用户信息
+	// After deleting the role, clear caches so active users cache their latest information again
 	isql.User.ClearUserInfoCache()
 	return nil, nil
 }
 
-// GetMenuList 获取角色菜单列表
+// GetMenuList gets the role menu list
 func (l RoleLogic) GetMenuList(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleGetMenuListReq)
 	if !ok {
@@ -249,7 +249,7 @@ func (l RoleLogic) GetMenuList(c *gin.Context, req any) (data any, rspError any)
 	return menus, nil
 }
 
-// GetApiList 获取角色接口列表
+// GetApiList gets the role API list
 func (l RoleLogic) GetApiList(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleGetApiListReq)
 	if !ok {
@@ -287,7 +287,7 @@ func (l RoleLogic) GetApiList(c *gin.Context, req any) (data any, rspError any) 
 	return accessApis, nil
 }
 
-// UpdateMenus 更新角色菜单
+// UpdateMenus updates role menus
 func (l RoleLogic) UpdateMenus(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleUpdateMenusReq)
 	if !ok {
@@ -300,35 +300,35 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req any) (data any, rspError any)
 		return nil, tools.NewMySqlI18nError("role.no_role_info", nil)
 	}
 
-	// 当前用户角色排序最小值（最高等级角色）以及当前用户
+	// The current user and their minimum role sort value (highest role level)
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// (非管理员)不能更新比自己角色等级高或相等角色的权限菜单
+	// (Non-admin) cannot update permission menus for roles at or above their own level
 	if minSort != 1 {
 		if minSort >= roles[0].Sort {
 			return nil, tools.NewValidatorI18nError("role.cannot_update_higher_or_equal_permissions", nil)
 		}
 	}
 
-	// 获取当前用户所拥有的权限菜单
+	// Get the permission menus owned by the current user
 	ctxUserMenus, err := isql.Menu.GetUserMenusByUserId(ctxUser.ID)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.current_user_menu_list_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 获取当前用户所拥有的权限菜单ID
+	// Get the IDs of permission menus owned by the current user
 	ctxUserMenusIds := make([]uint, 0)
 	for _, menu := range ctxUserMenus {
 		ctxUserMenusIds = append(ctxUserMenusIds, menu.ID)
 	}
 
-	// 用户需要修改的菜单集合
+	// The set of menus the user needs to modify
 	reqMenus := make([]*model.Menu, 0)
 
-	// (非管理员)不能把角色的权限菜单设置的比当前用户所拥有的权限菜单多
+	// (Non-admin) cannot assign a role more permission menus than the current user has
 	if minSort != 1 {
 		for _, id := range r.MenuIds {
 			if !funk.Contains(ctxUserMenusIds, id) {
@@ -345,8 +345,8 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req any) (data any, rspError any)
 			}
 		}
 	} else {
-		// 管理员随意设置
-		// 根据menuIds查询查询菜单
+		// Admins can set these freely
+		// Query menus by menuIds
 		menus, err := isql.Menu.List()
 		if err != nil {
 			return nil, tools.NewValidatorI18nError("role.menu_all_list_failed", i18n.Args{"error": err.Error()})
@@ -370,7 +370,7 @@ func (l RoleLogic) UpdateMenus(c *gin.Context, req any) (data any, rspError any)
 	return nil, nil
 }
 
-// UpdateApis 更新角色接口
+// UpdateApis updates role APIs
 func (l RoleLogic) UpdateApis(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.RoleUpdateApisReq)
 	if !ok {
@@ -378,43 +378,43 @@ func (l RoleLogic) UpdateApis(c *gin.Context, req any) (data any, rspError any) 
 	}
 	_ = c
 
-	// 根据path中的角色ID获取该角色信息
+	// Get the role information using the role ID in the path
 	roles, _ := isql.Role.GetRolesByIds([]uint{r.RoleID})
 	if len(roles) == 0 {
 		return nil, tools.NewMySqlI18nError("role.no_role_info", nil)
 	}
 
-	// 当前用户角色排序最小值（最高等级角色）以及当前用户
+	// The current user and their minimum role sort value (highest role level)
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.current_max_sort_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// (非管理员)不能更新比自己角色等级高或相等角色的权限菜单
+	// (Non-admin) cannot update permission menus for roles at or above their own level
 	if minSort != 1 {
 		if minSort >= roles[0].Sort {
 			return nil, tools.NewValidatorI18nError("role.cannot_update_higher_or_equal_permissions", nil)
 		}
 	}
 
-	// 获取当前用户所拥有的权限接口
+	// Get the permission APIs owned by the current user
 	ctxRoles := ctxUser.Roles
 	ctxRolesPolicies := make([][]string, 0)
 	for _, role := range ctxRoles {
 		policy := common.CasbinEnforcer.GetFilteredPolicy(0, role.Keyword)
 		ctxRolesPolicies = append(ctxRolesPolicies, policy...)
 	}
-	// 得到path中的角色ID对应角色能够设置的权限接口集合
+	// Get the set of permission APIs assignable to the role ID in the path
 	for _, policy := range ctxRolesPolicies {
 		policy[0] = roles[0].Keyword
 	}
 
-	// 根据apiID获取接口详情
+	// Get API details by apiID
 	apis, err := isql.Api.GetApisById(r.ApiIds)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.api_info_failed", nil)
 	}
-	// 生成前端想要设置的角色policies
+	// Generate the role policies requested by the frontend
 	reqRolePolicies := make([][]string, 0)
 	for _, api := range apis {
 		reqRolePolicies = append(reqRolePolicies, []string{
@@ -422,7 +422,7 @@ func (l RoleLogic) UpdateApis(c *gin.Context, req any) (data any, rspError any) 
 		})
 	}
 
-	// (非管理员)不能把角色的权限接口设置的比当前用户所拥有的权限接口多
+	// (Non-admin) cannot assign a role more permission APIs than the current user has
 	if minSort != 1 {
 		for _, reqPolicy := range reqRolePolicies {
 			if !funk.Contains(ctxRolesPolicies, reqPolicy) {
@@ -431,7 +431,7 @@ func (l RoleLogic) UpdateApis(c *gin.Context, req any) (data any, rspError any) 
 		}
 	}
 
-	// 更新角色的权限接口
+	// Update the role permission APIs
 	err = isql.Role.UpdateRoleApis(roles[0].Keyword, reqRolePolicies)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("role.update_apis_failed", nil)

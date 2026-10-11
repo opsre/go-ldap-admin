@@ -1,10 +1,10 @@
-# 定义项目名称
+# Define the project name
 BINARY_NAME=go-ldap-admin
 
-# 定义输出目录
+# Define the output directory
 OUTPUT_DIR=bin
 
-# 版本信息
+# Version information
 VERSION ?= $(shell git tag --points-at HEAD 2>/dev/null || echo "dev")
 GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 BUILD_TIME := $(shell date '+%Y-%m-%d %H:%M:%S')
@@ -52,12 +52,12 @@ gox-all:
 		GOARCH=$$(echo "$$FILENAME" | rev | cut -d'_' -f1 | rev); \
 		OUTPUT_FILE="${OUTPUT_DIR}/$$b"; \
 		if [ "$$GOOS" = "windows" ] && [ "$$GOARCH" = "arm64" ]; then \
-			echo "跳过 $$OUTPUT_FILE (Windows/arm64 不压缩)"; \
+			echo "Skipping $$OUTPUT_FILE (Windows/arm64 is not compressed)"; \
 		elif [ "$$GOOS" = "darwin" ]; then \
-			echo "压缩 macOS 文件: $$OUTPUT_FILE"; \
+			echo "Compressing macOS file: $$OUTPUT_FILE"; \
 			upx --force-macos -fq -9 "$$OUTPUT_FILE"; \
 		else \
-			echo "压缩通用文件: $$OUTPUT_FILE"; \
+			echo "Compressing binary: $$OUTPUT_FILE"; \
 			upx -q -9 "$$OUTPUT_FILE"; \
 		fi; \
 	done
@@ -66,14 +66,14 @@ gox-all:
 clean:
 	@rm -rf ${OUTPUT_DIR}
 
-# 帮助信息
+# Help information
 .PHONY: help
 help:
-	@echo "参数:"
-	@echo "  run         运行项目"
-	@echo "  build       为当前平台构建可执行文件"
-	@echo "  gox-linux   为Linux平台构建可执行文件"
-	@echo "  gox-all     为所有平台构建可执行文件"
-	@echo "  clean       清理生成的可执行文件"
-	@echo "  lint        代码格式检查"
-	@echo "  help        显示帮助信息"
+	@echo "Arguments:"
+	@echo "  run         Run the project"
+	@echo "  build       Build an executable for the current platform"
+	@echo "  gox-linux   Build executables for Linux platforms"
+	@echo "  gox-all     Build executables for all platforms"
+	@echo "  clean       Remove generated executables"
+	@echo "  lint        Check code formatting"
+	@echo "  help        Display this help message"

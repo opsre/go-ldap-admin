@@ -409,3 +409,20 @@ builtin:
         feishuroot: Feishu 루트 부서
       platform:
         group: 기본 그룹
+
+sqlsync:
+  user_id_not_found: "사용자 ID [{id}]가 존재하지 않습니다"
+  user_info_failed: "사용자 정보를 가져오지 못했습니다: {error}"
+  user_ldap_sync_failed: "사용자 [{username}]를 LDAP에 동기화하지 못했습니다: {error}"
+  user_department_info_failed: "사용자 [{username}]의 부서 ID로 부서 정보를 가져오지 못했습니다: {error}"
+  user_add_group_failed: "사용자 [{username}]를 LDAP 그룹 [{group}]에 추가하지 못했습니다: {error}"
+  user_status_update_failed: "사용자 [{username}] 동기화 후 상태를 업데이트하지 못했습니다: {error}"
+  group_id_not_found: "그룹 ID [{id}]가 존재하지 않습니다"
+  group_info_failed: "그룹 정보를 가져오지 못했습니다: {error}"
+  group_ldap_sync_failed: "그룹 [{group}]을 LDAP에 동기화하지 못했습니다: {error}"
+  group_user_sync_failed: "그룹 [{group}] 동기화 후 그룹 내 사용자 [{username}]를 처리하지 못했습니다: {error}"
+  group_status_update_failed: "그룹 [{group}] 동기화 후 상태를 업데이트하지 못했습니다: {error}"
+openldap_sync:
+  user_mysql_create_failed: "MySQL에서 사용자를 생성하지 못했습니다: {error}"
+  user_department_info_failed: "부서 ID로 부서 정보를 가져오지 못했습니다{error}"
+  user_mysql_group_relation_failed: "MySQL에서 사용자-그룹 관계를 추가하지 못했습니다: {error}"

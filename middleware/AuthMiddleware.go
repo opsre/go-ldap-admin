@@ -17,33 +17,33 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 初始化jwt中间件
+// Initialize the JWT middleware
 func InitAuth() (*jwt.GinJWTMiddleware, error) {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-		Realm:           config.Conf.Jwt.Realm,                                 // jwt标识
-		Key:             []byte(config.Conf.Jwt.Key),                           // 服务端密钥
-		Timeout:         time.Hour * time.Duration(config.Conf.Jwt.Timeout),    // token过期时间
-		MaxRefresh:      time.Hour * time.Duration(config.Conf.Jwt.MaxRefresh), // token最大刷新时间(RefreshToken过期时间=Timeout+MaxRefresh)
-		PayloadFunc:     payloadFunc,                                           // 有效载荷处理
-		IdentityHandler: identityHandler,                                       // 解析Claims
-		Authenticator:   login,                                                 // 校验token的正确性, 处理登录逻辑
-		Authorizator:    authorizator,                                          // 用户登录校验成功处理
-		Unauthorized:    unauthorized,                                          // 用户登录校验失败处理
-		LoginResponse:   loginResponse,                                         // 登录成功后的响应
-		LogoutResponse:  logoutResponse,                                        // 登出后的响应
-		RefreshResponse: refreshResponse,                                       // 刷新token后的响应
-		TokenLookup:     "header: Authorization, query: token, cookie: jwt",    // 自动在这几个地方寻找请求中的token
-		TokenHeadName:   "Bearer",                                              // header名称
+		Realm:           config.Conf.Jwt.Realm,                                 // JWT realm
+		Key:             []byte(config.Conf.Jwt.Key),                           // Server key
+		Timeout:         time.Hour * time.Duration(config.Conf.Jwt.Timeout),    // Token expiration time
+		MaxRefresh:      time.Hour * time.Duration(config.Conf.Jwt.MaxRefresh), // Maximum token refresh time (RefreshToken expiration = Timeout + MaxRefresh)
+		PayloadFunc:     payloadFunc,                                           // Handle the payload
+		IdentityHandler: identityHandler,                                       // Parse claims
+		Authenticator:   login,                                                 // Validate the token and handle login
+		Authorizator:    authorizator,                                          // Handle successful user authentication
+		Unauthorized:    unauthorized,                                          // Handle failed user authentication
+		LoginResponse:   loginResponse,                                         // Response after successful login
+		LogoutResponse:  logoutResponse,                                        // Response after logout
+		RefreshResponse: refreshResponse,                                       // Response after token refresh
+		TokenLookup:     "header: Authorization, query: token, cookie: jwt",    // Automatically look for the request token in these locations
+		TokenHeadName:   "Bearer",                                              // Header name
 		TimeFunc:        time.Now,
 	})
 	return authMiddleware, err
 }
 
-// 有效载荷处理
+// Handle the payload
 func payloadFunc(data any) jwt.MapClaims {
 	if v, ok := data.(tools.H); ok {
 		var user model.User
-		// 将用户json转为结构体
+		// Convert user JSON to a struct
 		tools.JsonI2Struct(v["user"], &user)
 		return jwt.MapClaims{
 			jwt.IdentityKey: user.ID,
@@ -53,25 +53,25 @@ func payloadFunc(data any) jwt.MapClaims {
 	return jwt.MapClaims{}
 }
 
-// 解析Claims
+// Parse claims
 func identityHandler(c *gin.Context) any {
 	claims := jwt.ExtractClaims(c)
-	// 此处返回值类型map[string]any与payloadFunc和authorizator的data类型必须一致, 否则会导致授权失败还不容易找到原因
+	// The return type map[string]any must match the data type used by payloadFunc and authorizator, or authorization can fail without an obvious cause
 	return tools.H{
 		"IdentityKey": claims[jwt.IdentityKey],
 		"user":        claims["user"],
 	}
 }
 
-// 校验token的正确性, 处理登录逻辑
+// Validate the token and handle login
 func login(c *gin.Context) (any, error) {
 	var req request.RegisterAndLoginReq
-	// 请求json绑定
+	// Bind the request JSON
 	if err := c.ShouldBind(&req); err != nil {
 		return "", err
 	}
 
-	// 密码通过RSA解密
+	// Decrypt the password with RSA
 	decodeData, err := tools.RSADecrypt([]byte(req.Password), config.Conf.System.RSAPrivateBytes)
 	if err != nil {
 		return nil, err
@@ -82,34 +82,34 @@ func login(c *gin.Context) (any, error) {
 		Password: string(decodeData),
 	}
 
-	// 密码校验
+	// Validate the password
 	user, err := isql.User.Login(u)
 	if err != nil {
 		return nil, err
 	}
-	// 将用户以json格式写入, payloadFunc/authorizator会使用到
+	// Write the user as JSON for payloadFunc and authorizator
 	return tools.H{
 		"user": tools.Struct2Json(user),
 	}, nil
 }
 
-// 用户登录校验成功处理
+// Handle successful user authentication
 func authorizator(data any, c *gin.Context) bool {
 	if v, ok := data.(tools.H); ok {
 		userStr := v["user"].(string)
 		var user model.User
-		// 将用户json转为结构体
+		// Convert user JSON to a struct
 		tools.Json2Struct(userStr, &user)
-		// 将用户保存到context, api调用时取数据方便
+		// Save the user in the context for easy access during API calls
 		c.Set("user", user)
 		return true
 	}
 	return false
 }
 
-// 用户登录校验失败处理
+// Handle failed user authentication
 func unauthorized(c *gin.Context, code int, message string) {
-	common.Log.Debugf("JWT认证失败, 错误码: %d, 错误信息: %s", code, message)
+	common.Log.Debugf("JWT authentication failed, code: %d, message: %s", code, message)
 	message = localizeAuthFailure(c, message)
 	response.Response(c, code, code, nil, i18n.TC(c, "auth.jwt_failed", i18n.Args{
 		"code":    code,
@@ -119,20 +119,20 @@ func unauthorized(c *gin.Context, code int, message string) {
 
 func localizeAuthFailure(c *gin.Context, message string) string {
 	switch message {
-	case "用户未登录":
+	case isql.ErrUserNotLoggedIn.Error():
 		return i18n.TC(c, "auth.not_logged_in", nil)
-	case "用户不存在":
+	case isql.ErrUserNotFound.Error():
 		return i18n.TC(c, "auth.user_not_found", nil)
-	case "用户被禁用":
+	case isql.ErrUserDisabled.Error():
 		return i18n.TC(c, "auth.user_disabled", nil)
-	case "密码错误":
+	case isql.ErrPasswordIncorrect.Error():
 		return i18n.TC(c, "auth.password_incorrect", nil)
 	default:
 		return message
 	}
 }
 
-// 登录成功后的响应
+// Response after successful login
 func loginResponse(c *gin.Context, code int, token string, expires time.Time) {
 	response.Response(c, code, code,
 		gin.H{
@@ -142,12 +142,12 @@ func loginResponse(c *gin.Context, code int, token string, expires time.Time) {
 		i18n.TC(c, "auth.login_success", nil))
 }
 
-// 登出后的响应
+// Response after logout
 func logoutResponse(c *gin.Context, code int) {
 	response.Success(c, nil, i18n.TC(c, "auth.logout_success", nil))
 }
 
-// 刷新token后的响应
+// Response after token refresh
 func refreshResponse(c *gin.Context, code int, token string, expires time.Time) {
 	response.Response(c, code, code,
 		gin.H{

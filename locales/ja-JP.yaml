@@ -409,3 +409,20 @@ builtin:
         feishuroot: Feishuルート部署
       platform:
         group: デフォルトグループ
+
+sqlsync:
+  user_id_not_found: "ユーザーID [{id}] が存在しません"
+  user_info_failed: "ユーザー情報の取得に失敗しました: {error}"
+  user_ldap_sync_failed: "ユーザー [{username}] のLDAP同期に失敗しました: {error}"
+  user_department_info_failed: "ユーザー [{username}] の部署IDによる部署情報の取得に失敗しました: {error}"
+  user_add_group_failed: "LDAPグループ [{group}] へのユーザー [{username}] の追加に失敗しました: {error}"
+  user_status_update_failed: "ユーザー [{username}] の同期後の状態更新に失敗しました: {error}"
+  group_id_not_found: "グループID [{id}] が存在しません"
+  group_info_failed: "グループ情報の取得に失敗しました: {error}"
+  group_ldap_sync_failed: "グループ [{group}] のLDAP同期に失敗しました: {error}"
+  group_user_sync_failed: "グループ [{group}] の同期後、グループ内のユーザー [{username}] の処理に失敗しました: {error}"
+  group_status_update_failed: "グループ [{group}] の同期後の状態更新に失敗しました: {error}"
+openldap_sync:
+  user_mysql_create_failed: "MySQLでのユーザー作成に失敗しました: {error}"
+  user_department_info_failed: "部署IDによる部署情報の取得に失敗しました{error}"
+  user_mysql_group_relation_failed: "MySQLでのユーザーとグループの関連付け追加に失敗しました: {error}"

@@ -4,27 +4,27 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Username      string  `gorm:"type:varchar(50);not null;unique;comment:'用户名'" json:"username"`                    // 用户名
-	Password      string  `gorm:"size:255;not null;comment:'用户密码'" json:"password"`                                  // 用户密码
-	Nickname      string  `gorm:"type:varchar(50);comment:'中文名'" json:"nickname"`                                    // 昵称
-	GivenName     string  `gorm:"type:varchar(50);comment:'花名'" json:"givenName"`                                    // 花名，如果有的话，没有的话用昵称占位
-	Mail          string  `gorm:"type:varchar(100);comment:'邮箱'" json:"mail"`                                        // 邮箱
-	JobNumber     string  `gorm:"type:varchar(20);comment:'工号'" json:"jobNumber"`                                    // 工号
-	Mobile        string  `gorm:"type:varchar(15);not null;unique;comment:'手机号'" json:"mobile"`                      // 手机号
-	Avatar        string  `gorm:"type:varchar(255);comment:'头像'" json:"avatar"`                                      // 头像
-	PostalAddress string  `gorm:"type:varchar(255);comment:'地址'" json:"postalAddress"`                               // 地址
-	Departments   string  `gorm:"type:varchar(512);comment:'部门'" json:"departments"`                                 // 部门
-	Position      string  `gorm:"type:varchar(128);comment:'职位'" json:"position"`                                    //  职位
-	Introduction  string  `gorm:"type:varchar(255);comment:'个人简介'" json:"introduction"`                              // 个人简介
-	Status        uint    `gorm:"type:tinyint(1);default:1;comment:'状态:1在职, 2离职'" json:"status"`                     // 状态
-	Creator       string  `gorm:"type:varchar(20);;comment:'创建者'" json:"creator"`                                    // 创建者
-	Source        string  `gorm:"type:varchar(50);comment:'用户来源：dingTalk、wecom、feishu、ldap、platform'" json:"source"` // 来源
-	DepartmentId  string  `gorm:"type:varchar(100);not null;comment:'部门id'" json:"departmentId"`                     // 部门id
-	Roles         []*Role `gorm:"many2many:user_roles" json:"roles"`                                                 // 角色
-	SourceUserId  string  `gorm:"type:varchar(100);not null;comment:'第三方用户id'" json:"sourceUserId"`                  // 第三方用户id
-	SourceUnionId string  `gorm:"type:varchar(100);not null;comment:'第三方唯一unionId'" json:"sourceUnionId"`            // 第三方唯一unionId
-	UserDN        string  `gorm:"type:varchar(255);not null;comment:'用户dn'" json:"userDn"`                           // 用户在ldap的dn
-	SyncState     uint    `gorm:"type:tinyint(1);default:1;comment:'同步状态:1已同步, 2未同步'" json:"syncState"`              // 数据到ldap的同步状态
+	Username      string  `gorm:"type:varchar(50);not null;unique;comment:'Username'" json:"username"`                           // Username
+	Password      string  `gorm:"size:255;not null;comment:'User password'" json:"password"`                                     // User password
+	Nickname      string  `gorm:"type:varchar(50);comment:'Chinese name'" json:"nickname"`                                       // Nickname
+	GivenName     string  `gorm:"type:varchar(50);comment:'Nickname'" json:"givenName"`                                          // Preferred name, if available; otherwise use the nickname
+	Mail          string  `gorm:"type:varchar(100);comment:'Email'" json:"mail"`                                                 // Email
+	JobNumber     string  `gorm:"type:varchar(20);comment:'Employee number'" json:"jobNumber"`                                   // Employee number
+	Mobile        string  `gorm:"type:varchar(15);not null;unique;comment:'Mobile number'" json:"mobile"`                        // Mobile number
+	Avatar        string  `gorm:"type:varchar(255);comment:'Avatar'" json:"avatar"`                                              // Avatar
+	PostalAddress string  `gorm:"type:varchar(255);comment:'Address'" json:"postalAddress"`                                      // Address
+	Departments   string  `gorm:"type:varchar(512);comment:'Department'" json:"departments"`                                     // Department
+	Position      string  `gorm:"type:varchar(128);comment:'Position'" json:"position"`                                          //  Position
+	Introduction  string  `gorm:"type:varchar(255);comment:'Personal introduction'" json:"introduction"`                         // Personal introduction
+	Status        uint    `gorm:"type:tinyint(1);default:1;comment:'Status: 1 active, 2 departed'" json:"status"`                // Status
+	Creator       string  `gorm:"type:varchar(20);;comment:'Creator'" json:"creator"`                                            // Creator
+	Source        string  `gorm:"type:varchar(50);comment:'User source: DingTalk, WeCom, Feishu, LDAP, platform'" json:"source"` // Source
+	DepartmentId  string  `gorm:"type:varchar(100);not null;comment:'Department ID'" json:"departmentId"`                        // Department ID
+	Roles         []*Role `gorm:"many2many:user_roles" json:"roles"`                                                             // Role
+	SourceUserId  string  `gorm:"type:varchar(100);not null;comment:'Third-party user ID'" json:"sourceUserId"`                  // Third-party user ID
+	SourceUnionId string  `gorm:"type:varchar(100);not null;comment:'Unique third-party union ID'" json:"sourceUnionId"`         // Unique third-party union ID
+	UserDN        string  `gorm:"type:varchar(255);not null;comment:'User DN'" json:"userDn"`                                    // User DN in LDAP
+	SyncState     uint    `gorm:"type:tinyint(1);default:1;comment:'Sync status: 1 synced, 2 not synced'" json:"syncState"`      // LDAP sync status
 }
 
 func (u *User) SetUserName(userName string) {

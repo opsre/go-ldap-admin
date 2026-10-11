@@ -11,23 +11,23 @@ import (
 
 type GroupService struct{}
 
-// Add 添加资源
+// Add a resource
 func (x GroupService) Add(g *model.Group) error { //organizationalUnit
 	if g.Remark == "" {
 		g.Remark = g.GroupName
 	}
 	add := ldap.NewAddRequest(g.GroupDN, nil)
 	if g.GroupType == "ou" {
-		add.Attribute("objectClass", []string{"organizationalUnit", "top"}) // 如果定义了 groupOfNAmes，那么必须指定member，否则报错如下：object class 'groupOfNames' requires attribute 'member'
+		add.Attribute("objectClass", []string{"organizationalUnit", "top"}) // If groupOfNames is defined, member must be specified, or this error occurs: object class 'groupOfNames' requires attribute 'member'
 	}
 	if g.GroupType == "cn" {
 		add.Attribute("objectClass", []string{"groupOfUniqueNames", "top"})
-		add.Attribute("uniqueMember", []string{config.Conf.Ldap.AdminDN}) // 所以这里创建组的时候，默认将admin加入其中，以免创建时没有人员而报上边的错误
+		add.Attribute("uniqueMember", []string{config.Conf.Ldap.AdminDN}) // Therefore, add admin to the group by default to avoid the error above when creating an empty group
 	}
 	add.Attribute(g.GroupType, []string{g.GroupName})
 	add.Attribute("description", []string{g.Remark})
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -37,12 +37,12 @@ func (x GroupService) Add(g *model.Group) error { //organizationalUnit
 	return conn.Add(add)
 }
 
-// UpdateGroup 更新一个分组
+// UpdateGroup updates a group
 func (x GroupService) Update(oldGroup, newGroup *model.Group) error {
 	modify1 := ldap.NewModifyRequest(oldGroup.GroupDN, nil)
 	modify1.Replace("description", []string{newGroup.Remark})
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -53,7 +53,7 @@ func (x GroupService) Update(oldGroup, newGroup *model.Group) error {
 	if err != nil {
 		return err
 	}
-	// 如果配置文件允许修改分组名称，且分组名称发生了变化，那么执行修改分组名称
+	// Rename the group if allowed by configuration and its name has changed
 	if config.Conf.Ldap.GroupNameModify && newGroup.GroupName != oldGroup.GroupName {
 		modify2 := ldap.NewModifyDNRequest(oldGroup.GroupDN, newGroup.GroupDN, true, "")
 		err := conn.ModifyDN(modify2)
@@ -64,11 +64,11 @@ func (x GroupService) Update(oldGroup, newGroup *model.Group) error {
 	return nil
 }
 
-// Delete 删除资源
+// Delete deletes a resource
 func (x GroupService) Delete(gdn string) error {
 	del := ldap.NewDelRequest(gdn, nil)
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -78,16 +78,16 @@ func (x GroupService) Delete(gdn string) error {
 	return conn.Del(del)
 }
 
-// AddUserToGroup 添加用户到分组
+// Add a user to a group
 func (x GroupService) AddUserToGroup(dn, udn string) error {
-	//判断dn是否以ou开头
+	//Check whether the DN starts with ou
 	if dn[:3] == "ou=" {
 		return tools.NewLdapI18nError("group.ou_cannot_add_user", nil)
 	}
 	newmr := ldap.NewModifyRequest(dn, nil)
 	newmr.Add("uniqueMember", []string{udn})
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -97,12 +97,12 @@ func (x GroupService) AddUserToGroup(dn, udn string) error {
 	return conn.Modify(newmr)
 }
 
-// DelUserFromGroup 将用户从分组删除
+// Remove a user from a group
 func (x GroupService) RemoveUserFromGroup(gdn, udn string) error {
 	newmr := ldap.NewModifyRequest(gdn, nil)
 	newmr.Delete("uniqueMember", []string{udn})
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -112,7 +112,7 @@ func (x GroupService) RemoveUserFromGroup(gdn, udn string) error {
 	return conn.Modify(newmr)
 }
 
-// DelUserFromGroup 将用户从分组删除
+// Remove a user from a group
 func (x GroupService) ListGroupDN() (groups []*model.Group, err error) {
 	// Construct query request
 	searchRequest := ldap.NewSearchRequest(
@@ -123,7 +123,7 @@ func (x GroupService) ListGroupDN() (groups []*model.Group, err error) {
 		nil,
 	)
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {

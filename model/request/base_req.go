@@ -1,17 +1,17 @@
 package request
 
-// BaseSendCodeReq 发送验证码
+// BaseSendCodeReq sends a verification code
 type BaseSendCodeReq struct {
 	Mail string `json:"mail" validate:"required,min=0,max=100"`
 }
 
-// BaseChangePwdReq 修改密码结构体
+// BaseChangePwdReq is the password change request struct
 type BaseChangePwdReq struct {
 	Mail string `json:"mail" validate:"required,min=0,max=100"`
 	Code string `json:"code" validate:"required,len=6"`
 }
 
-// BaseDashboardReq  系统首页展示数据结构体
+// BaseDashboardReq is the system home page data request struct
 type BaseDashboardReq struct {
 }
 
@@ -25,10 +25,10 @@ type DecryptPasswdReq struct {
 	Passwd string `json:"passwd" form:"passwd" validate:"required"`
 }
 
-// BaseConfigReq 获取系统配置结构体
+// BaseConfigReq is the system configuration request struct
 type BaseConfigReq struct {
 }
 
-// BaseVersionReq 获取版本信息结构体
+// BaseVersionReq is the version information request struct
 type BaseVersionReq struct {
 }

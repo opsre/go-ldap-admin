@@ -5,10 +5,10 @@ on:
     branches:
       - main
   release:
-    types: [created, published] # 表示在创建新的 Release 时触发
+    types: [created, published] # Run when a new release is created
 
   # Allows you to run this workflow manually from the Actions tab
-  # 可以手动触发
+  # Can be triggered manually
   workflow_dispatch:
     inputs:
       logLevel:
@@ -51,12 +51,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: 设置go环境
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
           cache-dependency-path: "go.sum"
-      - name: 安装 UPX
+      - name: Install UPX
         uses: crazy-max/ghaction-upx@v3
         with:
           install-only: true

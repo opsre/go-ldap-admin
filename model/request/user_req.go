@@ -1,6 +1,6 @@
 package request
 
-// UserAddReq 创建资源结构体
+// UserAddReq is the resource creation request struct
 type UserAddReq struct {
 	Username      string `json:"username" validate:"required,min=2,max=50"`
 	Password      string `json:"password"`
@@ -20,7 +20,7 @@ type UserAddReq struct {
 	RoleIds       []uint `json:"roleIds" validate:"required"`
 }
 
-// DingUserAddReq 钉钉用户创建资源结构体
+// DingUserAddReq is the DingTalk user creation request struct
 type DingUserAddReq struct {
 	Username      string `json:"username" validate:"required,min=2,max=50"`
 	Password      string `json:"password"`
@@ -38,11 +38,11 @@ type DingUserAddReq struct {
 	DepartmentId  []uint `json:"departmentId" validate:"required"`
 	Source        string `json:"source" validate:"min=0,max=50"`
 	RoleIds       []uint `json:"roleIds" validate:"required"`
-	SourceUserId  string `json:"sourceUserId"`  // 第三方用户id
-	SourceUnionId string `json:"sourceUnionId"` // 第三方唯一unionId
+	SourceUserId  string `json:"sourceUserId"`  // Third-party user ID
+	SourceUnionId string `json:"sourceUnionId"` // Unique third-party union ID
 }
 
-// WeComUserAddReq 企业微信用户创建资源结构体
+// WeComUserAddReq is the WeCom user creation request struct
 type WeComUserAddReq struct {
 	Username      string `json:"username" validate:"required,min=2,max=50"`
 	Password      string `json:"password"`
@@ -60,11 +60,11 @@ type WeComUserAddReq struct {
 	DepartmentId  []uint `json:"departmentId" validate:"required"`
 	Source        string `json:"source" validate:"min=0,max=50"`
 	RoleIds       []uint `json:"roleIds" validate:"required"`
-	SourceUserId  string `json:"sourceUserId"`  // 第三方用户id
-	SourceUnionId string `json:"sourceUnionId"` // 第三方唯一unionId
+	SourceUserId  string `json:"sourceUserId"`  // Third-party user ID
+	SourceUnionId string `json:"sourceUnionId"` // Unique third-party union ID
 }
 
-// UserUpdateReq 更新资源结构体
+// UserUpdateReq is the resource update request struct
 type UserUpdateReq struct {
 	ID            uint   `json:"id" validate:"required"`
 	Username      string `json:"username" validate:"required,min=2,max=50"`
@@ -83,52 +83,52 @@ type UserUpdateReq struct {
 	RoleIds       []uint `json:"roleIds" validate:"required"`
 }
 
-// UserDeleteReq 批量删除资源结构体
+// UserDeleteReq is the bulk resource deletion request struct
 type UserDeleteReq struct {
 	UserIds []uint `json:"userIds" validate:"required"`
 }
 
-// UserChangePwdReq 修改密码结构体
+// UserChangePwdReq is the password change request struct
 type UserChangePwdReq struct {
 	OldPassword string `json:"oldPassword" validate:"required"`
 	NewPassword string `json:"newPassword" validate:"required"`
 }
 
-// UserResetPasswordReq 重置密码结构体
+// UserResetPasswordReq is the password reset request struct
 type UserResetPasswordReq struct {
 	Username string `json:"username" validate:"required"`
 }
 
-// UserChangeUserStatusReq 修改用户状态结构体
+// UserChangeUserStatusReq is the user status change request struct
 type UserChangeUserStatusReq struct {
 	ID     uint `json:"id" validate:"required"`
 	Status uint `json:"status" validate:"oneof=1 2"`
 }
 
-// UserGetUserInfoReq 获取用户信息结构体
+// UserGetUserInfoReq is the user information request struct
 type UserGetUserInfoReq struct {
 }
 
-// SyncDingUserReq 同步钉钉用户信息
+// SyncDingUserReq syncs DingTalk user information
 type SyncDingUserReq struct {
 }
 
-// SyncWeComUserReq 同步企业微信用户信息
+// SyncWeComUserReq syncs WeCom user information
 type SyncWeComUserReq struct {
 }
 
-// SyncFeiShuUserReq 同步飞书用户信息
+// SyncFeiShuUserReq syncs Feishu user information
 type SyncFeiShuUserReq struct {
 }
 
-// SyncOpenLdapUserReq 同步ldap用户信息
+// SyncOpenLdapUserReq syncs LDAP user information
 type SyncOpenLdapUserReq struct {
 }
 type SyncSqlUserReq struct {
 	UserIds []uint `json:"userIds" validate:"required"`
 }
 
-// UserListReq 获取用户列表结构体
+// UserListReq is the user list request struct
 type UserListReq struct {
 	Username     string `json:"username" form:"username"`
 	Mobile       string `json:"mobile" form:"mobile" `
@@ -141,7 +141,7 @@ type UserListReq struct {
 	PageSize     int    `json:"pageSize" form:"pageSize"`
 }
 
-// RegisterAndLoginReq 用户登录结构体
+// RegisterAndLoginReq is the user login request struct
 type RegisterAndLoginReq struct {
 	Username string `form:"username" json:"username" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required"`

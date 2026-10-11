@@ -10,9 +10,9 @@ import (
 
 func InitMenuRoutes(r *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) gin.IRoutes {
 	menu := r.Group("/menu")
-	// 开启jwt认证中间件
+	// Enable JWT authentication middleware
 	menu.Use(authMiddleware.MiddlewareFunc())
-	// 开启casbin鉴权中间件
+	// Enable Casbin authorization middleware
 	menu.Use(middleware.CasbinMiddleware())
 	{
 		menu.GET("/tree", controller.Menu.GetTree)

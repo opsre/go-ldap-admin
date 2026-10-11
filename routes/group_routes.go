@@ -10,9 +10,9 @@ import (
 
 func InitGroupRoutes(r *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) gin.IRoutes {
 	group := r.Group("/group")
-	// 开启jwt认证中间件
+	// Enable JWT authentication middleware
 	group.Use(authMiddleware.MiddlewareFunc())
-	// 开启casbin鉴权中间件
+	// Enable Casbin authorization middleware
 	group.Use(middleware.CasbinMiddleware())
 	{
 		group.GET("/list", controller.Group.List)
@@ -26,11 +26,11 @@ func InitGroupRoutes(r *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) g
 		group.GET("/useringroup", controller.Group.UserInGroup)
 		group.GET("/usernoingroup", controller.Group.UserNoInGroup)
 
-		group.POST("/syncDingTalkDepts", controller.Group.SyncDingTalkDepts) // 同步钉钉部门到平台
-		group.POST("/syncWeComDepts", controller.Group.SyncWeComDepts)       // 同步企业微信部门到平台
-		group.POST("/syncFeiShuDepts", controller.Group.SyncFeiShuDepts)     // 同步飞书部门到平台
-		group.POST("/syncOpenLdapDepts", controller.Group.SyncOpenLdapDepts) // 同步ldap的分组到平台InitGroupRoutes
-		group.POST("/syncSqlGroups", controller.Group.SyncSqlGroups)         // 同步Sql分组到Ldap
+		group.POST("/syncDingTalkDepts", controller.Group.SyncDingTalkDepts) // Sync DingTalk departments to the platform
+		group.POST("/syncWeComDepts", controller.Group.SyncWeComDepts)       // Sync WeCom departments to the platform
+		group.POST("/syncFeiShuDepts", controller.Group.SyncFeiShuDepts)     // Sync Feishu departments to the platform
+		group.POST("/syncOpenLdapDepts", controller.Group.SyncOpenLdapDepts) // Sync LDAP groups to the platform InitGroupRoutes
+		group.POST("/syncSqlGroups", controller.Group.SyncSqlGroups)         // Sync SQL groups to LDAP
 	}
 
 	return r

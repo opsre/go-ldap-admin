@@ -8,7 +8,7 @@ import (
 )
 
 func TestLocaleFilesHaveSameKeys(t *testing.T) {
-	if err := Init("zh-CN", []string{"zh-CN", "en-US", "ja-JP", "es-ES", "ko-KR"}); err != nil {
+	if err := Init("en-US", []string{"en-US", "zh-CN", "ja-JP", "es-ES", "ko-KR"}); err != nil {
 		t.Fatal(err)
 	}
 

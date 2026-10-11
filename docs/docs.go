@@ -11,7 +11,7 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "termsOfService": "https://github.com/eryajf/go-ldap-admin",
         "contact": {
-            "name": "项目作者：二丫讲梵 、 swagger作者：南宫乘风",
+            "name": "Project author: Er Ya Jiang Fan; Swagger author: Nangong Chengfeng",
             "url": "https://github.com/eryajf/go-ldap-admin",
             "email": "https://github.com/eryajf/go-ldap-admin"
         },
@@ -34,12 +34,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "接口管理"
+                    "API management"
                 ],
-                "summary": "新建API接口",
+                "summary": "Create an API",
                 "parameters": [
                     {
-                        "description": "新建API",
+                        "description": "New API",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -72,12 +72,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "接口管理"
+                    "API management"
                 ],
-                "summary": "删除API接口",
+                "summary": "Delete the API",
                 "parameters": [
                     {
-                        "description": "删除API",
+                        "description": "Delete API",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -110,9 +110,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "接口管理"
+                    "API management"
                 ],
-                "summary": "获取API接口列表",
+                "summary": "Get the API list",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -137,9 +137,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "接口管理"
+                    "API management"
                 ],
-                "summary": "获取API接口树",
+                "summary": "Get the API tree",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -164,12 +164,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "接口管理"
+                    "API management"
                 ],
-                "summary": "更新API接口",
+                "summary": "Update the API",
                 "parameters": [
                     {
-                        "description": "更新API",
+                        "description": "Update API",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -190,7 +190,7 @@ const docTemplate = `{
         },
         "/base/changePwd": {
             "post": {
-                "description": "使用邮箱验证码修改密码",
+                "description": "Change the password using an email verification code",
                 "consumes": [
                     "application/json"
                 ],
@@ -198,12 +198,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "基础管理"
+                    "Basic management"
                 ],
-                "summary": "用户通过邮箱修改密码",
+                "summary": "Change password by email",
                 "parameters": [
                     {
-                        "description": "发送验证码请求数据",
+                        "description": "Verification code request data",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -222,9 +222,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/base/dashboard": {
+        "/base/config": {
             "get": {
-                "description": "获取系统仪表盘概览数据",
+                "description": "Get system configuration so the frontend can determine whether to show the sync button",
                 "consumes": [
                     "application/json"
                 ],
@@ -232,9 +232,32 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "基础管理"
+                    "Basic management"
                 ],
-                "summary": "获取仪表盘数据",
+                "summary": "Get the system configuration",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/base/dashboard": {
+            "get": {
+                "description": "Get an overview of the system dashboard",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Basic management"
+                ],
+                "summary": "Get dashboard data",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -247,7 +270,7 @@ const docTemplate = `{
         },
         "/base/decryptpwd": {
             "get": {
-                "description": "将加密后的密码解密为明文",
+                "description": "Decrypt the encrypted password to plain text",
                 "consumes": [
                     "application/json"
                 ],
@@ -255,13 +278,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "基础管理"
+                    "Basic management"
                 ],
-                "summary": "密码解密",
+                "summary": "Decrypt the password",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "需要解密的加密密码",
+                        "description": "Encrypted password to decrypt",
                         "name": "passwd",
                         "in": "query",
                         "required": true
@@ -279,7 +302,7 @@ const docTemplate = `{
         },
         "/base/encryptpwd": {
             "get": {
-                "description": "将明文密码加密",
+                "description": "Encrypt the plain-text password",
                 "consumes": [
                     "application/json"
                 ],
@@ -287,13 +310,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "基础管理"
+                    "Basic management"
                 ],
-                "summary": "密码加密",
+                "summary": "Encrypt the password",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "需要加密的明文密码",
+                        "description": "Plain-text password to encrypt",
                         "name": "passwd",
                         "in": "query",
                         "required": true
@@ -311,7 +334,7 @@ const docTemplate = `{
         },
         "/base/login": {
             "post": {
-                "description": "用户登录",
+                "description": "User login",
                 "consumes": [
                     "application/json"
                 ],
@@ -319,12 +342,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "基础管理"
+                    "Basic management"
                 ],
-                "summary": "登录接口 (手动加上: Bearer + token(密码加密接口))",
+                "summary": "Login endpoint (manually add: Bearer + token (password encryption endpoint))",
                 "parameters": [
                     {
-                        "description": "用户登录信息账号和密码",
+                        "description": "User login information: account and password",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -345,7 +368,7 @@ const docTemplate = `{
         },
         "/base/logout": {
             "post": {
-                "description": "用户退出登录",
+                "description": "User logout",
                 "consumes": [
                     "application/json"
                 ],
@@ -353,9 +376,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "基础管理"
+                    "Basic management"
                 ],
-                "summary": "退出登录",
+                "summary": "Log out",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -368,14 +391,14 @@ const docTemplate = `{
         },
         "/base/ping": {
             "get": {
-                "description": "健康检测",
+                "description": "Health check",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "基础管理"
+                    "Basic management"
                 ],
-                "summary": "健康检测",
+                "summary": "Health check",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -388,7 +411,7 @@ const docTemplate = `{
         },
         "/base/refreshToken": {
             "post": {
-                "description": "使用旧的 Token 获取新的 Token",
+                "description": "Get a new token using the old token",
                 "consumes": [
                     "application/json"
                 ],
@@ -396,13 +419,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "基础管理"
+                    "Basic management"
                 ],
-                "summary": "刷新 Token",
+                "summary": "Refresh token",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bearer 旧的 Token",
+                        "description": "Bearer old token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -420,7 +443,7 @@ const docTemplate = `{
         },
         "/base/sendcode": {
             "post": {
-                "description": "向指定邮箱发送验证码",
+                "description": "Send a verification code to the specified email",
                 "consumes": [
                     "application/json"
                 ],
@@ -428,12 +451,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "基础管理"
+                    "Basic management"
                 ],
-                "summary": "发送验证码",
+                "summary": "Send a verification code",
                 "parameters": [
                     {
-                        "description": "发送验证码请求数据",
+                        "description": "Verification code request data",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -442,6 +465,29 @@ const docTemplate = `{
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/base/version": {
+            "get": {
+                "description": "Get the system version, Git commit hash, and build time",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Basic management"
+                ],
+                "summary": "Get version information",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -466,12 +512,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "字段关系管理"
+                    "Field relation management"
                 ],
-                "summary": "新建字段关系管理记录",
+                "summary": "Create a field relation record",
                 "parameters": [
                     {
-                        "description": "新建字段关系管理记录",
+                        "description": "Create a field relation record",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -504,12 +550,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "字段关系管理"
+                    "Field relation management"
                 ],
-                "summary": "删除字段关系管理记录",
+                "summary": "Delete a field relation record",
                 "parameters": [
                     {
-                        "description": "删除字段关系管理记录",
+                        "description": "Delete a field relation record",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -542,9 +588,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "字段关系管理"
+                    "Field relation management"
                 ],
-                "summary": "获字段关系管理列表",
+                "summary": "Get the field relation management list",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -569,12 +615,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "字段关系管理"
+                    "Field relation management"
                 ],
-                "summary": "更新字段关系管理记录",
+                "summary": "Update a field relation record",
                 "parameters": [
                     {
-                        "description": "更新字段关系管理记录",
+                        "description": "Update a field relation record",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -600,7 +646,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "添加分组记录",
+                "description": "Add a group record",
                 "consumes": [
                     "application/json"
                 ],
@@ -608,12 +654,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "添加分组记录",
+                "summary": "Add a group record",
                 "parameters": [
                     {
-                        "description": "添加用户记录的结构体",
+                        "description": "User record request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -639,7 +685,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "添加用户",
+                "description": "Add a user",
                 "consumes": [
                     "application/json"
                 ],
@@ -647,12 +693,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "添加用户",
+                "summary": "Add a user",
                 "parameters": [
                     {
-                        "description": "添加用户记录的结构体",
+                        "description": "User record request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -678,7 +724,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "删除分组记录",
+                "description": "Delete a group record",
                 "consumes": [
                     "application/json"
                 ],
@@ -686,12 +732,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "删除分组记录",
+                "summary": "Delete a group record",
                 "parameters": [
                     {
-                        "description": "删除用户记录的结构体",
+                        "description": "User record deletion structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -717,7 +763,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取分组记录列表",
+                "description": "Get the group list",
                 "consumes": [
                     "application/json"
                 ],
@@ -725,9 +771,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "获取分组记录列表",
+                "summary": "Get the group list",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -745,7 +791,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "移除用户",
+                "description": "Remove a user",
                 "consumes": [
                     "application/json"
                 ],
@@ -753,12 +799,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "移除用户",
+                "summary": "Remove a user",
                 "parameters": [
                     {
-                        "description": "移除用户记录的结构体",
+                        "description": "User removal request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -784,7 +830,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步钉钉部门信息",
+                "description": "Sync DingTalk department information",
                 "consumes": [
                     "application/json"
                 ],
@@ -792,9 +838,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "同步钉钉部门信息",
+                "summary": "Sync DingTalk department information",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -812,7 +858,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步飞书部门信息",
+                "description": "Sync Feishu department information",
                 "consumes": [
                     "application/json"
                 ],
@@ -820,9 +866,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "同步飞书部门信息",
+                "summary": "Sync Feishu department information",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -840,7 +886,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步原ldap部门信息",
+                "description": "Sync existing LDAP department information",
                 "consumes": [
                     "application/json"
                 ],
@@ -848,9 +894,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "同步原ldap部门信息",
+                "summary": "Sync existing LDAP department information",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -868,7 +914,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步Sql中的分组信息到ldap",
+                "description": "Sync SQL group information to LDAP",
                 "consumes": [
                     "application/json"
                 ],
@@ -876,9 +922,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "同步Sql中的分组信息到ldap",
+                "summary": "Sync SQL group information to LDAP",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -896,7 +942,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步企业微信部门信息",
+                "description": "Sync WeCom department information",
                 "consumes": [
                     "application/json"
                 ],
@@ -904,9 +950,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "同步企业微信部门信息",
+                "summary": "Sync WeCom department information",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -924,7 +970,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取分组接口树",
+                "description": "Get the group API tree",
                 "consumes": [
                     "application/json"
                 ],
@@ -932,9 +978,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "获取分组接口树",
+                "summary": "Get the group API tree",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -952,7 +998,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "更新分组记录",
+                "description": "Update a group record",
                 "consumes": [
                     "application/json"
                 ],
@@ -960,12 +1006,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "更新分组记录",
+                "summary": "Update a group record",
                 "parameters": [
                     {
-                        "description": "更新用户记录的结构体",
+                        "description": "User record update structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -991,7 +1037,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取分组内用户",
+                "description": "Get users in the group",
                 "consumes": [
                     "application/json"
                 ],
@@ -999,20 +1045,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "获取分组内用户",
+                "summary": "Get users in the group",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "分组ID",
+                        "description": "Group ID",
                         "name": "groupId",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "昵称",
+                        "description": "Nickname",
                         "name": "nickname",
                         "in": "query"
                     }
@@ -1034,7 +1080,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "不在分组的用户",
+                "description": "Users outside the group",
                 "consumes": [
                     "application/json"
                 ],
@@ -1042,20 +1088,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "分组管理"
+                    "Group management"
                 ],
-                "summary": "不在分组的用户",
+                "summary": "Users outside the group",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "分组ID",
+                        "description": "Group ID",
                         "name": "groupId",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "昵称",
+                        "description": "Nickname",
                         "name": "nickname",
                         "in": "query"
                     }
@@ -1084,9 +1130,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "操作日志管理"
+                    "Operation log management"
                 ],
-                "summary": "清空操作日志记录",
+                "summary": "Clear operation log records",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1111,12 +1157,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "操作日志管理"
+                    "Operation log management"
                 ],
-                "summary": "删除操作日志记录",
+                "summary": "Delete operation log records",
                 "parameters": [
                     {
-                        "description": "删除日志的ID",
+                        "description": "IDs of the logs to delete",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1149,49 +1195,49 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "操作日志管理"
+                    "Operation log management"
                 ],
-                "summary": "获取操作日志记录列表",
+                "summary": "Get the operation log list",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "用户名",
+                        "description": "Username",
                         "name": "username",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "IP地址",
+                        "description": "IP address",
                         "name": "ip",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "路径",
+                        "description": "Path",
                         "name": "path",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "方法",
+                        "description": "Method",
                         "name": "method",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "状态码",
+                        "description": "Status code",
                         "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "页码",
+                        "description": "Page number",
                         "name": "pageNum",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "每页数量",
+                        "description": "Page size",
                         "name": "pageSize",
                         "in": "query"
                     }
@@ -1220,13 +1266,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "菜单管理"
+                    "Menu management"
                 ],
-                "summary": "获取用户菜单树",
+                "summary": "Get the user menu tree",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "分组ID",
+                        "description": "Group ID",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -1256,12 +1302,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "菜单管理"
+                    "Menu management"
                 ],
-                "summary": "新建菜单",
+                "summary": "Create a menu",
                 "parameters": [
                     {
-                        "description": "新建菜单",
+                        "description": "Create a menu",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1294,12 +1340,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "菜单管理"
+                    "Menu management"
                 ],
-                "summary": "删除菜单",
+                "summary": "Delete the menu",
                 "parameters": [
                     {
-                        "description": "删除菜单",
+                        "description": "Delete the menu",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1332,9 +1378,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "菜单管理"
+                    "Menu management"
                 ],
-                "summary": "获取菜单树",
+                "summary": "Get the menu tree",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1359,12 +1405,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "菜单管理"
+                    "Menu management"
                 ],
-                "summary": "更新菜单",
+                "summary": "Update the menu",
                 "parameters": [
                     {
-                        "description": "更新菜单",
+                        "description": "Update the menu",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1390,7 +1436,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "新建角色记录",
+                "description": "Create a role record",
                 "consumes": [
                     "application/json"
                 ],
@@ -1398,12 +1444,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "角色管理"
+                    "Role management"
                 ],
-                "summary": "新建角色记录",
+                "summary": "Create a role record",
                 "parameters": [
                     {
-                        "description": "添加角色记录的结构体",
+                        "description": "Role creation request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1429,7 +1475,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "删除角色记录",
+                "description": "Delete role records",
                 "consumes": [
                     "application/json"
                 ],
@@ -1437,12 +1483,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "角色管理"
+                    "Role management"
                 ],
-                "summary": "删除角色记录",
+                "summary": "Delete role records",
                 "parameters": [
                     {
-                        "description": "删除角色记录的结构体",
+                        "description": "Role deletion request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1468,7 +1514,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取接口列表",
+                "description": "Get the API list",
                 "consumes": [
                     "application/json"
                 ],
@@ -1476,13 +1522,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "角色管理"
+                    "Role management"
                 ],
-                "summary": "获取接口列表",
+                "summary": "Get the API list",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "角色ID",
+                        "description": "Role ID",
                         "name": "roleId",
                         "in": "query",
                         "required": true
@@ -1505,7 +1551,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取菜单列表",
+                "description": "Get the menu list",
                 "consumes": [
                     "application/json"
                 ],
@@ -1513,13 +1559,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "角色管理"
+                    "Role management"
                 ],
-                "summary": "获取菜单列表",
+                "summary": "Get the menu list",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "角色ID",
+                        "description": "Role ID",
                         "name": "roleId",
                         "in": "query",
                         "required": true
@@ -1542,7 +1588,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取角色记录列表",
+                "description": "Get the role list",
                 "consumes": [
                     "application/json"
                 ],
@@ -1550,9 +1596,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "角色管理"
+                    "Role management"
                 ],
-                "summary": "获取角色记录列表",
+                "summary": "Get the role list",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1570,7 +1616,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "更新角色记录",
+                "description": "Update a role record",
                 "consumes": [
                     "application/json"
                 ],
@@ -1578,12 +1624,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "角色管理"
+                    "Role management"
                 ],
-                "summary": "更新角色记录",
+                "summary": "Update a role record",
                 "parameters": [
                     {
-                        "description": "更新角色记录的结构体",
+                        "description": "Role update request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1609,7 +1655,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "更新接口",
+                "description": "Update APIs",
                 "consumes": [
                     "application/json"
                 ],
@@ -1617,12 +1663,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "角色管理"
+                    "Role management"
                 ],
-                "summary": "更新接口",
+                "summary": "Update APIs",
                 "parameters": [
                     {
-                        "description": "更新接口的结构体",
+                        "description": "API update request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1648,7 +1694,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "更新菜单",
+                "description": "Update the menu",
                 "consumes": [
                     "application/json"
                 ],
@@ -1656,12 +1702,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "角色管理"
+                    "Role management"
                 ],
-                "summary": "更新菜单",
+                "summary": "Update the menu",
                 "parameters": [
                     {
-                        "description": "更新菜单的结构体",
+                        "description": "Menu update request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1687,7 +1733,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "添加用户记录",
+                "description": "Add a user record",
                 "consumes": [
                     "application/json"
                 ],
@@ -1695,12 +1741,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "添加用户记录",
+                "summary": "Add a user record",
                 "parameters": [
                     {
-                        "description": "添加用户记录的结构体",
+                        "description": "User record request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1726,7 +1772,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "更新密码",
+                "description": "Update the password",
                 "consumes": [
                     "application/json"
                 ],
@@ -1734,12 +1780,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "更新密码",
+                "summary": "Update the password",
                 "parameters": [
                     {
-                        "description": "更改用户密码的结构体",
+                        "description": "User password change request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1765,7 +1811,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "更改用户状态",
+                "description": "Change the user status",
                 "consumes": [
                     "application/json"
                 ],
@@ -1773,12 +1819,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "更改用户状态",
+                "summary": "Change the user status",
                 "parameters": [
                     {
-                        "description": "更改用户状态的结构体",
+                        "description": "User status change request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1804,7 +1850,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "删除用户记录",
+                "description": "Delete user records",
                 "consumes": [
                     "application/json"
                 ],
@@ -1812,12 +1858,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "删除用户记录",
+                "summary": "Delete user records",
                 "parameters": [
                     {
-                        "description": "删除用户记录的结构体ID",
+                        "description": "IDs in the user deletion request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1843,7 +1889,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取当前登录用户信息",
+                "description": "Get the current logged-in user information",
                 "consumes": [
                     "application/json"
                 ],
@@ -1851,9 +1897,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "获取当前登录用户信息",
+                "summary": "Get the current logged-in user information",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1871,7 +1917,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "获取所有用户记录列表",
+                "description": "Get the list of all user records",
                 "consumes": [
                     "application/json"
                 ],
@@ -1879,9 +1925,48 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "获取所有用户记录列表",
+                "summary": "Get the list of all user records",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/resetPassword": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Reset the user password to a random value and send an email notification",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User management"
+                ],
+                "summary": "Reset the user password",
+                "parameters": [
+                    {
+                        "description": "User password reset request structure",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UserResetPasswordReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1899,7 +1984,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步钉钉用户信息",
+                "description": "Sync DingTalk user information",
                 "consumes": [
                     "application/json"
                 ],
@@ -1907,12 +1992,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "同步钉钉用户信息",
+                "summary": "Sync DingTalk user information",
                 "parameters": [
                     {
-                        "description": "同步钉钉用户信息",
+                        "description": "Sync DingTalk user information",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1938,7 +2023,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步飞书用户信息",
+                "description": "Sync Feishu user information",
                 "consumes": [
                     "application/json"
                 ],
@@ -1946,12 +2031,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "同步飞书用户信息",
+                "summary": "Sync Feishu user information",
                 "parameters": [
                     {
-                        "description": "同步飞书用户信息",
+                        "description": "Sync Feishu user information",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1977,7 +2062,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步ldap用户信息",
+                "description": "Sync LDAP user information",
                 "consumes": [
                     "application/json"
                 ],
@@ -1985,12 +2070,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "同步ldap用户信息",
+                "summary": "Sync LDAP user information",
                 "parameters": [
                     {
-                        "description": "同步ldap用户信息",
+                        "description": "Sync LDAP user information",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -2016,7 +2101,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步sql用户信息到ldap",
+                "description": "Sync SQL user information to LDAP",
                 "consumes": [
                     "application/json"
                 ],
@@ -2024,12 +2109,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "同步sql用户信息到ldap",
+                "summary": "Sync SQL user information to LDAP",
                 "parameters": [
                     {
-                        "description": "更改用户状态的结构体",
+                        "description": "User status change request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -2055,7 +2140,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "同步企业微信用户信息",
+                "description": "Sync WeCom user information",
                 "consumes": [
                     "application/json"
                 ],
@@ -2063,12 +2148,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "同步企业微信用户信息",
+                "summary": "Sync WeCom user information",
                 "parameters": [
                     {
-                        "description": "同步企业微信用户信息",
+                        "description": "Sync WeCom user information",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -2094,7 +2179,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "添加用户记录",
+                "description": "Add a user record",
                 "consumes": [
                     "application/json"
                 ],
@@ -2102,12 +2187,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理"
+                    "User management"
                 ],
-                "summary": "更新用户记录",
+                "summary": "Update a user record",
                 "parameters": [
                     {
-                        "description": "更改用户记录的结构体",
+                        "description": "User update request structure",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -2309,12 +2394,12 @@ const docTemplate = `{
                     "minLength": 1
                 },
                 "parentId": {
-                    "description": "父级Id 大于等于0 必填",
+                    "description": "Parent ID is required and must be greater than or equal to 0",
                     "type": "integer",
                     "minimum": 0
                 },
                 "remark": {
-                    "description": "分组的中文描述",
+                    "description": "Chinese description of the group",
                     "type": "string",
                     "maxLength": 128,
                     "minLength": 0
@@ -2387,7 +2472,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "remark": {
-                    "description": "分组的中文描述",
+                    "description": "Chinese description of the group",
                     "type": "string",
                     "maxLength": 128,
                     "minLength": 0
@@ -2910,6 +2995,17 @@ const docTemplate = `{
                 }
             }
         },
+        "request.UserResetPasswordReq": {
+            "type": "object",
+            "required": [
+                "username"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "request.UserUpdateReq": {
             "type": "object",
             "required": [
@@ -3021,7 +3117,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Go Ldap Admin",
-	Description:      "基于Go+Vue实现的openLDAP后台管理项目",
+	Description:      "OpenLDAP admin system built with Go and Vue",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

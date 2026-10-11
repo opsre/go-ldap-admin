@@ -1,6 +1,6 @@
 package request
 
-// RoleAddReq 添加资源结构体
+// RoleAddReq is the resource creation request struct
 type RoleAddReq struct {
 	Name    string `json:"name" validate:"required,min=1,max=20"`
 	Keyword string `json:"keyword" validate:"required,min=1,max=20"`
@@ -9,7 +9,7 @@ type RoleAddReq struct {
 	Sort    uint   `json:"sort" validate:"gte=1,lte=999"`
 }
 
-// RoleListReq 列表结构体
+// RoleListReq is the list request struct
 type RoleListReq struct {
 	Name     string `json:"name" form:"name"`
 	Keyword  string `json:"keyword" form:"keyword"`
@@ -18,7 +18,7 @@ type RoleListReq struct {
 	PageSize int    `json:"pageSize" form:"pageSize"`
 }
 
-// RoleUpdateReq 更新资源结构体
+// RoleUpdateReq is the resource update request struct
 type RoleUpdateReq struct {
 	ID      uint   `json:"id" validate:"required"`
 	Name    string `json:"name" validate:"required,min=1,max=20"`
@@ -28,32 +28,32 @@ type RoleUpdateReq struct {
 	Sort    uint   `json:"sort" validate:"gte=1,lte=999"`
 }
 
-// RoleDeleteReq 删除资源结构体
+// RoleDeleteReq is the resource deletion request struct
 type RoleDeleteReq struct {
 	RoleIds []uint `json:"roleIds" validate:"required"`
 }
 
-// RoleGetTreeReq 获取资源树结构体
+// RoleGetTreeReq is the resource tree request struct
 type RoleGetTreeReq struct {
 }
 
-// RoleGetMenuListReq 获取角色菜单列表结构体
+// RoleGetMenuListReq is the role menu list request struct
 type RoleGetMenuListReq struct {
 	RoleID uint `json:"roleId" form:"roleId" validate:"required"`
 }
 
-// RoleGetApiListReq 获取角色接口列表结构体
+// RoleGetApiListReq is the role API list request struct
 type RoleGetApiListReq struct {
 	RoleID uint `json:"roleId" form:"roleId" validate:"required"`
 }
 
-// RoleUpdateMenusReq 更新角色菜单结构体
+// RoleUpdateMenusReq is the role menu update request struct
 type RoleUpdateMenusReq struct {
 	RoleID  uint   `json:"roleId" validate:"required"`
 	MenuIds []uint `json:"menuIds" validate:"required"`
 }
 
-// RoleUpdateApisReq 更新角色接口结构体
+// RoleUpdateApisReq is the role API update request struct
 type RoleUpdateApisReq struct {
 	RoleID uint   `json:"roleId" validate:"required"`
 	ApiIds []uint `json:"apiIds" validate:"required"`

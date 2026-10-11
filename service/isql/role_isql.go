@@ -15,14 +15,14 @@ import (
 
 type RoleService struct{}
 
-// Exist 判断资源是否存在
+// Exist checks whether the resource exists
 func (s RoleService) Exist(filter map[string]any) bool {
 	var dataObj model.Role
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
 }
 
-// List 获取数据列表
+// List gets the data list
 func (s RoleService) List(req *request.RoleListReq) ([]*model.Role, error) {
 	var list []*model.Role
 	db := common.DB.Model(&model.Role{}).Order("created_at DESC")
@@ -45,29 +45,29 @@ func (s RoleService) List(req *request.RoleListReq) ([]*model.Role, error) {
 	return list, err
 }
 
-// Count 获取资源总数
+// Count gets the total number of resources
 func (s RoleService) Count() (int64, error) {
 	var count int64
 	err := common.DB.Model(&model.Role{}).Count(&count).Error
 	return count, err
 }
 
-// Add 创建资源
+// Add creates a resource
 func (s RoleService) Add(role *model.Role) error {
 	return common.DB.Create(role).Error
 }
 
-// Update 更新资源
+// Update a resource
 func (s RoleService) Update(role *model.Role) error {
 	return common.DB.Model(&model.Role{}).Where("id = ?", role.ID).Updates(role).Error
 }
 
-// Find 获取单个资源
+// Find a single resource
 func (s RoleService) Find(filter map[string]any, data *model.Role) error {
 	return common.DB.Where(filter).First(&data).Error
 }
 
-// Delete 删除资源
+// Delete deletes a resource
 func (s RoleService) Delete(roleIds []uint) error {
 	var roles []*model.Role
 	err := common.DB.Where("id IN (?)", roleIds).Find(&roles).Error
@@ -75,7 +75,7 @@ func (s RoleService) Delete(roleIds []uint) error {
 		return err
 	}
 	err = common.DB.Select("Users", "Menus").Unscoped().Delete(&roles).Error
-	// 删除成功就删除casbin policy
+	// Delete the Casbin policy after successful deletion
 	if err == nil {
 		for _, role := range roles {
 			roleKeyword := role.Keyword
@@ -92,28 +92,28 @@ func (s RoleService) Delete(roleIds []uint) error {
 	return err
 }
 
-// Delete 根据角色ID获取角色
+// Delete gets a role by role ID
 func (s RoleService) GetRolesByIds(roleIds []uint) ([]*model.Role, error) {
 	var list []*model.Role
 	err := common.DB.Where("id IN (?)", roleIds).Find(&list).Error
 	return list, err
 }
 
-// GetRoleMenusById 获取角色的权限菜单
+// GetRoleMenusById gets the role permission menus
 func (s RoleService) GetRoleMenusById(roleId uint) ([]*model.Menu, error) {
 	var role model.Role
 	err := common.DB.Where("id = ?", roleId).Preload("Menus").First(&role).Error
 	return role.Menus, err
 }
 
-// UpdateRoleMenus 更新角色的权限菜单
+// UpdateRoleMenus updates the role permission menus
 func (s RoleService) UpdateRoleMenus(role *model.Role) error {
 	return common.DB.Model(role).Association("Menus").Replace(role.Menus)
 }
 
-// UpdateRoleApis 更新角色的权限接口（先全部删除再新增）
+// UpdateRoleApis updates role permission APIs (delete all first, then add)
 func (s RoleService) UpdateRoleApis(roleKeyword string, reqRolePolicies [][]string) error {
-	// 先获取path中的角色ID对应角色已有的police(需要先删除的)
+	// First get the existing policies for the role ID in the path (to delete first)
 	err := common.CasbinEnforcer.LoadPolicy()
 	if err != nil {
 		return errors.New("failed to load role permission API policy")

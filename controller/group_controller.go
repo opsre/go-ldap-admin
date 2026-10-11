@@ -9,10 +9,10 @@ import (
 
 type GroupController struct{}
 
-// List 记录列表
-// @Summary 获取分组记录列表
-// @Description 获取分组记录列表
-// @Tags 分组管理
+// List records
+// @Summary Get the group list
+// @Description Get the group list
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody
@@ -25,14 +25,14 @@ func (m *GroupController) List(c *gin.Context) {
 	})
 }
 
-// UserInGroup 在分组内的用户
-// @Summary 获取分组内用户
-// @Description 获取分组内用户
-// @Tags 分组管理
+// UserInGroup lists users in the group
+// @Summary Get users in the group
+// @Description Get users in the group
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
-// @Param groupId query int true "分组ID"
-// @Param nickname query string false "昵称"
+// @Param groupId query int true "Group ID"
+// @Param nickname query string false "Nickname"
 // @Success 200 {object} response.ResponseBody
 // @Router /group/useringroup [get]
 // @Security ApiKeyAuth
@@ -43,14 +43,14 @@ func (m *GroupController) UserInGroup(c *gin.Context) {
 	})
 }
 
-// UserNoInGroup 不在分组的用户
-// @Summary 不在分组的用户
-// @Description 不在分组的用户
-// @Tags 分组管理
+// UserNoInGroup lists users outside the group
+// @Summary Users outside the group
+// @Description Users outside the group
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
-// @Param groupId query int true "分组ID"
-// @Param nickname query string false "昵称"
+// @Param groupId query int true "Group ID"
+// @Param nickname query string false "Nickname"
 // @Success 200 {object} response.ResponseBody
 // @Router /group/usernoingroup [get]
 // @Security ApiKeyAuth
@@ -61,10 +61,10 @@ func (m *GroupController) UserNoInGroup(c *gin.Context) {
 	})
 }
 
-// GetTree 接口树
-// @Summary 获取分组接口树
-// @Description 获取分组接口树
-// @Tags 分组管理
+// GetTree gets the API tree
+// @Summary Get the group API tree
+// @Description Get the group API tree
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody
@@ -77,13 +77,13 @@ func (m *GroupController) GetTree(c *gin.Context) {
 	})
 }
 
-// Add 新建分组记录
-// @Summary 添加分组记录
-// @Description 添加分组记录
-// @Tags 分组管理
+// Add a group record
+// @Summary Add a group record
+// @Description Add a group record
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.GroupAddReq true "添加用户记录的结构体"
+// @Param  data body request.GroupAddReq true "User record request structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /group/add [post]
 // @Security ApiKeyAuth
@@ -94,13 +94,13 @@ func (m *GroupController) Add(c *gin.Context) {
 	})
 }
 
-// Update 更新记录
-// @Summary 更新分组记录
-// @Description 更新分组记录
-// @Tags 分组管理
+// Update a record
+// @Summary Update a group record
+// @Description Update a group record
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.GroupUpdateReq true "更新用户记录的结构体"
+// @Param  data body request.GroupUpdateReq true "User record update structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /group/update [post]
 // @Security ApiKeyAuth
@@ -111,13 +111,13 @@ func (m *GroupController) Update(c *gin.Context) {
 	})
 }
 
-// Delete 删除记录
-// @Summary 删除分组记录
-// @Description 删除分组记录
-// @Tags 分组管理
+// Delete records
+// @Summary Delete a group record
+// @Description Delete a group record
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.GroupDeleteReq true "删除用户记录的结构体"
+// @Param  data body request.GroupDeleteReq true "User record deletion structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /group/delete [post]
 // @Security ApiKeyAuth
@@ -128,13 +128,13 @@ func (m *GroupController) Delete(c *gin.Context) {
 	})
 }
 
-// AddUser 添加用户
-// @Summary 添加用户
-// @Description 添加用户
-// @Tags 分组管理
+// AddUser adds a user
+// @Summary Add a user
+// @Description Add a user
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.GroupAddUserReq true "添加用户记录的结构体"
+// @Param  data body request.GroupAddUserReq true "User record request structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /group/adduser [post]
 // @Security ApiKeyAuth
@@ -145,13 +145,13 @@ func (m *GroupController) AddUser(c *gin.Context) {
 	})
 }
 
-// RemoveUser 移除用户
-// @Summary 移除用户
-// @Description 移除用户
-// @Tags 分组管理
+// RemoveUser removes a user
+// @Summary Remove a user
+// @Description Remove a user
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.GroupRemoveUserReq true "移除用户记录的结构体"
+// @Param  data body request.GroupRemoveUserReq true "User removal request structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /group/removeuser [post]
 // @Security ApiKeyAuth
@@ -162,10 +162,10 @@ func (m *GroupController) RemoveUser(c *gin.Context) {
 	})
 }
 
-// SyncDingTalkDepts 同步钉钉部门信息
-// @Summary 同步钉钉部门信息
-// @Description 同步钉钉部门信息
-// @Tags 分组管理
+// SyncDingTalkDepts syncs DingTalk department information
+// @Summary Sync DingTalk department information
+// @Description Sync DingTalk department information
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody
@@ -178,10 +178,10 @@ func (m *GroupController) SyncDingTalkDepts(c *gin.Context) {
 	})
 }
 
-// SyncWeComDepts 同步企业微信部门信息
-// @Summary 同步企业微信部门信息
-// @Description 同步企业微信部门信息
-// @Tags 分组管理
+// SyncWeComDepts syncs WeCom department information
+// @Summary Sync WeCom department information
+// @Description Sync WeCom department information
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody
@@ -194,10 +194,10 @@ func (m *GroupController) SyncWeComDepts(c *gin.Context) {
 	})
 }
 
-// SyncFeiShuDepts 同步飞书部门信息
-// @Summary 同步飞书部门信息
-// @Description 同步飞书部门信息
-// @Tags 分组管理
+// SyncFeiShuDepts syncs Feishu department information
+// @Summary Sync Feishu department information
+// @Description Sync Feishu department information
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody
@@ -210,10 +210,10 @@ func (m *GroupController) SyncFeiShuDepts(c *gin.Context) {
 	})
 }
 
-// SyncOpenLdapDepts 同步原ldap部门信息
-// @Summary 同步原ldap部门信息
-// @Description 同步原ldap部门信息
-// @Tags 分组管理
+// SyncOpenLdapDepts syncs existing LDAP department information
+// @Summary Sync existing LDAP department information
+// @Description Sync existing LDAP department information
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody
@@ -226,10 +226,10 @@ func (m *GroupController) SyncOpenLdapDepts(c *gin.Context) {
 	})
 }
 
-// SyncSqlGroups 同步Sql中的分组信息到ldap
-// @Summary 同步Sql中的分组信息到ldap
-// @Description 同步Sql中的分组信息到ldap
-// @Tags 分组管理
+// SyncSqlGroups syncs SQL group information to LDAP
+// @Summary Sync SQL group information to LDAP
+// @Description Sync SQL group information to LDAP
+// @Tags Group management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody

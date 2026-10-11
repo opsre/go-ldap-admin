@@ -8,14 +8,14 @@ type PageOption struct {
 var defaultOptions *PageOption
 
 func init() {
-	// 默认取 第 1 页的 10 条记录
+	// By default, get 10 records from page 1
 	defaultOptions = &PageOption{
 		PageNum:  0,
 		PageSize: 10,
 	}
 }
 
-// NewPageOption 创建一个分页参数
+// NewPageOption creates pagination options
 func NewPageOption(pageNum, pageSize int) *PageOption {
 	if pageSize <= 0 || pageSize > 1000 || pageNum < 0 {
 		return defaultOptions

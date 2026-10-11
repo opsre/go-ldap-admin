@@ -1,7 +1,7 @@
 <div align="center">
 <h1>Go Ldap Admin</h1>
 
-[简体中文](../README.md) | **English**
+**English** | [Chinese](../README.md)
 
 [![Auth](https://img.shields.io/badge/Auth-eryajf-ff69b4)](https://github.com/eryajf)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/eryajf-world/go-ldap-admin)](https://github.com/eryajf/go-ldap-admin)
@@ -12,7 +12,7 @@
 [![GitHub license](https://img.shields.io/github/license/eryajf/go-ldap-admin)](https://github.com/eryajf/go-ldap-admin/blob/main/LICENSE)
 [![Commits](https://img.shields.io/github/commit-activity/m/eryajf/go-ldap-admin?color=ffff00)](https://github.com/eryajf/go-ldap-admin/commits/main)
 
-<p>🌉 An OpenLDAP administration platform built with Go + Vue 🌉</p>
+<p>An OpenLDAP administration platform built with Go + Vue</p>
 
 <img src="./docs/img/00.webp" width="800"  height="3">
 </div><br>
@@ -24,29 +24,31 @@
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**目录**
+**Contents**
 
-- [ℹ️ Introduction](#-introduction)
-- [❤️ Sponsors](#-sponsors)
-- [🏊 Online Demo](#-online-demo)
-- [👨‍💻 Project Repositories](#-project-repositories)
-- [🔗 Documentation Links](#-documentation-links)
-- [🥰 Acknowledgements](#-acknowledgements)
-- [🤗 One More Thing](#-one-more-thing)
-- [🤑 Donation](#-donation)
-- [📝 User Registration](#-user-registration)
-- [💎 Recommended Software](#-recommended-software)
-- [🤝 Contributors](#-contributors)
+- [Introduction](#introduction)
+- [Sponsors](#sponsors)
+- [Online Demo](#online-demo)
+- [Project Repositories](#project-repositories)
+- [Documentation Links](#documentation-links)
+- [Acknowledgements](#acknowledgements)
+- [One More Thing](#one-more-thing)
+- [Donation](#donation)
+- [User Registration](#user-registration)
+- [Recommended Software](#recommended-software)
+- [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## ℹ️ Introduction
+## Introduction
 
 `go-ldap-admin` aims to provide a simple, easy-to-use, clean, and modern administration console for `OpenLDAP`.
 
 > In addition to OpenLDAP administration, the project supports integration with `DingTalk`, `WeCom`, and `Lark`. Users can manually or automatically synchronize organization structures and employee information into the platform, making `go-ldap-admin` a bridge between enterprise IM systems and internal enterprise applications.
 
-## ❤️ Sponsors
+UI and API messages support `en-US` (default), `zh-CN`, `ja-JP`, `es-ES`, and `ko-KR`. Backend locale files are in `locales/`, and frontend locale files are in `src/lang/`. The UI language selector stores the selected locale and sends it in the `X-Locale` request header; the backend reads that header and falls back to `Accept-Language`.
+
+## Sponsors
 
 [![](./docs/img/12.webp)](https://aiserve.top/)
 
@@ -55,7 +57,7 @@
 
 [**Yuanren AI**](https://aiserve.top/): an all-in-one Gemini, ChatGPT, and Claude support platform that provides advanced AI mirror services, helping users in China access models such as ChatGPT and Claude more smoothly.
 
-## 🏊 Online Demo
+## Online Demo
 
 The online demo is available at:
 
@@ -73,14 +75,14 @@ The online demo is available at:
 |   ![API management](./docs/img/08.webp)   | ![Operation logs](./docs/img/09.webp)  |
 |  ![Swagger](./docs/img/10.webp)   | ![Swagger](./docs/img/11.webp) |
 
-## 👨‍💻 Project Repositories
+## Project Repositories
 
 | Category |                     GitHub                     |   CNB |                     Gitee                        |
 | :--: | :--------------------------------------------: | :-------------------------------------------------:| :-------------------------------------------------: |
 | Backend |  [go-ldap-admin](https://github.com/opsre/go-ldap-admin.git)   | [go-ldap-admin](https://cnb.cool/opsre/go-ldap-admin.git) | [go-ldap-admin](https://gitee.com/eryajf-world/go-ldap-admin.git)   |
 | Frontend | [go-ldap-admin-ui](https://github.com/opsre/go-ldap-admin-ui.git) | [go-ldap-admin-ui](https://cnb.cool/opsre/go-ldap-admin-ui.git) | [go-ldap-admin-ui](https://gitee.com/eryajf-world/go-ldap-admin-ui.git) |
 
-## 🔗 Documentation Links
+## Documentation Links
 
 Project introductions, usage guides, and best practices are all available in the official documentation. If you have questions, please read the documentation first. Common links are listed below.
 
@@ -95,7 +97,7 @@ Project introductions, usage guides, and best practices are all available in the
 > - Deploying and using this project requires some knowledge of OpenLDAP. If you want to configure IM synchronization, you may also need basic Go knowledge for debugging when issues occur.
 > - The documentation is already detailed. Free support is not provided for topics already covered in the documentation. If you encounter problems during installation or deployment, you can request support through the [paid service](http://ldapdoc.eryajf.net/pages/7eab1c/).
 
-## 🥰 Acknowledgements
+## Acknowledgements
 
 Thanks to the following excellent projects. Without them, `go-ldap-admin` would not exist:
 
@@ -112,25 +114,25 @@ Thanks to the following excellent projects. Without them, `go-ldap-admin` would 
   - [go-web-mini](https://github.com/gnimli/go-web-mini): this project was refactored based on `go-web-mini`. Thanks to the author for the original work.
   - Thanks to [nangongchengfeng](https://github.com/nangongchengfeng) for contributing the [Swagger](https://github.com/eryajf/go-ldap-admin/pull/345) feature.
 
-## 🤗 One More Thing
+## One More Thing
 
 - If you find this project useful, please give it a star.
 - If you have ideas or feature requests, feel free to discuss them in issues.
 
-## 🤑 Donation
+## Donation
 
 If this project helps you, you can buy the author a coffee: [click here](http://ldapdoc.eryajf.net/pages/2b6725/)
 
-## 📝 User Registration
+## User Registration
 
 If your company uses this project, please leave a footprint here. Thank you for your support: [click here](https://github.com/eryajf/go-ldap-admin/issues/18)
 
-## 💎 Recommended Software
+## Recommended Software
 
-- [🦄 TenSunS: an efficient and easy-to-use Consul Web operations platform](https://github.com/starsliao/TenSunS)
+- [TenSunS: an efficient and easy-to-use Consul Web operations platform](https://github.com/starsliao/TenSunS)
 - [Next Terminal: a simple, easy-to-use, and secure open-source interactive audit bastion host system](https://github.com/dushixiang/next-terminal)
 
-## 🤝 Contributors
+## Contributors
 
 <!-- readme: collaborators,contributors -start -->
 <table>
@@ -139,7 +141,7 @@ If your company uses this project, please leave a footprint here. Thank you for 
         <a href="https://github.com/eryajf">
             <img src="https://avatars.githubusercontent.com/u/33259379?v=4" width="100;" alt="eryajf"/>
             <br />
-            <sub><b>二丫讲梵</b></sub>
+            <sub><b>Er Ya Jiang Fan</b></sub>
         </a>
     </td>
     <td align="center">
@@ -167,7 +169,7 @@ If your company uses this project, please leave a footprint here. Thank you for 
         <a href="https://github.com/nangongchengfeng">
             <img src="https://avatars.githubusercontent.com/u/46562911?v=4" width="100;" alt="nangongchengfeng"/>
             <br />
-            <sub><b>南宫乘风</b></sub>
+            <sub><b>Nan Gong Cheng Feng</b></sub>
         </a>
     </td>
     <td align="center">

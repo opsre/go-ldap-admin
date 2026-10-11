@@ -13,39 +13,39 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 操作日志channel
+// Operation log channel
 var OperationLogChan = make(chan *model.OperationLog, 30)
 
 func OperationLogMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 开始时间
+		// Start time
 		startTime := time.Now()
 
-		// 处理请求
+		// Handle the request
 		c.Next()
 
-		// 结束时间
+		// End time
 		endTime := time.Now()
 
-		// 执行耗时
+		// Execution duration
 		timeCost := endTime.Sub(startTime).Milliseconds()
 
-		// 获取当前登录用户
+		// Get the current logged-in user
 		var username string
 		ctxUser, _ := c.Get("user")
 		user, ok := ctxUser.(model.User)
 		if !ok {
-			username = "未登录"
+			username = "anonymous"
 		} else {
 			username = user.Username
 		}
 
-		// 获取访问路径
+		// Get the request path
 		path := strings.TrimPrefix(c.FullPath(), "/"+config.Conf.System.UrlPathPrefix)
-		// 请求方式
+		// Request method
 		method := c.Request.Method
 
-		// 获取接口描述
+		// Get the API description
 		api := new(model.Api)
 		_ = isql.Api.Find(tools.H{"path": path, "method": method}, api)
 
@@ -62,8 +62,8 @@ func OperationLogMiddleware() gin.HandlerFunc {
 			UserAgent:  c.Request.UserAgent(),
 		}
 
-		// 最好是将日志发送到rabbitmq或者kafka中
-		// 这里是发送到channel中，开启3个goroutine处理
+		// Ideally, send logs to RabbitMQ or Kafka
+		// For now, send logs to a channel and start three goroutines to process them
 		OperationLogChan <- &operationLog
 	}
 }

@@ -10,8 +10,8 @@ import (
 	"github.com/eryajf/go-ldap-admin/public/tools"
 )
 
-// 官方文档： https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/children
-// GetAllDepts 获取所有部门
+// Official documentation: https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/children
+// GetAllDepts gets all departments
 func GetAllDepts() (ret []map[string]any, err error) {
 	var (
 		fetchChild       = true
@@ -51,7 +51,7 @@ func GetAllDepts() (ret []map[string]any, err error) {
 			pageToken = res.PageToken
 		}
 	} else {
-		//使用dept-list来一个一个添加部门，开头为^的不添加子部门
+		//Use dept-list to add departments one by one; do not add children for entries beginning with ^
 		isInDeptList := func(id string) bool {
 			for _, v := range config.Conf.FeiShu.DeptList {
 				v = strings.TrimPrefix(v, "^")
@@ -135,8 +135,8 @@ func GetAllDepts() (ret []map[string]any, err error) {
 	return
 }
 
-// 官方文档： https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/find_by_department
-// GetAllUsers 获取所有员工信息
+// Official documentation: https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/find_by_department
+// GetAllUsers gets all employee information
 func GetAllUsers() (ret []map[string]any, err error) {
 	var (
 		pageSize  int64 = 50
@@ -192,7 +192,7 @@ func GetAllUsers() (ret []map[string]any, err error) {
 				ele["employee_no"] = user.EmployeeNo
 				ele["enterprise_email"] = user.EnterpriseEmail
 				ele["job_title"] = user.JobTitle
-				// 部门ids
+				// Department IDs
 				var sourceDeptIds []string
 				for _, deptId := range user.DepartmentIDs {
 					sourceDeptIds = append(sourceDeptIds, fmt.Sprintf("%s_%s", config.Conf.FeiShu.Flag, deptId))
@@ -210,13 +210,13 @@ func GetAllUsers() (ret []map[string]any, err error) {
 	return
 }
 
-// 官方文档： https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/ehr/ehr-v1/employee/list
-// GetLeaveUserIds 获取离职人员ID列表
+// Official documentation: https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/ehr/ehr-v1/employee/list
+// GetLeaveUserIds gets the IDs of departed employees
 func GetLeaveUserIds() ([]string, error) {
 	var ids []string
 	users, _, err := InitFeiShuClient().EHR.GetEHREmployeeList(context.TODO(), &lark.GetEHREmployeeListReq{
 		Status:     []int64{5},
-		UserIDType: lark.IDTypePtr(lark.IDTypeUnionID), // 只查询unionID
+		UserIDType: lark.IDTypePtr(lark.IDTypeUnionID), // Query unionID only
 	})
 	if err != nil {
 		return nil, err

@@ -15,7 +15,7 @@ import (
 
 type ApiService struct{}
 
-// List 获取数据列表
+// List gets the data list
 func (s ApiService) List(req *request.ApiListReq) ([]*model.Api, error) {
 	var list []*model.Api
 	db := common.DB.Model(&model.Api{}).Order("created_at DESC")
@@ -42,28 +42,28 @@ func (s ApiService) List(req *request.ApiListReq) ([]*model.Api, error) {
 	return list, err
 }
 
-// List 获取数据列表
+// List gets the data list
 func (s ApiService) ListAll() (list []*model.Api, err error) {
 	err = common.DB.Model(&model.Api{}).Order("created_at DESC").Find(&list).Error
 
 	return list, err
 }
 
-// Count 获取数据总数
+// Count gets the total number of records
 func (s ApiService) Count() (int64, error) {
 	var count int64
 	err := common.DB.Model(&model.Api{}).Count(&count).Error
 	return count, err
 }
 
-// Add 添加资源
+// Add a resource
 func (s ApiService) Add(api *model.Api) error {
 	return common.DB.Create(api).Error
 }
 
-// Update 更新资源
+// Update a resource
 func (s ApiService) Update(api *model.Api) error {
-	// 根据id获取接口信息
+	// Get API information by ID
 	var oldApi model.Api
 	err := common.DB.First(&oldApi, api.ID).Error
 	if err != nil {
@@ -73,12 +73,12 @@ func (s ApiService) Update(api *model.Api) error {
 	if err != nil {
 		return err
 	}
-	// 更新了method和path就更新casbin中policy
+	// Update the Casbin policy when method or path changes
 	if oldApi.Path != api.Path || oldApi.Method != api.Method {
 		policies := common.CasbinEnforcer.GetFilteredPolicy(1, oldApi.Path, oldApi.Method)
-		// 接口在casbin的policy中存在才进行操作
+		// Proceed only if the API exists in the Casbin policy
 		if len(policies) > 0 {
-			// 先删除
+			// Delete first
 			isRemoved, _ := common.CasbinEnforcer.RemovePolicies(policies)
 			if !isRemoved {
 				return errors.New("failed to update permission API")
@@ -87,12 +87,12 @@ func (s ApiService) Update(api *model.Api) error {
 				policy[1] = api.Path
 				policy[2] = api.Method
 			}
-			// 新增
+			// Add
 			isAdded, _ := common.CasbinEnforcer.AddPolicies(policies)
 			if !isAdded {
 				return errors.New("failed to update permission API")
 			}
-			// 加载policy
+			// Load the policy
 			err := common.CasbinEnforcer.LoadPolicy()
 			if err != nil {
 				return errors.New("permission API updated, but failed to load permission API policy")
@@ -104,23 +104,23 @@ func (s ApiService) Update(api *model.Api) error {
 	return err
 }
 
-// Find 获取单个资源
+// Find a single resource
 func (s ApiService) Find(filter map[string]any, data *model.Api) error {
 	return common.DB.Where(filter).First(&data).Error
 }
 
-// Exist 判断资源是否存在
+// Exist checks whether the resource exists
 func (s ApiService) Exist(filter map[string]any) bool {
 	var dataObj model.Api
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
 }
 
-// Delete 批量删除
+// Delete multiple resources
 func (s ApiService) Delete(ids []uint) error {
 	var apis []model.Api
 	for _, id := range ids {
-		// 根据ID获取用户
+		// Get the user by ID
 		api := new(model.Api)
 		err := s.Find(tools.H{"id": id}, api)
 		if err != nil {
@@ -130,7 +130,7 @@ func (s ApiService) Delete(ids []uint) error {
 	}
 
 	err := common.DB.Where("id IN (?)", ids).Unscoped().Delete(&model.Api{}).Error
-	// 如果删除成功，删除casbin中policy
+	// If deletion succeeds, delete the policy from Casbin
 	if err == nil {
 		for _, api := range apis {
 			policies := common.CasbinEnforcer.GetFilteredPolicy(1, api.Path, api.Method)
@@ -141,7 +141,7 @@ func (s ApiService) Delete(ids []uint) error {
 				}
 			}
 		}
-		// 重新加载策略
+		// Reload the policies
 		err := common.CasbinEnforcer.LoadPolicy()
 		if err != nil {
 			return errors.New("permission API deleted, but failed to load permission API policy")
@@ -152,16 +152,16 @@ func (s ApiService) Delete(ids []uint) error {
 	return err
 }
 
-// // GetApiTree 获取接口树(按接口Category字段分类)
+// // GetApiTree gets the API tree (grouped by the API Category field)
 // func (s ApiService) GetApiTree() ([]*response.ApiTreeDto, error) {
 // 	var apiList []*model.Api
 // 	err := common.DB.Order("category").Order("created_at").Find(&apiList).Error
-// 	// 获取所有的分类
+// 	// Get all categories
 // 	var categoryList []string
 // 	for _, api := range apiList {
 // 		categoryList = append(categoryList, api.Category)
 // 	}
-// 	// 获取去重后的分类
+// 	// Get deduplicated categories
 // 	categoryUniq := funk.UniqString(categoryList)
 
 // 	apiTree := make([]*response.ApiTreeDto, len(categoryUniq))
@@ -183,7 +183,7 @@ func (s ApiService) Delete(ids []uint) error {
 // 	return apiTree, err
 // }
 
-// GetApisById 根据接口ID获取接口列表
+// GetApisById gets the API list by API ID
 func (s ApiService) GetApisById(apiIds []uint) ([]*model.Api, error) {
 	var apis []*model.Api
 	err := common.DB.Where("id IN (?)", apiIds).Find(&apis).Error

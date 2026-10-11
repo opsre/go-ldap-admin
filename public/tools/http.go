@@ -137,7 +137,7 @@ func NewRspI18nError(code int, msgKey string, args i18n.Args) *RspError {
 	}
 }
 
-// NewMySqlError mysql错误
+// NewMySqlError returns a MySQL error
 func NewMySqlError(err error) *RspError {
 	return NewRspError(MySqlErr, err)
 }
@@ -146,7 +146,7 @@ func NewMySqlI18nError(msgKey string, args i18n.Args) *RspError {
 	return NewRspI18nError(MySqlErr, msgKey, args)
 }
 
-// NewValidatorError 验证错误
+// NewValidatorError returns a validation error
 func NewValidatorError(err error) *RspError {
 	return NewRspError(ValidatorErr, err)
 }
@@ -155,7 +155,7 @@ func NewValidatorI18nError(msgKey string, args i18n.Args) *RspError {
 	return NewRspI18nError(ValidatorErr, msgKey, args)
 }
 
-// NewLdapError ldap错误
+// NewLdapError returns an LDAP error
 func NewLdapError(err error) *RspError {
 	return NewRspError(LdapErr, err)
 }
@@ -164,7 +164,7 @@ func NewLdapI18nError(msgKey string, args i18n.Args) *RspError {
 	return NewRspI18nError(LdapErr, msgKey, args)
 }
 
-// NewOperationError 操作错误
+// NewOperationError returns an operation error
 func NewOperationError(err error) *RspError {
 	return NewRspError(OperationErr, err)
 }
@@ -173,7 +173,7 @@ func NewOperationI18nError(msgKey string, args i18n.Args) *RspError {
 	return NewRspI18nError(OperationErr, msgKey, args)
 }
 
-// ReloadErr 重新加载错误
+// ReloadErr indicates a reload error
 func ReloadErr(err any) *RspError {
 	rspErr, ok := err.(*RspError)
 	if !ok {
@@ -192,7 +192,7 @@ func ReloadErr(err any) *RspError {
 	return rspErr
 }
 
-// Success http 成功
+// Success returns an HTTP success response
 func Success(c *gin.Context, data any) {
 	SuccessI18n(c, data, "common.success", nil)
 }
@@ -205,7 +205,7 @@ func SuccessI18n(c *gin.Context, data any, msgKey string, args i18n.Args) {
 	})
 }
 
-// Err http 错误
+// Err returns an HTTP error response
 func Err(c *gin.Context, err *RspError, data any) {
 	body := gin.H{
 		"code": err.Code(),
@@ -216,7 +216,7 @@ func Err(c *gin.Context, err *RspError, data any) {
 	if msgKey == "" {
 		msgKey, args = lookupLegacyErrorKey(err.Error())
 	}
-	if msgKey == "" && i18n.LocaleFromContext(c) != i18n.NormalizeLocale("") && containsCJK(err.Error()) {
+	if msgKey == "" && i18n.LocaleFromContext(c) != "zh-CN" && containsCJK(err.Error()) {
 		msgKey = fallbackErrorKey(err.Code())
 	}
 	if msgKey != "" {
@@ -265,7 +265,7 @@ func containsCJK(message string) bool {
 	return false
 }
 
-// 返回前端
+// Return to the frontend
 func Response(c *gin.Context, httpStatus int, code int, data gin.H, message string) {
 	c.JSON(httpStatus, gin.H{
 		"code":    code,

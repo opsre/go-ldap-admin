@@ -8,19 +8,19 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 )
 
-// 全局CasbinEnforcer
+// Global CasbinEnforcer
 var CasbinEnforcer *casbin.Enforcer
 
-// 初始化casbin策略管理器
+// Initialize the Casbin policy manager
 func InitCasbinEnforcer() {
 	e, err := mysqlCasbin()
 	if err != nil {
-		Log.Panicf("初始化Casbin失败：%v", err)
-		panic(fmt.Sprintf("初始化Casbin失败：%v", err))
+		Log.Panicf("Casbin initialization failed：%v", err)
+		panic(fmt.Sprintf("Casbin initialization failed：%v", err))
 	}
 
 	CasbinEnforcer = e
-	Log.Info("初始化Casbin完成!")
+	Log.Info("Casbin initialized")
 }
 
 var casbinModel = `

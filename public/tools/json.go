@@ -5,25 +5,25 @@ import (
 	"fmt"
 )
 
-// 结构体转为json
+// Convert a struct to JSON
 func Struct2Json(obj any) string {
 	str, err := json.Marshal(obj)
 	if err != nil {
-		panic(fmt.Sprintf("[Struct2Json]转换异常: %v", err))
+		panic(fmt.Sprintf("[Struct2Json] conversion error: %v", err))
 	}
 	return string(str)
 }
 
-// json转为结构体
+// Convert JSON to a struct
 func Json2Struct(str string, obj any) {
-	// 将json转为结构体
+	// Convert JSON to a struct
 	err := json.Unmarshal([]byte(str), obj)
 	if err != nil {
-		panic(fmt.Sprintf("[Json2Struct]转换异常: %v", err))
+		panic(fmt.Sprintf("[Json2Struct] conversion error: %v", err))
 	}
 }
 
-// json interface转为结构体
+// Convert a JSON interface to a struct
 func JsonI2Struct(str any, obj any) {
 	JsonStr := str.(string)
 	Json2Struct(JsonStr, obj)

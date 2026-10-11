@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 返回前端
+// Return to the frontend
 func Response(c *gin.Context, httpStatus int, code int, data gin.H, message string) {
 	c.JSON(httpStatus, gin.H{
 		"code":    code,
@@ -15,12 +15,12 @@ func Response(c *gin.Context, httpStatus int, code int, data gin.H, message stri
 	})
 }
 
-// 返回前端-成功
+// Return to the frontend - success
 func Success(c *gin.Context, data gin.H, message string) {
 	Response(c, http.StatusOK, 200, data, message)
 }
 
-// 返回前端-失败
+// Return to the frontend - failure
 func Fail(c *gin.Context, data gin.H, message string) {
 	Response(c, http.StatusBadRequest, 400, data, message)
 }

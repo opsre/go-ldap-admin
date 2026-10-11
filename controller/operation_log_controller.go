@@ -9,19 +9,19 @@ import (
 
 type OperationLogController struct{}
 
-// List 记录列表
-// @Summary 获取操作日志记录列表
-// Description: 获取操作日志记录列表
-// @Tags 操作日志管理
+// List records
+// @Summary Get the operation log list
+// Description: Get the operation log list
+// @Tags Operation log management
 // @Accept application/json
 // @Produce application/json
-// @Param username query string false "用户名"
-// @Param ip query string false "IP地址"
-// @Param path query string false "路径"
-// @Param method query string false "方法"
-// @Param status query int false "状态码"
-// @Param pageNum query int false "页码"
-// @Param pageSize query int false "每页数量"
+// @Param username query string false "Username"
+// @Param ip query string false "IP address"
+// @Param path query string false "Path"
+// @Param method query string false "Method"
+// @Param status query int false "Status code"
+// @Param pageNum query int false "Page number"
+// @Param pageSize query int false "Page size"
 // @Success 200 {object} response.ResponseBody
 // @Router /log/operation/list [get]
 // @Security ApiKeyAuth
@@ -32,13 +32,13 @@ func (m *OperationLogController) List(c *gin.Context) {
 	})
 }
 
-// Delete 删除记录
-// @Summary 删除操作日志记录
-// Description: 删除操作日志记录
-// @Tags 操作日志管理
+// Delete records
+// @Summary Delete operation log records
+// Description: Delete operation log records
+// @Tags Operation log management
 // @Accept application/json
 // @Produce application/json
-// @Param data body request.OperationLogDeleteReq true "删除日志的ID"
+// @Param data body request.OperationLogDeleteReq true "IDs of the logs to delete"
 // @Success 200 {object} response.ResponseBody
 // @Router /log/operation/delete [post]
 // @Security ApiKeyAuth
@@ -49,10 +49,10 @@ func (m *OperationLogController) Delete(c *gin.Context) {
 	})
 }
 
-// Clean 清空记录
-// @Summary 清空操作日志记录
-// Description: 清空操作日志记录
-// @Tags 操作日志管理
+// Clean clears the records
+// @Summary Clear operation log records
+// Description: Clear operation log records
+// @Tags Operation log management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody

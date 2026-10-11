@@ -11,7 +11,7 @@ import (
 
 func TestLocaleMiddlewareUsesXLocale(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	i18n.SetSupportedLocales([]string{"zh-CN", "en-US"}, "zh-CN")
+	i18n.SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
 
 	r := gin.New()
 	r.Use(LocaleMiddleware())
@@ -31,7 +31,7 @@ func TestLocaleMiddlewareUsesXLocale(t *testing.T) {
 
 func TestLocaleMiddlewareFallsBackToAcceptLanguage(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	i18n.SetSupportedLocales([]string{"zh-CN", "en-US"}, "zh-CN")
+	i18n.SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
 
 	r := gin.New()
 	r.Use(LocaleMiddleware())
