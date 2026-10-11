@@ -2,16 +2,16 @@ name: build and push binary to release
 
 on:
   release:
-    types: [created,published] # 表示在创建新的 Release 时触发
+    types: [created,published] # Run when a new release is created
 
 jobs:
   build-go-binary:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux, windows, darwin] # 需要打包的系统
-        goarch: [amd64, arm64] # 需要打包的架构
-        exclude: # 排除某些平台和架构
+        goos: [linux, windows, darwin] # Operating systems to build for
+        goarch: [amd64, arm64] # Architectures to build for
+        exclude: # Exclude certain platforms and architectures
           - goarch: arm64
             goos: windows
     steps:
@@ -20,9 +20,9 @@ jobs:
           docker cp $(docker create --rm docker.cnb.cool/opsre/go-ldap-admin-ui):/app/dist public/static/dist
       - uses: wangyoucao577/go-release-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # 一个默认的变量，用来实现往 Release 中添加文件
+          github_token: ${{ secrets.GITHUB_TOKEN }} # A default variable used to add files to a release
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
-          goversion: "https://go.dev/dl/go1.25.1.linux-amd64.tar.gz" # 可以指定编译使用的 Golang 版本
-          binary_name: "go-ldap-admin" # 可以指定二进制文件的名称
-          extra_files: LICENSE config.yml README.md # 需要包含的额外文件
+          goversion: "https://go.dev/dl/go1.25.1.linux-amd64.tar.gz" # Specify the Golang version to use for the build
+          binary_name: "go-ldap-admin" # Specify the binary file name
+          extra_files: LICENSE config.yml README.md # Additional files to include

@@ -1,4 +1,4 @@
-# 更多部署方式详见：http://ldapdoc.eryajf.net/pages/f081dc/
+# For more deployment options, see: http://ldapdoc.eryajf.net/pages/f081dc/
 networks:
   go-ldap-admin:
     driver: bridge
@@ -44,7 +44,7 @@ services:
     networks:
       - go-ldap-admin
 
-  # 按需启用
+  # Enable as needed
   # phpldapadmin:
   #   image: docker.cnb.cool/znb/images/phpldapadmin:0.9.0
   #   container_name: go-ldap-admin-phpldapadmin
@@ -70,73 +70,73 @@ configs:
     content: |
       # delelopment
       system:
-        # 设定模式(debug/release/test,正式版改为release)
+        # Set the mode (debug/release/test; use release for production)
         mode: debug
-        # url前缀
+        # URL prefix
         url-path-prefix: api
-        # 程序监听端口
+        # Application listen port
         port: 8888
-        # 是否初始化数据(没有初始数据时使用, 已发布正式版改为false)
+        # Whether to initialize data (use when no initial data exists; set to false for a release)
         init-data: true
       logs:
-        # 日志等级(-1:Debug, 0:Info, 1:Warn, 2:Error, 3:DPanic, 4:Panic, 5:Fatal, -1<=level<=5, 参照zap.level源码)
+        # Log level (-1: Debug, 0: Info, 1: Warn, 2: Error, 3: DPanic, 4: Panic, 5: Fatal; -1<=level<=5; see zap.level source)
         level: -1
-        # 日志路径
+        # Log path
         path: data/logs
-        # 文件最大大小, M
+        # Maximum file size, MB
         max-size: 50
-        # 备份数
+        # Number of backups
         max-backups: 100
-        # 存放时间, 天
+        # Retention period, days
         max-age: 30
-        # 是否压缩
+        # Whether to compress
         compress: false
       database:
-        # 数据库类型 mysql sqlite3
+        # Database type: mysql or sqlite3
         driver: sqlite3
-        # 数据库连接sqlite3数据文件的路径
+        # Path to the SQLite3 database file
         source: data/go-ldap-admin.db
       mysql:
-        # 用户名
+        # Username
         username: root
-        # 密码
+        # Password
         password: 123456
-        # 数据库名
+        # Database name
         database: go_ldap_admin
-        # 主机地址
+        # Host address
         host: localhost
-        # 端口
+        # Port
         port: 3306
-        # 连接字符串参数
+        # Connection string parameters
         query: parseTime=True&loc=Local&timeout=10000ms
-        # 是否打印日志
+        # Whether to print logs
         log-mode: true
-        # 数据库表前缀(无需再末尾添加下划线, 程序内部自动处理)
+        # Database table prefix (do not add a trailing underscore; the program handles it)
         table-prefix: tb
-        # 编码方式
+        # Encoding
         charset: utf8mb4
-        # 字符集(utf8mb4_general_ci速度比utf8mb4_unicode_ci快些)
+        # Collation (utf8mb4_general_ci is faster than utf8mb4_unicode_ci)
         collation: utf8mb4_general_ci
-      # jwt配置
+      # JWT configuration
       jwt:
-        # jwt标识
+        # JWT realm
         realm: test jwt
-        # 服务端密钥
+        # Server key
         key: secret key
-        # token过期时间, 小时
+        # Token expiration time, hours
         timeout: 12000
-        # 刷新token最大过期时间, 小时
+        # Maximum token refresh time, hours
         max-refresh: 12000
-      # 令牌桶限流配置
+      # Token bucket rate limit configuration
       rate-limit:
-        # 填充一个令牌需要的时间间隔,毫秒
+        # Interval between adding tokens, milliseconds
         fill-interval: 50
-        # 桶容量
+        # Bucket capacity
         capacity: 200
       i18n:
-        # 默认语言
+        # Default language
         default-locale: zh-CN
-        # 支持语言列表
+        # Supported locales
         supported-locales:
           - zh-CN
           - en-US
@@ -151,66 +151,66 @@ configs:
         host: 'smtp.163.com'
         # is-ssl: true
         pass: 'your password'
-      # # ldap 配置
+      # # LDAP configuration
       ldap:
-        # ldap服务器地址
+        # LDAP server address
         url: ldap://openldap:389
-        # ladp最大连接数设置
+        # Maximum LDAP connections
         max-conn: 10
-        # ldap服务器基础DN
+        # LDAP base DN
         base-dn: "dc=eryajf,dc=net"
-        # ldap管理员DN
+        # LDAP admin DN
         admin-dn: "cn=admin,dc=eryajf,dc=net"
-        # ldap管理员密码
+        # LDAP admin password
         admin-pass: "123456"
-        # ldap用户OU
+        # LDAP user OU
         user-dn: "ou=people,dc=eryajf,dc=net"
-        # ldap用户初始默认密码
+        # Default initial LDAP user password
         user-init-password: "123456"
-        # 是否允许更改分组DN
+        # Whether group DNs can be changed
         group-name-modify: false
-        # 是否允许更改用户DN
+        # Whether user DNs can be changed
         user-name-modify: false
-        # 用户密码加密方式 默认为 ssha 还可指定为 clear(表示不加密)
+        # User password encryption; defaults to ssha, or can be set to clear (no encryption)
         user-password-encryption-type: "ssha"
-        # 默认邮箱后缀
+        # Default email suffix
         default-email-suffix: "eryajf.net"
-        # 是否开启同步功能，表示将该ldap中的数据同步到数据库，如果你是新建的，则保持false，页面上也不会展示同步按钮
+        # Whether to sync data from this LDAP server to the database. For a new setup, leave false; the sync button will then be hidden
         enable-sync: false
-      # 📢 即便用不到如下三段配置信息，也不要删除，否则会有一些奇怪的错误出现
+      # Even if the following three configuration sections are not used, do not remove them; doing so may cause unexpected errors
       dingtalk:
-        # 配置获取详细文档参考： http://ldapdoc.eryajf.net/pages/94f43a/
-        flag: "dingtalk" # 作为钉钉在平台的标识
-        app-key: "xxxxxxxxxxxxxxx" # 应用的key
-        app-secret: "xxxxxxxxxxxxxxxxxxxxxxxxxxxx" # 应用的secret
-        agent-id: "12121212" # 目前agent-id未使用到，可忽略
-        enable-sync: false  # 是否开启定时同步钉钉的任务
-        dept-sync-time: "0 30 2 * * *" # 部门同步任务的时间点 * * * * * * 秒 分 时 日 月 周, 请把时间设置在凌晨 1 ~ 5 点
-        user-sync-time: "0 30 3 * * *" # 用户同步任务的时间点 * * * * * * 秒 分 时 日 月 周, 请把时间设置在凌晨 1 ~ 5 点,注意请把用户同步的任务滞后于部门同步时间,比如部门为2点,则用户为3点
-        dept-list:    # 配置要同步的部门列表，配置留空则同步所有部门，在开头加^表示不同步此部门
-          #- "48456726"   # 需要同步的部门ID
-          #- "^61213417"  # 不需要同步的部门ID
-        is-update-syncd: false # 当钉钉用户的邮箱，手机号，部门等信息更新之后，是否同步更新，默认为false，如果你不了解这个字段的含义，则不建议开启
-        user-leave-range: 0 #按配置天数查离职时间范围内的用户,为0时不限制
+        # For details about this configuration, see: http://ldapdoc.eryajf.net/pages/94f43a/
+        flag: "dingtalk" # DingTalk identifier on the platform
+        app-key: "xxxxxxxxxxxxxxx" # Application key
+        app-secret: "xxxxxxxxxxxxxxxxxxxxxxxxxxxx" # Application secret
+        agent-id: "12121212" # agent-id is not currently used and can be ignored
+        enable-sync: false  # Whether to enable scheduled DingTalk synchronization
+        dept-sync-time: "0 30 2 * * *" # Department sync time: second minute hour day month week; set it between 1 and 5 a.m.
+        user-sync-time: "0 30 3 * * *" # User sync time: second minute hour day month week; set it between 1 and 5 a.m. Run user sync after department sync, for example, if departments sync at 2 a.m., sync users at 3 a.m.
+        dept-list:    # Departments to sync. Leave empty to sync all departments; prefix an entry with ^ to exclude it
+          #- "48456726"   # Department ID to sync
+          #- "^61213417"  # Department ID to exclude
+        is-update-syncd: false # Whether to sync changes to DingTalk user email, phone, department, and other details. Defaults to false; leave disabled if unsure
+        user-leave-range: 0 #Query users who left within the configured number of days; 0 means no limit
       wecom:
-        # 配置获取详细文档参考：http://ldapdoc.eryajf.net/pages/cf1698/
-        flag: "wecom" # 作为微信在平台的标识
-        corp-id: "xxxx" # 企业微信企业ID
-        agent-id: 1000003 # 企业微信中创建的应用ID
-        corp-secret: "xxxxx" # 企业微信中创建的应用secret
-        enable-sync: false # 是否开启定时同步企业微信的任务
-        dept-sync-time: "0 30 2 * * *" # 部门同步任务的时间点 * * * * * * 秒 分 时 日 月 周, 请把时间设置在凌晨 1 ~ 5 点
-        user-sync-time: "0 30 3 * * *" # 用户同步任务的时间点 * * * * * * 秒 分 时 日 月 周, 请把时间设置在凌晨 1 ~ 5 点,注意请把用户同步的任务滞后于部门同步时间,比如部门为2点,则用户为3点
-        is-update-syncd: false # 当企微用户的邮箱，手机号，部门等信息更新之后，是否同步更新，默认为false，如果你不了解这个字段的含义，则不建议开启
+        # For details about this configuration, see: http://ldapdoc.eryajf.net/pages/cf1698/
+        flag: "wecom" # WeCom identifier on the platform
+        corp-id: "xxxx" # WeCom company ID
+        agent-id: 1000003 # Application ID created in WeCom
+        corp-secret: "xxxxx" # Application secret created in WeCom
+        enable-sync: false # Whether to enable scheduled WeCom synchronization
+        dept-sync-time: "0 30 2 * * *" # Department sync time: second minute hour day month week; set it between 1 and 5 a.m.
+        user-sync-time: "0 30 3 * * *" # User sync time: second minute hour day month week; set it between 1 and 5 a.m. Run user sync after department sync, for example, if departments sync at 2 a.m., sync users at 3 a.m.
+        is-update-syncd: false # Whether to sync changes to WeCom user email, phone, department, and other details. Defaults to false; leave disabled if unsure
       feishu:
-        # 配置获取详细文档参考：http://ldapdoc.eryajf.net/pages/83c90b/
-        flag: "feishu" # 作为飞书在平台的标识
-        app-id: "xxxxxxx" # 飞书的app-id
-        app-secret: "xxxxxxxxxxx" # 飞书的app-secret
-        enable-sync: false  # 是否开启定时同步飞书的任务
-        dept-sync-time: "0 20 0 * * *" # 部门同步任务的时间点 * * * * * * 秒 分 时 日 月 周, 请把时间设置在凌晨 1 ~ 5 点
-        user-sync-time: "0 40 0 * * *" # 用户同步任务的时间点 * * * * * * 秒 分 时 日 月 周, 请把时间设置在凌晨 1 ~ 5 点,注意请把用户同步的任务滞后于部门同步时间,比如部门为2点,则用户为3点
-        dept-list:    # 配置要同步的部门列表，配置留空则同步所有部门，在开头加^表示不同步此部门
-          #- "48456726"   # 需要同步的部门ID
-          #- "^61213417"  # 不需要同步的部门ID
-        is-update-syncd: false # 当飞书用户的邮箱，手机号，部门等信息更新之后，是否同步更新，默认为false，如果你不了解这个字段的含义，则不建议开启
+        # For details about this configuration, see: http://ldapdoc.eryajf.net/pages/83c90b/
+        flag: "feishu" # Feishu identifier on the platform
+        app-id: "xxxxxxx" # Feishu app ID
+        app-secret: "xxxxxxxxxxx" # Feishu app secret
+        enable-sync: false  # Whether to enable scheduled Feishu synchronization
+        dept-sync-time: "0 20 0 * * *" # Department sync time: second minute hour day month week; set it between 1 and 5 a.m.
+        user-sync-time: "0 40 0 * * *" # User sync time: second minute hour day month week; set it between 1 and 5 a.m. Run user sync after department sync, for example, if departments sync at 2 a.m., sync users at 3 a.m.
+        dept-list:    # Departments to sync. Leave empty to sync all departments; prefix an entry with ^ to exclude it
+          #- "48456726"   # Department ID to sync
+          #- "^61213417"  # Department ID to exclude
+        is-update-syncd: false # Whether to sync changes to Feishu user email, phone, department, and other details. Defaults to false; leave disabled if unsure

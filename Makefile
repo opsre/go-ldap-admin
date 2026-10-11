@@ -1,10 +1,10 @@
-# 定义项目名称
+# Define the project name
 BINARY_NAME=go-ldap-admin
 
-# 定义输出目录
+# Define the output directory
 OUTPUT_DIR=bin
 
-# 版本信息
+# Version information
 VERSION ?= $(shell git tag --points-at HEAD 2>/dev/null || echo "dev")
 GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 BUILD_TIME := $(shell date '+%Y-%m-%d %H:%M:%S')
@@ -66,7 +66,7 @@ gox-all:
 clean:
 	@rm -rf ${OUTPUT_DIR}
 
-# 帮助信息
+# Help information
 .PHONY: help
 help:
 	@echo "参数:"
