@@ -23,18 +23,18 @@ func (d *FeiShuLogic) SyncFeiShuDepts(c *gin.Context, req any) (data any, rspErr
 	// 1. Get all departments
 	deptSource, err := feishu.GetAllDepts()
 	if err != nil {
-		errMsg := fmt.Sprintf("获取飞书部门列表失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to get Feishu department list: %s", err.Error())
 		common.Log.Errorf("SyncFeiShuDepts: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.dept_list_failed", i18n.Args{"provider": "Feishu", "error": err.Error()})
 	}
 	depts, err := ConvertDeptData(config.Conf.FeiShu.Flag, deptSource)
 	if err != nil {
-		errMsg := fmt.Sprintf("转换飞书部门数据失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to convert Feishu department data: %s", err.Error())
 		common.Log.Errorf("SyncFeiShuDepts: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.dept_convert_failed", i18n.Args{"provider": "Feishu", "error": err.Error()})
 	}
 	if len(depts) == 0 {
-		errMsg := "获取到的部门数量为0"
+		errMsg := "The department count is 0"
 		common.Log.Errorf("SyncFeiShuDepts: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.empty_depts", nil)
 	}
@@ -45,7 +45,7 @@ func (d *FeiShuLogic) SyncFeiShuDepts(c *gin.Context, req any) (data any, rspErr
 	// 3. Create entries from the tree
 	err = d.addDepts(deptTree.Children)
 	if err != nil {
-		errMsg := fmt.Sprintf("创建飞书部门失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to create Feishu departments: %s", err.Error())
 		common.Log.Errorf("SyncFeiShuDepts: %s", errMsg)
 		return nil, err
 	}
@@ -59,14 +59,14 @@ func (d FeiShuLogic) addDepts(depts []*model.Group) error {
 	for _, dept := range depts {
 		err := d.AddDepts(dept)
 		if err != nil {
-			errMsg := fmt.Sprintf("DsyncFeiShuDepts添加部门[%s]失败: %s", dept.GroupName, err.Error())
+			errMsg := fmt.Sprintf("DsyncFeiShuDepts: failed to add department [%s]: %s", dept.GroupName, err.Error())
 			common.Log.Errorf("%s", errMsg)
 			return tools.NewOperationI18nError("sync.dept_add_failed", i18n.Args{"dept": dept.GroupName, "error": err.Error()})
 		}
 		if len(dept.Children) != 0 {
 			err = d.addDepts(dept.Children)
 			if err != nil {
-				errMsg := fmt.Sprintf("DsyncFeiShuDepts添加子部门失败: %s", err.Error())
+				errMsg := fmt.Sprintf("DsyncFeiShuDepts: failed to add child departments: %s", err.Error())
 				common.Log.Errorf("%s", errMsg)
 				return tools.NewOperationI18nError("sync.child_dept_add_failed", i18n.Args{"error": err.Error()})
 			}
@@ -105,18 +105,18 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req any) (data any, rspErro
 	// 1. Get the Feishu user list
 	staffSource, err := feishu.GetAllUsers()
 	if err != nil {
-		errMsg := fmt.Sprintf("获取飞书用户列表失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to get Feishu user list: %s", err.Error())
 		common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.user_list_failed", i18n.Args{"provider": "Feishu", "error": err.Error()})
 	}
 	staffs, err := ConvertUserData(config.Conf.FeiShu.Flag, staffSource)
 	if err != nil {
-		errMsg := fmt.Sprintf("转换飞书用户数据失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to convert Feishu user data: %s", err.Error())
 		common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.user_convert_failed", i18n.Args{"provider": "Feishu", "error": err.Error()})
 	}
 	if len(staffs) == 0 {
-		errMsg := "获取到的用户数量为0"
+		errMsg := "The user count is 0"
 		common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.empty_users", nil)
 	}
@@ -125,7 +125,7 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req any) (data any, rspErro
 		// Write to the database
 		err = d.AddUsers(staff)
 		if err != nil {
-			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Username, err.Error())
+			errMsg := fmt.Sprintf("Failed to write user [%s]: %s", staff.Username, err.Error())
 			common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 			return nil, tools.NewOperationI18nError("sync.user_write_failed", i18n.Args{"username": staff.Username, "error": err.Error()})
 		}
@@ -135,7 +135,7 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req any) (data any, rspErro
 	// 3. Get the IDs of departed Feishu users
 	userIds, err := feishu.GetLeaveUserIds()
 	if err != nil {
-		errMsg := fmt.Sprintf("获取飞书离职用户列表失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to get Feishu departed user list: %s", err.Error())
 		common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.leave_user_list_failed", i18n.Args{"provider": "Feishu", "error": err.Error()})
 	}
@@ -150,21 +150,21 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req any) (data any, rspErro
 			user := new(model.User)
 			err = isql.User.Find(tools.H{"source_union_id": fmt.Sprintf("%s_%s", config.Conf.FeiShu.Flag, uid)}, user)
 			if err != nil {
-				errMsg := fmt.Sprintf("在MySQL查询离职用户[%s]失败: %s", uid, err.Error())
+				errMsg := fmt.Sprintf("Failed to query departed user [%s] in MySQL: %s", uid, err.Error())
 				common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 				return nil, tools.NewMySqlI18nError("sync.leave_user_query_failed", i18n.Args{"username": uid, "error": err.Error()})
 			}
 			// First delete the user from LDAP
 			err = ildap.User.Delete(user.UserDN)
 			if err != nil {
-				errMsg := fmt.Sprintf("在LDAP删除离职用户[%s]失败: %s", user.Username, err.Error())
+				errMsg := fmt.Sprintf("Failed to delete departed user [%s] in LDAP: %s", user.Username, err.Error())
 				common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 				return nil, tools.NewLdapI18nError("sync.leave_user_ldap_delete_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 			}
 			// Then update the user status in MySQL
 			err = isql.User.ChangeStatus(int(user.ID), 2)
 			if err != nil {
-				errMsg := fmt.Sprintf("在MySQL更新离职用户[%s]状态失败: %s", user.Username, err.Error())
+				errMsg := fmt.Sprintf("Failed to update departed user [%s] status in MySQL: %s", user.Username, err.Error())
 				common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 				return nil, tools.NewMySqlI18nError("sync.leave_user_status_update_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 			}

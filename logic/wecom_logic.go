@@ -23,18 +23,18 @@ func (d *WeComLogic) SyncWeComDepts(c *gin.Context, req any) (data any, rspError
 	// 1. Get all departments
 	deptSource, err := wechat.GetAllDepts()
 	if err != nil {
-		errMsg := fmt.Sprintf("获取企业微信部门列表失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to get WeCom department list: %s", err.Error())
 		common.Log.Errorf("SyncWeComDepts: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.dept_list_failed", i18n.Args{"provider": "WeCom", "error": err.Error()})
 	}
 	depts, err := ConvertDeptData(config.Conf.WeCom.Flag, deptSource)
 	if err != nil {
-		errMsg := fmt.Sprintf("转换企业微信部门数据失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to convert WeCom department data: %s", err.Error())
 		common.Log.Errorf("SyncWeComDepts: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.dept_convert_failed", i18n.Args{"provider": "WeCom", "error": err.Error()})
 	}
 	if len(depts) == 0 {
-		errMsg := "获取到的部门数量为0"
+		errMsg := "The department count is 0"
 		common.Log.Errorf("SyncWeComDepts: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.empty_depts", nil)
 	}
@@ -45,7 +45,7 @@ func (d *WeComLogic) SyncWeComDepts(c *gin.Context, req any) (data any, rspError
 	// 3. Create entries from the tree
 	err = d.addDepts(deptTree.Children)
 	if err != nil {
-		errMsg := fmt.Sprintf("创建企业微信部门失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to create WeCom departments: %s", err.Error())
 		common.Log.Errorf("SyncWeComDepts: %s", errMsg)
 		return nil, err
 	}
@@ -59,14 +59,14 @@ func (d WeComLogic) addDepts(depts []*model.Group) error {
 	for _, dept := range depts {
 		err := d.AddDepts(dept)
 		if err != nil {
-			errMsg := fmt.Sprintf("DsyncWeComDepts添加部门[%s]失败: %s", dept.GroupName, err.Error())
+			errMsg := fmt.Sprintf("DsyncWeComDepts: failed to add department [%s]: %s", dept.GroupName, err.Error())
 			common.Log.Errorf("%s", errMsg)
 			return tools.NewOperationI18nError("sync.dept_add_failed", i18n.Args{"dept": dept.GroupName, "error": err.Error()})
 		}
 		if len(dept.Children) != 0 {
 			err = d.addDepts(dept.Children)
 			if err != nil {
-				errMsg := fmt.Sprintf("DsyncWeComDepts添加子部门失败: %s", err.Error())
+				errMsg := fmt.Sprintf("DsyncWeComDepts: failed to add child departments: %s", err.Error())
 				common.Log.Errorf("%s", errMsg)
 				return tools.NewOperationI18nError("sync.child_dept_add_failed", i18n.Args{"error": err.Error()})
 			}
@@ -105,18 +105,18 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 	// 1. Get the WeCom user list
 	staffSource, err := wechat.GetAllUsers()
 	if err != nil {
-		errMsg := fmt.Sprintf("获取企业微信用户列表失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to get WeCom user list: %s", err.Error())
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.user_list_failed", i18n.Args{"provider": "WeCom", "error": err.Error()})
 	}
 	staffs, err := ConvertUserData(config.Conf.WeCom.Flag, staffSource)
 	if err != nil {
-		errMsg := fmt.Sprintf("转换企业微信用户数据失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to convert WeCom user data: %s", err.Error())
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.user_convert_failed", i18n.Args{"provider": "WeCom", "error": err.Error()})
 	}
 	if len(staffs) == 0 {
-		errMsg := "获取到的用户数量为0"
+		errMsg := "The user count is 0"
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.empty_users", nil)
 	}
@@ -125,7 +125,7 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 		// Write to the database
 		err = d.AddUsers(staff)
 		if err != nil {
-			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Username, err.Error())
+			errMsg := fmt.Sprintf("Failed to write user [%s]: %s", staff.Username, err.Error())
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 			return nil, tools.NewOperationI18nError("sync.user_write_failed", i18n.Args{"username": staff.Username, "error": err.Error()})
 		}
@@ -138,7 +138,7 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 	var res []*model.User
 	users, err := isql.User.ListAll()
 	if err != nil {
-		errMsg := fmt.Sprintf("获取MySQL用户列表失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to get MySQL user list: %s", err.Error())
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 		return nil, tools.NewMySqlI18nError("sync.mysql_user_list_failed", i18n.Args{"error": err.Error()})
 	}
@@ -163,21 +163,21 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 		user := new(model.User)
 		err = isql.User.Find(tools.H{"source_user_id": userTmp.SourceUserId, "status": 1}, user)
 		if err != nil {
-			errMsg := fmt.Sprintf("在MySQL查询离职用户[%s]失败: %s", userTmp.Username, err.Error())
+			errMsg := fmt.Sprintf("Failed to query departed user [%s] in MySQL: %s", userTmp.Username, err.Error())
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 			return nil, tools.NewMySqlI18nError("sync.leave_user_query_failed", i18n.Args{"username": userTmp.Username, "error": err.Error()})
 		}
 		// First delete the user from LDAP
 		err = ildap.User.Delete(user.UserDN)
 		if err != nil {
-			errMsg := fmt.Sprintf("在LDAP删除离职用户[%s]失败: %s", user.Username, err.Error())
+			errMsg := fmt.Sprintf("Failed to delete departed user [%s] in LDAP: %s", user.Username, err.Error())
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 			return nil, tools.NewLdapI18nError("sync.leave_user_ldap_delete_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 		}
 		// Then update the user status in MySQL
 		err = isql.User.ChangeStatus(int(user.ID), 2)
 		if err != nil {
-			errMsg := fmt.Sprintf("在MySQL更新离职用户[%s]状态失败: %s", user.Username, err.Error())
+			errMsg := fmt.Sprintf("Failed to update departed user [%s] status in MySQL: %s", user.Username, err.Error())
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 			return nil, tools.NewMySqlI18nError("sync.leave_user_status_update_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 		}

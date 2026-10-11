@@ -21,12 +21,12 @@ func (d *OpenLdapLogic) SyncOpenLdapDepts(c *gin.Context, req any) (data any, rs
 	// 1. Get all departments
 	depts, err := openldap.GetAllDepts()
 	if err != nil {
-		errMsg := fmt.Sprintf("获取OpenLDAP部门列表失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to get OpenLDAP department list: %s", err.Error())
 		common.Log.Errorf("SyncOpenLdapDepts: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.dept_list_failed", i18n.Args{"provider": "OpenLDAP", "error": err.Error()})
 	}
 	if len(depts) == 0 {
-		errMsg := "获取到的部门数量为0"
+		errMsg := "The department count is 0"
 		common.Log.Errorf("SyncOpenLdapDepts: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.empty_depts", nil)
 	}
@@ -46,7 +46,7 @@ func (d *OpenLdapLogic) SyncOpenLdapDepts(c *gin.Context, req any) (data any, rs
 	// 3. Create entries from the tree
 	err = d.addDepts(deptTree.Children)
 	if err != nil {
-		errMsg := fmt.Sprintf("创建OpenLDAP部门失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to create OpenLDAP departments: %s", err.Error())
 		common.Log.Errorf("SyncOpenLdapDepts: %s", errMsg)
 		return nil, err
 	}
@@ -60,14 +60,14 @@ func (d OpenLdapLogic) addDepts(depts []*model.Group) error {
 	for _, dept := range depts {
 		err := d.AddDepts(dept)
 		if err != nil {
-			errMsg := fmt.Sprintf("DsyncOpenLdapDepts添加部门[%s]失败: %s", dept.GroupName, err.Error())
+			errMsg := fmt.Sprintf("DsyncOpenLdapDepts: failed to add department [%s]: %s", dept.GroupName, err.Error())
 			common.Log.Errorf("%s", errMsg)
 			return tools.NewOperationI18nError("sync.dept_add_failed", i18n.Args{"dept": dept.GroupName, "error": err.Error()})
 		}
 		if len(dept.Children) != 0 {
 			err = d.addDepts(dept.Children)
 			if err != nil {
-				errMsg := fmt.Sprintf("DsyncOpenLdapDepts添加子部门失败: %s", err.Error())
+				errMsg := fmt.Sprintf("DsyncOpenLdapDepts: failed to add child departments: %s", err.Error())
 				common.Log.Errorf("%s", errMsg)
 				return tools.NewOperationI18nError("sync.child_dept_add_failed", i18n.Args{"error": err.Error()})
 			}
@@ -121,12 +121,12 @@ func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req any) (data any, rsp
 	// 1. Get the LDAP user list
 	staffs, err := openldap.GetAllUsers()
 	if err != nil {
-		errMsg := fmt.Sprintf("获取OpenLDAP用户列表失败：%s", err.Error())
+		errMsg := fmt.Sprintf("Failed to get OpenLDAP user list: %s", err.Error())
 		common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.user_list_failed", i18n.Args{"provider": "OpenLDAP", "error": err.Error()})
 	}
 	if len(staffs) == 0 {
-		errMsg := "获取到的用户数量为0"
+		errMsg := "The user count is 0"
 		common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.empty_users", nil)
 	}
@@ -134,14 +134,14 @@ func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req any) (data any, rsp
 	for i, staff := range staffs {
 		groupIds, err := isql.Group.DeptIdsToGroupIds(staff.DepartmentIds)
 		if err != nil {
-			errMsg := fmt.Sprintf("将用户[%s]的部门ids转换为内部部门id失败：%s", staff.Name, err.Error())
+			errMsg := fmt.Sprintf("Failed to convert user [%s] department IDs to internal department IDs: %s", staff.Name, err.Error())
 			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
 			return nil, tools.NewMySqlI18nError("sync.user_dept_ids_convert_failed", i18n.Args{"username": staff.Name, "error": err.Error()})
 		}
 		// Get the role by role ID
 		roles, err := isql.Role.GetRolesByIds([]uint{2})
 		if err != nil {
-			errMsg := fmt.Sprintf("获取用户[%s]的角色信息失败：%s", staff.Name, err.Error())
+			errMsg := fmt.Sprintf("Failed to get role information for user [%s]: %s", staff.Name, err.Error())
 			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
 			return nil, tools.NewValidatorI18nError("sync.user_role_info_failed", i18n.Args{"username": staff.Name, "error": err.Error()})
 		}
@@ -166,7 +166,7 @@ func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req any) (data any, rsp
 			UserDN:        staff.DN,
 		})
 		if err != nil {
-			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Name, err.Error())
+			errMsg := fmt.Sprintf("Failed to write user [%s]: %s", staff.Name, err.Error())
 			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
 			return nil, tools.NewOperationI18nError("sync.user_write_failed", i18n.Args{"username": staff.Name, "error": err.Error()})
 		}
