@@ -14,5 +14,5 @@ type Role struct {
 	Creator        string  `gorm:"type:varchar(20);" json:"creator"`
 	CreatorDisplay string  `gorm:"-" json:"creatorDisplay,omitempty"`
 	Users          []*User `gorm:"many2many:user_roles" json:"users"`
-	Menus          []*Menu `gorm:"many2many:role_menus;" json:"menus"` // 角色菜单多对多关系
+	Menus          []*Menu `gorm:"many2many:role_menus;" json:"menus"` // Many-to-many relationship between roles and menus
 }

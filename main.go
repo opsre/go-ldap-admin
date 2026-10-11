@@ -20,10 +20,10 @@ import (
 
 // @title Go Ldap Admin
 // @version 1.0
-// @description 基于Go+Vue实现的openLDAP后台管理项目
+// @description OpenLDAP admin system built with Go and Vue
 // @termsOfService https://github.com/eryajf/go-ldap-admin
 
-// @contact.name 项目作者：二丫讲梵 、 swagger作者：南宫乘风
+// @contact.name Project author: Er Ya Jiang Fan; Swagger author: Nangong Chengfeng
 // @contact.url https://github.com/eryajf/go-ldap-admin
 // @contact.email https://github.com/eryajf/go-ldap-admin
 
@@ -34,38 +34,38 @@ import (
 // @name Authorization
 func main() {
 
-	// 加载配置文件到全局配置结构体
+	// Load the configuration file into the global configuration struct
 	config.InitConfig()
 
 	if err := i18n.Init(config.Conf.I18n.DefaultLocale, config.Conf.I18n.SupportedLocales); err != nil {
 		panic(fmt.Errorf("i18n initialization failed:%s", err))
 	}
 
-	// 初始化日志
+	// Initialize logging
 	common.InitLogger()
 
-	// 初始化数据库(mysql)
+	// Initialize the MySQL database
 	common.InitDB()
 
-	// 初始化ldap连接
+	// Initialize the LDAP connection
 	common.InitLDAP()
 
-	// 初始化casbin策略管理器
+	// Initialize the Casbin policy manager
 	common.InitCasbinEnforcer()
 
-	// 初始化Validator数据校验
+	// Initialize Validator data validation
 	common.InitValidate()
 
-	// 初始化mysql数据
+	// Initialize MySQL data
 	common.InitData()
 
-	// 操作日志中间件处理日志时没有将日志发送到rabbitmq或者kafka中, 而是发送到了channel中
-	// 这里开启3个goroutine处理channel将日志记录到数据库
+	// The operation log middleware sends logs to a channel instead of RabbitMQ or Kafka
+	// Start three goroutines to process the channel and write logs to the database
 	for i := 0; i < 3; i++ {
 		go isql.OperationLog.SaveOperationLogChannel(middleware.OperationLogChan)
 	}
 
-	// 注册所有路由
+	// Register all routes
 	r := routes.InitRoutes()
 
 	host := "0.0.0.0"
@@ -84,7 +84,7 @@ func main() {
 		}
 	}()
 
-	// 启动定时任务
+	// Start scheduled tasks
 	logic.InitCron()
 
 	common.Log.Info(fmt.Sprintf("Server is running at http://%s:%d", host, port))

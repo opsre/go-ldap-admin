@@ -15,7 +15,7 @@ import (
 
 var checkLock sync.Mutex
 
-// Casbin中间件, 基于RBAC的权限访问控制模型
+// Casbin middleware based on the RBAC access control model
 func CasbinMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, err := isql.User.GetCurrentLoginUser(c)
@@ -29,18 +29,18 @@ func CasbinMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		// 获得用户的全部角色
+		// Get all user roles
 		roles := user.Roles
-		// 获得用户全部未被禁用的角色的Keyword
+		// Get the keywords of all enabled user roles
 		var subs []string
 		for _, role := range roles {
 			if role.Status == 1 {
 				subs = append(subs, role.Keyword)
 			}
 		}
-		// 获得请求路径URL
+		// Get the request URL path
 		obj := strings.TrimPrefix(c.FullPath(), "/"+config.Conf.System.UrlPathPrefix)
-		// 获取请求方式
+		// Get the request method
 		act := c.Request.Method
 		isPass := check(subs, obj, act)
 		if !isPass {
@@ -54,7 +54,7 @@ func CasbinMiddleware() gin.HandlerFunc {
 }
 
 func check(subs []string, obj string, act string) bool {
-	// 同一时间只允许一个请求执行校验, 否则可能会校验失败
+	// Allow only one request to run validation at a time, or validation may fail
 	checkLock.Lock()
 	defer checkLock.Unlock()
 	isPass := false

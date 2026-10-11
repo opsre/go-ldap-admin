@@ -1,7 +1,7 @@
 package response
 
 /**
- * @Author: 南宫乘风
+ * @Author: Nangong Chengfeng
  * @Description:
  * @File:  responsebody.go
  * @Email: 1794748404@qq.com

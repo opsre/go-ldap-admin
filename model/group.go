@@ -20,8 +20,8 @@ type Group struct {
 	SourceDeptParentId string   `gorm:"type:varchar(100);comment:'Parent department ID'" json:"sourceDeptParentId"`
 	SourceUserNum      int      `gorm:"default:0;comment:'Number of users in department from third-party data'" json:"source_user_num"`
 	Children           []*Group `gorm:"-" json:"children"`
-	GroupDN            string   `gorm:"type:varchar(255);not null;comment:'Group DN'" json:"groupDn"`                             // 分组在ldap的dn
-	SyncState          uint     `gorm:"type:tinyint(1);default:1;comment:'Sync status: 1 synced, 2 not synced'" json:"syncState"` // 数据到ldap的同步状态
+	GroupDN            string   `gorm:"type:varchar(255);not null;comment:'Group DN'" json:"groupDn"`                             // Group DN in LDAP
+	SyncState          uint     `gorm:"type:tinyint(1);default:1;comment:'Sync status: 1 synced, 2 not synced'" json:"syncState"` // LDAP sync status
 }
 
 func (g *Group) SetGroupName(groupName string) {

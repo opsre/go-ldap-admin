@@ -9,13 +9,13 @@ import (
 
 type BaseController struct{}
 
-// SendCode 给用户邮箱发送验证码
-// @Summary 发送验证码
-// @Description 向指定邮箱发送验证码
-// @Tags 基础管理
+// SendCode sends a verification code to the user email
+// @Summary Send a verification code
+// @Description Send a verification code to the specified email
+// @Tags Basic management
 // @Accept application/json
 // @Produce application/json
-// @Param data body request.BaseSendCodeReq true "发送验证码请求数据"
+// @Param data body request.BaseSendCodeReq true "Verification code request data"
 // @Success 200 {object} response.ResponseBody
 // @Router /base/sendcode [post]
 func (m *BaseController) SendCode(c *gin.Context) {
@@ -25,13 +25,13 @@ func (m *BaseController) SendCode(c *gin.Context) {
 	})
 }
 
-// ChangePwd 用户通过邮箱修改密码
-// @Summary 用户通过邮箱修改密码
-// @Description 使用邮箱验证码修改密码
-// @Tags 基础管理
+// ChangePwd lets users change their password by email
+// @Summary Change password by email
+// @Description Change the password using an email verification code
+// @Tags Basic management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.BaseChangePwdReq true "发送验证码请求数据"
+// @Param  data body request.BaseChangePwdReq true "Verification code request data"
 // @Success 200 {object} response.ResponseBody
 // @Router /base/changePwd [post]
 func (m *BaseController) ChangePwd(c *gin.Context) {
@@ -41,10 +41,10 @@ func (m *BaseController) ChangePwd(c *gin.Context) {
 	})
 }
 
-// Dashboard 系统首页展示数据
-// @Summary 获取仪表盘数据
-// @Description 获取系统仪表盘概览数据
-// @Tags 基础管理
+// Dashboard displays the system home page data
+// @Summary Get dashboard data
+// @Description Get an overview of the system dashboard
+// @Tags Basic management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody
@@ -56,13 +56,13 @@ func (m *BaseController) Dashboard(c *gin.Context) {
 	})
 }
 
-// EncryptPasswd 密码加密
-// @Summary 密码加密
-// @Description 将明文密码加密
-// @Tags 基础管理
+// EncryptPasswd encrypts a password
+// @Summary Encrypt the password
+// @Description Encrypt the plain-text password
+// @Tags Basic management
 // @Accept application/json
 // @Produce application/json
-// @Param passwd query string true "需要加密的明文密码"
+// @Param passwd query string true "Plain-text password to encrypt"
 // @Success 200 {object} response.ResponseBody
 // @Router /base/encryptpwd [get]
 func (m *BaseController) EncryptPasswd(c *gin.Context) {
@@ -72,13 +72,13 @@ func (m *BaseController) EncryptPasswd(c *gin.Context) {
 	})
 }
 
-// DecryptPasswd 密码解密为明文
-// @Summary 密码解密
-// @Description 将加密后的密码解密为明文
-// @Tags 基础管理
+// DecryptPasswd decrypts a password to plain text
+// @Summary Decrypt the password
+// @Description Decrypt the encrypted password to plain text
+// @Tags Basic management
 // @Accept application/json
 // @Produce application/json
-// @Param passwd query string true "需要解密的加密密码"
+// @Param passwd query string true "Encrypted password to decrypt"
 // @Success 200 {object} response.ResponseBody
 // @Router /base/decryptpwd [get]
 func (m *BaseController) DecryptPasswd(c *gin.Context) {
@@ -88,10 +88,10 @@ func (m *BaseController) DecryptPasswd(c *gin.Context) {
 	})
 }
 
-// GetConfig 获取系统配置
-// @Summary 获取系统配置
-// @Description 获取系统配置信息，用于前端判断是否显示同步按钮
-// @Tags 基础管理
+// GetConfig gets the system configuration
+// @Summary Get the system configuration
+// @Description Get system configuration so the frontend can determine whether to show the sync button
+// @Tags Basic management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody
@@ -103,10 +103,10 @@ func (m *BaseController) GetConfig(c *gin.Context) {
 	})
 }
 
-// GetVersion 获取版本信息
-// @Summary 获取版本信息
-// @Description 获取系统版本号、Git提交哈希和构建时间
-// @Tags 基础管理
+// GetVersion gets version information
+// @Summary Get version information
+// @Description Get the system version, Git commit hash, and build time
+// @Tags Basic management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody

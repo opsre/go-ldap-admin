@@ -15,15 +15,15 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// 初始化
+// Initialize
 func InitRoutes() *gin.Engine {
-	//设置模式
+	//Set the mode
 	gin.SetMode(config.Conf.System.Mode)
 
-	// 创建带有默认中间件的路由:
-	// 日志与恢复中间件
+	// Create a router with default middleware:
+	// Logging and recovery middleware
 	r := gin.Default()
-	// 创建不带中间件的路由:
+	// Create a router without middleware:
 	// r := gin.New()
 	// r.Use(gin.Recovery())
 
@@ -39,19 +39,19 @@ func InitRoutes() *gin.Engine {
 
 	r.Use(middleware.LocaleMiddleware())
 
-	// 启用限流中间件
-	// 默认每50毫秒填充一个令牌，最多填充200个
+	// Enable rate limiting middleware
+	// By default, add one token every 50 milliseconds, up to 200 tokens
 	fillInterval := time.Duration(config.Conf.RateLimit.FillInterval)
 	capacity := config.Conf.RateLimit.Capacity
 	r.Use(middleware.RateLimitMiddleware(time.Millisecond*fillInterval, capacity))
 
-	// 启用全局跨域中间件
+	// Enable global CORS middleware
 	r.Use(middleware.CORSMiddleware())
 
-	// 启用操作日志中间件
+	// Enable operation log middleware
 	r.Use(middleware.OperationLogMiddleware())
 
-	// 初始化JWT认证中间件
+	// Initialize JWT authentication middleware
 	authMiddleware, err := middleware.InitAuth()
 	if err != nil {
 		common.Log.Panicf("failed to initialize JWT middleware：%v", err)
@@ -61,15 +61,15 @@ func InitRoutes() *gin.Engine {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	apiGroup := r.Group("/" + config.Conf.System.UrlPathPrefix)
 	// swag
-	// 注册路由
-	InitBaseRoutes(apiGroup, authMiddleware)          // 注册基础路由, 不需要jwt认证中间件,不需要casbin中间件
-	InitUserRoutes(apiGroup, authMiddleware)          // 注册用户路由, jwt认证中间件,casbin鉴权中间件
-	InitGroupRoutes(apiGroup, authMiddleware)         // 注册分组路由, jwt认证中间件,casbin鉴权中间件
-	InitRoleRoutes(apiGroup, authMiddleware)          // 注册角色路由, jwt认证中间件,casbin鉴权中间件
-	InitMenuRoutes(apiGroup, authMiddleware)          // 注册菜单路由, jwt认证中间件,casbin鉴权中间件
-	InitApiRoutes(apiGroup, authMiddleware)           // 注册接口路由, jwt认证中间件,casbin鉴权中间件
-	InitOperationLogRoutes(apiGroup, authMiddleware)  // 注册操作日志路由, jwt认证中间件,casbin鉴权中间件
-	InitFieldRelationRoutes(apiGroup, authMiddleware) // 注册操作日志路由, jwt认证中间件,casbin鉴权中间件
+	// Register routes
+	InitBaseRoutes(apiGroup, authMiddleware)          // Register base routes without JWT authentication or Casbin middleware
+	InitUserRoutes(apiGroup, authMiddleware)          // Register user routes with JWT authentication and Casbin authorization middleware
+	InitGroupRoutes(apiGroup, authMiddleware)         // Register group routes with JWT authentication and Casbin authorization middleware
+	InitRoleRoutes(apiGroup, authMiddleware)          // Register role routes with JWT authentication and Casbin authorization middleware
+	InitMenuRoutes(apiGroup, authMiddleware)          // Register menu routes with JWT authentication and Casbin authorization middleware
+	InitApiRoutes(apiGroup, authMiddleware)           // Register API routes with JWT authentication and Casbin authorization middleware
+	InitOperationLogRoutes(apiGroup, authMiddleware)  // Register operation log routes with JWT authentication and Casbin authorization middleware
+	InitFieldRelationRoutes(apiGroup, authMiddleware) // Register operation log routes with JWT authentication and Casbin authorization middleware
 
 	common.Log.Info("routes initialized")
 	return r

@@ -24,6 +24,6 @@ type Menu struct {
 	ParentId       uint    `gorm:"default:0;comment:'Parent menu ID (0 indicates the root menu)'" json:"parentId"`
 	Creator        string  `gorm:"type:varchar(20);comment:'Creator'" json:"creator"`
 	CreatorDisplay string  `gorm:"-" json:"creatorDisplay,omitempty"`
-	Children       []*Menu `gorm:"-" json:"children"`                  // 子菜单集合
-	Roles          []*Role `gorm:"many2many:role_menus;" json:"roles"` // 角色菜单多对多关系
+	Children       []*Menu `gorm:"-" json:"children"`                  // Child menus
+	Roles          []*Role `gorm:"many2many:role_menus;" json:"roles"` // Many-to-many relationship between roles and menus
 }

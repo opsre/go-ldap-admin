@@ -1,6 +1,6 @@
 package request
 
-// MenuAddReq 添加资源结构体
+// MenuAddReq is the resource creation request struct
 type MenuAddReq struct {
 	Name       string `json:"name" validate:"required,min=1,max=50"`
 	Title      string `json:"title" validate:"required,min=1,max=50"`
@@ -18,11 +18,11 @@ type MenuAddReq struct {
 	ParentId   uint   `json:"parentId"`
 }
 
-// MenuListReq 列表结构体
+// MenuListReq is the list request struct
 type MenuListReq struct {
 }
 
-// MenuUpdateReq 更新资源结构体
+// MenuUpdateReq is the resource update request struct
 type MenuUpdateReq struct {
 	ID         uint   `json:"id" validate:"required"`
 	Name       string `json:"name" validate:"required,min=1,max=50"`
@@ -41,16 +41,16 @@ type MenuUpdateReq struct {
 	ParentId   uint   `json:"parentId" validate:"gte=0"`
 }
 
-// MenuDeleteReq 删除资源结构体
+// MenuDeleteReq is the resource deletion request struct
 type MenuDeleteReq struct {
 	MenuIds []uint `json:"menuIds" validate:"required"`
 }
 
-// MenuGetTreeReq 获取菜单树结构体
+// MenuGetTreeReq is the menu tree request struct
 type MenuGetTreeReq struct {
 }
 
-// MenuGetAccessTreeReq 获取用户菜单树
+// MenuGetAccessTreeReq gets the user menu tree
 type MenuGetAccessTreeReq struct {
 	ID uint `json:"id" form:"id"`
 }

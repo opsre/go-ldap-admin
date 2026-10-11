@@ -1,6 +1,6 @@
 package request
 
-// OperationLogListReq 操作日志请求结构体
+// OperationLogListReq is the operation log request struct
 type OperationLogListReq struct {
 	Username string `json:"username" form:"username"`
 	Ip       string `json:"ip" form:"ip"`
@@ -11,7 +11,7 @@ type OperationLogListReq struct {
 	PageSize int    `json:"pageSize" form:"pageSize"`
 }
 
-// OperationLogDeleteReq 批量删除操作日志结构体
+// OperationLogDeleteReq is the bulk operation log deletion request struct
 type OperationLogDeleteReq struct {
 	OperationLogIds []uint `json:"operationLogIds" validate:"required"`
 }

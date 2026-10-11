@@ -9,10 +9,10 @@ import (
 
 type RoleController struct{}
 
-// List 角色记录列表
-// @Summary 获取角色记录列表
-// @Description 获取角色记录列表
-// @Tags 角色管理
+// List role records
+// @Summary Get the role list
+// @Description Get the role list
+// @Tags Role management
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {object} response.ResponseBody
@@ -25,13 +25,13 @@ func (m *RoleController) List(c *gin.Context) {
 	})
 }
 
-// Add 新建
-// @Summary 新建角色记录
-// @Description 新建角色记录
-// @Tags 角色管理
+// Add a new item
+// @Summary Create a role record
+// @Description Create a role record
+// @Tags Role management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.RoleAddReq true "添加角色记录的结构体"
+// @Param  data body request.RoleAddReq true "Role creation request structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /role/add [post]
 // @Security ApiKeyAuth
@@ -42,13 +42,13 @@ func (m *RoleController) Add(c *gin.Context) {
 	})
 }
 
-// Update 更新记录
-// @Summary 更新角色记录
-// @Description 更新角色记录
-// @Tags 角色管理
+// Update a record
+// @Summary Update a role record
+// @Description Update a role record
+// @Tags Role management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.RoleUpdateReq true "更新角色记录的结构体"
+// @Param  data body request.RoleUpdateReq true "Role update request structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /role/update [post]
 // @Security ApiKeyAuth
@@ -59,13 +59,13 @@ func (m *RoleController) Update(c *gin.Context) {
 	})
 }
 
-// Delete 删除记录
-// @Summary 删除角色记录
-// @Description 删除角色记录
-// @Tags 角色管理
+// Delete records
+// @Summary Delete role records
+// @Description Delete role records
+// @Tags Role management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.RoleDeleteReq true "删除角色记录的结构体"
+// @Param  data body request.RoleDeleteReq true "Role deletion request structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /role/delete [post]
 // @Security ApiKeyAuth
@@ -76,13 +76,13 @@ func (m *RoleController) Delete(c *gin.Context) {
 	})
 }
 
-// GetMenuList 获取菜单列表
-// @Summary 获取菜单列表
-// @Description 获取菜单列表
-// @Tags 角色管理
+// GetMenuList gets the menu list
+// @Summary Get the menu list
+// @Description Get the menu list
+// @Tags Role management
 // @Accept application/json
 // @Produce application/json
-// @Param roleId query int true "角色ID"
+// @Param roleId query int true "Role ID"
 // @Success 200 {object} response.ResponseBody
 // @Router /role/getmenulist [get]
 // @Security ApiKeyAuth
@@ -93,13 +93,13 @@ func (m *RoleController) GetMenuList(c *gin.Context) {
 	})
 }
 
-// GetApiList 获取接口列表
-// @Summary 获取接口列表
-// @Description 获取接口列表
-// @Tags 角色管理
+// GetApiList gets the API list
+// @Summary Get the API list
+// @Description Get the API list
+// @Tags Role management
 // @Accept application/json
 // @Produce application/json
-// @Param roleId query int true "角色ID"
+// @Param roleId query int true "Role ID"
 // @Success 200 {object} response.ResponseBody
 // @Router /role/getapilist [get]
 // @Security ApiKeyAuth
@@ -110,13 +110,13 @@ func (m *RoleController) GetApiList(c *gin.Context) {
 	})
 }
 
-// UpdateMenus 更新菜单
-// @Summary 更新菜单
-// @Description 更新菜单
-// @Tags 角色管理
+// UpdateMenus updates menus
+// @Summary Update the menu
+// @Description Update the menu
+// @Tags Role management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.RoleUpdateMenusReq true "更新菜单的结构体"
+// @Param  data body request.RoleUpdateMenusReq true "Menu update request structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /role/updatemenus [post]
 // @Security ApiKeyAuth
@@ -127,13 +127,13 @@ func (m *RoleController) UpdateMenus(c *gin.Context) {
 	})
 }
 
-// UpdateApis 更新接口
-// @Summary 更新接口
-// @Description 更新接口
-// @Tags 角色管理
+// UpdateApis updates APIs
+// @Summary Update APIs
+// @Description Update APIs
+// @Tags Role management
 // @Accept application/json
 // @Produce application/json
-// @Param  data body request.RoleUpdateApisReq true "更新接口的结构体"
+// @Param  data body request.RoleUpdateApisReq true "API update request structure"
 // @Success 200 {object} response.ResponseBody
 // @Router /role/updateapis [post]
 // @Security ApiKeyAuth
