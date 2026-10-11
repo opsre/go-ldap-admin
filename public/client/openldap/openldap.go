@@ -11,10 +11,10 @@ import (
 
 type Dept struct {
 	DN       string `json:"dn"`
-	Id       string `json:"id"`       // 部门ID
-	Name     string `json:"name"`     // 部门名称拼音
-	Remark   string `json:"remark"`   // 部门中文名
-	ParentId string `json:"parentid"` // 父部门ID
+	Id       string `json:"id"`       // Department ID
+	Name     string `json:"name"`     // Department name in Pinyin
+	Remark   string `json:"remark"`   // Department name in Chinese
+	ParentId string `json:"parentid"` // Parent department ID
 }
 
 type User struct {
@@ -23,18 +23,18 @@ type User struct {
 	CN               string   `json:"cn"`
 	SN               string   `json:"sn"`
 	Mobile           string   `json:"mobile"`
-	BusinessCategory string   `json:"businessCategory"` // 业务类别，部门名字
-	DepartmentNumber string   `json:"departmentNumber"` // 部门编号，此处可以存放员工的职位
-	Description      string   `json:"description"`      // 描述
-	DisplayName      string   `json:"displayName"`      // 展示名字，可以是中文名字
-	Mail             string   `json:"mail"`             // 邮箱
-	EmployeeNumber   string   `json:"employeeNumber"`   // 员工工号
-	GivenName        string   `json:"givenName"`        // 给定名字，如果公司有花名，可以用这个字段
-	PostalAddress    string   `json:"postalAddress"`    // 家庭住址
+	BusinessCategory string   `json:"businessCategory"` // Business category, department name
+	DepartmentNumber string   `json:"departmentNumber"` // Department number; this field can store the employee position
+	Description      string   `json:"description"`      // Description
+	DisplayName      string   `json:"displayName"`      // Display name, which may be in Chinese
+	Mail             string   `json:"mail"`             // Email
+	EmployeeNumber   string   `json:"employeeNumber"`   // Employee number
+	GivenName        string   `json:"givenName"`        // Given name; if the company uses preferred names, they can go here
+	PostalAddress    string   `json:"postalAddress"`    // Home address
 	DepartmentIds    []string `json:"department_ids"`
 }
 
-// GetAllDepts 获取所有部门
+// GetAllDepts gets all departments
 func GetAllDepts() (ret []*Dept, err error) {
 	// Construct query request
 	searchRequest := ldap.NewSearchRequest(
@@ -45,7 +45,7 @@ func GetAllDepts() (ret []*Dept, err error) {
 		nil,
 	)
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -79,7 +79,7 @@ func GetAllDepts() (ret []*Dept, err error) {
 	return
 }
 
-// GetAllUsers 获取所有员工信息
+// GetAllUsers gets all employee information
 func GetAllUsers() (ret []*User, err error) {
 	// Construct query request
 	searchRequest := ldap.NewSearchRequest(
@@ -90,7 +90,7 @@ func GetAllUsers() (ret []*User, err error) {
 		nil,
 	)
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -134,7 +134,7 @@ func GetAllUsers() (ret []*User, err error) {
 	return
 }
 
-// GetUserDeptIds 获取用户所在的部门
+// GetUserDeptIds gets the departments a user belongs to
 func GetUserDeptIds(udn string) (ret []string, err error) {
 	// Construct query request
 	searchRequest := ldap.NewSearchRequest(
@@ -145,7 +145,7 @@ func GetUserDeptIds(udn string) (ret []string, err error) {
 		nil,
 	)
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {

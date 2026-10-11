@@ -11,10 +11,10 @@ import (
 	"gorm.io/gorm"
 )
 
-// 全局数据库对象
+// Global database object
 var DB *gorm.DB
 
-// 初始化数据库
+// Initialize the database
 func InitDB() {
 	switch config.Conf.Database.Driver {
 	case "mysql":
@@ -25,7 +25,7 @@ func InitDB() {
 	dbAutoMigrate()
 }
 
-// 自动迁移表结构
+// Automatically migrate the table schema
 func dbAutoMigrate() {
 	_ = DB.AutoMigrate(
 		&model.User{},
@@ -40,7 +40,7 @@ func dbAutoMigrate() {
 
 func ConnSqlite() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(config.Conf.Database.Source), &gorm.Config{
-		// 禁用外键(指定外键时不会在mysql创建真实的外键约束)
+		// Disable foreign keys (declared foreign keys will not create actual constraints in MySQL)
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
@@ -50,7 +50,7 @@ func ConnSqlite() *gorm.DB {
 	if err != nil {
 		Log.Panicf("failed to get sqlite3 obj: %v", err)
 	}
-	// 参见： https://github.com/glebarez/sqlite/issues/52
+	// See: https://github.com/glebarez/sqlite/issues/52
 	dbObj.SetMaxOpenConns(1)
 	return db
 }
@@ -66,7 +66,7 @@ func ConnMysql() *gorm.DB {
 		config.Conf.Mysql.Collation,
 		config.Conf.Mysql.Query,
 	)
-	// 隐藏密码
+	// Hide passwords
 	showDsn := fmt.Sprintf(
 		"%s:******@tcp(%s:%d)/%s?charset=%s&collation=%s&%s",
 		config.Conf.Mysql.Username,
@@ -78,13 +78,13 @@ func ConnMysql() *gorm.DB {
 		config.Conf.Mysql.Query,
 	)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		// 禁用外键(指定外键时不会在mysql创建真实的外键约束)
+		// Disable foreign keys (declared foreign keys will not create actual constraints in MySQL)
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
 		Log.Panicf("MySQL database initialization error: %v", err)
 	}
-	// 开启mysql日志
+	// Enable MySQL logging
 	if config.Conf.Mysql.LogMode {
 		db.Debug()
 	}

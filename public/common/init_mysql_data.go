@@ -13,14 +13,14 @@ import (
 	"gorm.io/gorm"
 )
 
-// 初始化mysql数据
+// Initialize MySQL data
 func InitData() {
-	// 是否初始化数据
+	// Whether to initialize data
 	if !config.Conf.System.InitData {
 		return
 	}
 
-	// 1.写入角色数据
+	// 1. Insert role data
 	newRoles := make([]*model.Role, 0)
 	roles := []*model.Role{
 		{
@@ -66,7 +66,7 @@ func InitData() {
 		}
 	}
 
-	// 2写入菜单
+	// 2. Insert menus
 	newMenus := make([]model.Menu, 0)
 	var uint0 uint = 0
 	var uint1 uint = 1
@@ -224,7 +224,7 @@ func InitData() {
 		}
 	}
 
-	// 3.写入用户
+	// 3. Insert users
 	newUsers := make([]*model.User, 0)
 	users := []*model.User{
 		{
@@ -262,7 +262,7 @@ func InitData() {
 		}
 	}
 
-	// 4.写入api
+	// 4. Insert APIs
 	apis := []model.Api{
 		{
 			Method:   "GET",
@@ -707,7 +707,7 @@ func InitData() {
 		},
 	}
 
-	// 5. 将角色绑定给菜单
+	// 5. Assign roles to menus
 	newApi := make([]model.Api, 0)
 	newRoleCasbin := make([]model.RoleCasbin, 0)
 	for i, api := range apis {
@@ -716,14 +716,14 @@ func InitData() {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			newApi = append(newApi, api)
 
-			// 管理员拥有所有API权限
+			// Admins have all API permissions
 			newRoleCasbin = append(newRoleCasbin, model.RoleCasbin{
 				Keyword: roles[0].Keyword,
 				Path:    api.Path,
 				Method:  api.Method,
 			})
 
-			// 非管理员拥有基础权限
+			// Non-admins have basic permissions
 			basePaths := []string{
 				"/base/login",
 				"/base/logout",
@@ -766,7 +766,7 @@ func InitData() {
 		}
 	}
 
-	// 6.写入分组
+	// 6. Insert groups
 	newGroups := make([]model.Group, 0)
 	groups := []model.Group{
 		{
@@ -844,7 +844,7 @@ func InitData() {
 		}
 	}
 
-	// 7.写入关系管理
+	// 7. Insert field relations
 	filedRelation := []model.FieldRelation{
 		{
 			Flag:       "dingtalk_group",

@@ -6,17 +6,17 @@ import (
 	"strings"
 )
 
-// 字符串切片比较
+// Compare string slices
 func ArrStrCmp(src []string, dest []string) ([]string, []string) {
-	msrc := make(map[string]byte) //按源数组建索引
-	mall := make(map[string]byte) //源+目所有元素建索引
-	var set []string              //交集
-	//1.源数组建立map
+	msrc := make(map[string]byte) //Build an index from the source slice
+	mall := make(map[string]byte) //Build an index from all source and destination elements
+	var set []string              //Intersection
+	//1. Build a map from the source slice
 	for _, v := range src {
 		msrc[v] = 0
 		mall[v] = 0
 	}
-	//2.目数组中，存不进去，即重复元素，所有存不进去的集合就是并集
+	//2. Elements that cannot be inserted from the destination slice are duplicates; the remaining elements form the union
 	for _, v := range dest {
 		l := len(mall)
 		mall[v] = 1
@@ -26,11 +26,11 @@ func ArrStrCmp(src []string, dest []string) ([]string, []string) {
 			set = append(set, v)
 		}
 	}
-	//3.遍历交集，在并集中找，找到就从并集中删，删完后就是补集（即并-交=所有变化的元素）
+	//3. For each intersection element, find and remove it from the union; the remaining elements are the difference (union minus intersection)
 	for _, v := range set {
 		delete(mall, v)
 	}
-	//4.此时，mall是补集，所有元素去源中找，找到就是删除的，找不到的必定能在目数组中找到，即新加的
+	//4. mall is now the difference: elements found in the source were removed, and the rest are newly added
 	var added, deleted []string
 	for v := range mall {
 		_, exist := msrc[v]
@@ -43,17 +43,17 @@ func ArrStrCmp(src []string, dest []string) ([]string, []string) {
 	return added, deleted
 }
 
-// uint切片比较
+// Compare uint slices
 func ArrUintCmp(src []uint, dest []uint) ([]uint, []uint) {
-	msrc := make(map[uint]byte) //按源数组建索引
-	mall := make(map[uint]byte) //源+目所有元素建索引
-	var set []uint              //交集
-	//1.源数组建立map
+	msrc := make(map[uint]byte) //Build an index from the source slice
+	mall := make(map[uint]byte) //Build an index from all source and destination elements
+	var set []uint              //Intersection
+	//1. Build a map from the source slice
 	for _, v := range src {
 		msrc[v] = 0
 		mall[v] = 0
 	}
-	//2.目数组中，存不进去，即重复元素，所有存不进去的集合就是并集
+	//2. Elements that cannot be inserted from the destination slice are duplicates; the remaining elements form the union
 	for _, v := range dest {
 		l := len(mall)
 		mall[v] = 1
@@ -63,11 +63,11 @@ func ArrUintCmp(src []uint, dest []uint) ([]uint, []uint) {
 			set = append(set, v)
 		}
 	}
-	//3.遍历交集，在并集中找，找到就从并集中删，删完后就是补集（即并-交=所有变化的元素）
+	//3. For each intersection element, find and remove it from the union; the remaining elements are the difference (union minus intersection)
 	for _, v := range set {
 		delete(mall, v)
 	}
-	//4.此时，mall是补集，所有元素去源中找，找到就是删除
+	//4. mall is the difference; elements found in the source were removed
 	var added, deleted []uint
 	for v := range mall {
 		_, exist := msrc[v]
@@ -80,12 +80,12 @@ func ArrUintCmp(src []uint, dest []uint) ([]uint, []uint) {
 	return added, deleted
 }
 
-// 将字符串切片转换为uint切片
+// Convert a string slice to a uint slice
 func SliceToString(src []uint, delim string) string {
 	return strings.Trim(strings.ReplaceAll(fmt.Sprint(src), " ", delim), "[]")
 }
 
-// 将字符串切片转换为uint切片
+// Convert a string slice to a uint slice
 func StringToSlice(src string, delim string) []uint {
 	var dest []uint
 	if src == "" {

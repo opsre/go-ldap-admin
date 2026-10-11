@@ -17,15 +17,15 @@ import (
 	ch_translations "github.com/go-playground/validator/v10/translations/zh"
 )
 
-// 全局Validate数据校验实列
+// Global Validate data validation instance
 var Validate *validator.Validate
 
-// 全局翻译器
+// Global translator
 var Trans ut.Translator
 
 var TransByLocale map[string]ut.Translator
 
-// 初始化Validator数据校验
+// Initialize Validator data validation
 func InitValidate() {
 	Validate = validator.New()
 	TransByLocale = map[string]ut.Translator{}

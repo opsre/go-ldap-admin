@@ -17,7 +17,7 @@ var ldapPool *LdapConnPool
 var ldapInit = false
 var ldapInitOne sync.Once
 
-// Init 初始化连接
+// Init initializes the connection
 func InitLDAP() {
 	if ldapInit {
 		return
@@ -27,7 +27,7 @@ func InitLDAP() {
 		ldapInit = true
 	})
 
-	// Dail有两个参数 network,  address, 返回 (*Conn,  error)
+	// Dial takes two parameters, network and address, and returns (*Conn, error)
 	ldapConn, err := ldap.DialURL(config.Conf.Ldap.Url, ldap.DialWithDialer(&net.Dialer{Timeout: 5 * time.Second}))
 	if err != nil {
 		Log.Panicf("LDAP connection initialization error: %v", err)
@@ -39,7 +39,7 @@ func InitLDAP() {
 		panic(fmt.Errorf("admin account bind error: %v", err))
 	}
 
-	// 全局变量赋值
+	// Assign the global variable
 	ldapPool = &LdapConnPool{
 		conns:    make([]*ldap.Conn, 0),
 		reqConns: make(map[uint64]chan *ldap.Conn),
@@ -48,7 +48,7 @@ func InitLDAP() {
 	}
 	PutLADPConn(ldapConn)
 
-	// 隐藏密码
+	// Hide passwords
 	showDsn := fmt.Sprintf(
 		"%s:******@tcp(%s)",
 		config.Conf.Ldap.AdminDN,
@@ -58,12 +58,12 @@ func InitLDAP() {
 	Log.Info("LDAP initialized, DSN: ", showDsn)
 }
 
-// GetLDAPConn 获取 LDAP 连接
+// GetLDAPConn gets an LDAP connection
 func GetLDAPConn() (*ldap.Conn, error) {
 	return ldapPool.GetConnection()
 }
 
-// PutLDAPConn 放回 LDAP 连接
+// PutLDAPConn returns an LDAP connection to the pool
 func PutLADPConn(conn *ldap.Conn) {
 	ldapPool.PutConnection(conn)
 }
@@ -76,10 +76,10 @@ type LdapConnPool struct {
 	maxOpen  int
 }
 
-// 获取一个 ladp Conn
+// Get an LDAP connection
 func (lcp *LdapConnPool) GetConnection() (*ldap.Conn, error) {
 	lcp.mu.Lock()
-	// 判断当前连接池内是否存在连接
+	// Check whether the connection pool has a connection
 	connNum := len(lcp.conns)
 	if connNum > 0 {
 		lcp.openConn++
@@ -88,22 +88,22 @@ func (lcp *LdapConnPool) GetConnection() (*ldap.Conn, error) {
 		lcp.conns = lcp.conns[:connNum-1]
 
 		lcp.mu.Unlock()
-		// 发现连接已经 close 重新获取连接
+		// If the connection is closed, get a new one
 		if conn.IsClosing() {
 			return initLDAPConn()
 		}
 		return conn, nil
 	}
 
-	// 当现有连接池为空时，并且当前超过最大连接限制
+	// If the pool is empty and the current count exceeds the maximum connection limit
 	if lcp.maxOpen != 0 && lcp.openConn > lcp.maxOpen {
-		// 创建一个等待队列
+		// Create a wait queue
 		req := make(chan *ldap.Conn, 1)
 		reqKey := lcp.nextRequestKeyLocked()
 		lcp.reqConns[reqKey] = req
 		lcp.mu.Unlock()
 
-		// 等待请求归还
+		// Wait for a connection to be returned
 		return <-req, nil
 	} else {
 		lcp.openConn++
@@ -117,7 +117,7 @@ func (lcp *LdapConnPool) PutConnection(conn *ldap.Conn) {
 	lcp.mu.Lock()
 	defer lcp.mu.Unlock()
 
-	// 先判断是否存在等待的队列
+	// First check whether a wait queue exists
 	if num := len(lcp.reqConns); num > 0 {
 		var req chan *ldap.Conn
 		var reqKey uint64
@@ -135,7 +135,7 @@ func (lcp *LdapConnPool) PutConnection(conn *ldap.Conn) {
 	}
 }
 
-// 获取下一个请求令牌
+// Get the next request token
 func (lcp *LdapConnPool) nextRequestKeyLocked() uint64 {
 	for {
 		reqKey := rand.Uint64()
@@ -145,7 +145,7 @@ func (lcp *LdapConnPool) nextRequestKeyLocked() uint64 {
 	}
 }
 
-// 获取 ladp 连接
+// Get an LDAP connection
 func initLDAPConn() (*ldap.Conn, error) {
 	ldap, err := ldap.DialURL(config.Conf.Ldap.Url, ldap.DialWithDialer(&net.Dialer{Timeout: 5 * time.Second}))
 	if err != nil {

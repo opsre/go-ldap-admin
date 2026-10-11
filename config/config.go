@@ -11,10 +11,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// 系统配置，对应yml
+// System configuration, corresponding to the YAML file
 // Viper includes mapstructure; YAML uses hyphens, which are converted to camel case
 
-// 全局配置变量
+// Global configuration variable
 var Conf = new(config)
 
 //go:embed go-ldap-admin-priv.pem
@@ -48,18 +48,18 @@ func InitConfig() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(workDir + "/")
-	// 读取配置信息
+	// Read configuration information
 	err = viper.ReadInConfig()
 
-	// 热更新配置
+	// Reload configuration dynamically
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
-		// 将读取的配置信息保存至全局变量Conf
+		// Save the loaded configuration in the global variable Conf
 		if err := viper.Unmarshal(Conf); err != nil {
 			panic(fmt.Errorf("failed to initialize configuration file:%s", err))
 		}
 		normalizeConfig()
-		// 读取rsa key
+		// Load the RSA key
 		Conf.System.RSAPublicBytes = pub
 		Conf.System.RSAPrivateBytes = priv
 	})
@@ -67,16 +67,16 @@ func InitConfig() {
 	if err != nil {
 		panic(fmt.Errorf("failed to read configuration file:%s", err))
 	}
-	// 将读取的配置信息保存至全局变量Conf
+	// Save the loaded configuration in the global variable Conf
 	if err := viper.Unmarshal(Conf); err != nil {
 		panic(fmt.Errorf("failed to initialize configuration file:%s", err))
 	}
 	normalizeConfig()
-	// 读取rsa key
+	// Load the RSA key
 	Conf.System.RSAPublicBytes = pub
 	Conf.System.RSAPrivateBytes = priv
 
-	// 部分配合通过环境变量加载
+	// Some settings are loaded through environment variables
 	dbDriver := os.Getenv("DB_DRIVER")
 	if dbDriver != "" {
 		Conf.Database.Driver = dbDriver

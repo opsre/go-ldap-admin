@@ -12,20 +12,20 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-// 全局日志变量
+// Global logger variable
 //var Log *zap.Logger
 var Log *zap.SugaredLogger
 
 /**
- * 初始化日志
- * filename 日志文件路径
- * level 日志级别
- * maxSize 每个日志文件保存的最大尺寸 单位：M
- * maxBackups 日志文件最多保存多少个备份
- * maxAge 文件最多保存多少天
- * compress 是否压缩
- * serviceName 服务名
- * 由于zap不具备日志切割功能, 这里使用lumberjack配合
+ * Initialize logging
+ * filename is the log file path
+ * level is the log level
+ * maxSize is the maximum size of each log file, in MB
+ * maxBackups is the maximum number of log backups to keep
+ * maxAge is the maximum number of days to retain log files
+ * compress indicates whether to compress log files
+ * serviceName is the service name
+ * Zap does not support log rotation, so lumberjack is used alongside it
  */
 func InitLogger() {
 	now := time.Now()
@@ -33,11 +33,11 @@ func InitLogger() {
 	errorLogFileName := fmt.Sprintf("%s/error/%04d-%02d-%02d.log", config.Conf.Logs.Path, now.Year(), now.Month(), now.Day())
 	var coreArr []zapcore.Core
 
-	// 获取编码器
+	// Get the encoder
 	//encoderConfig := zap.NewProductionEncoderConfig()
-	//encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder        // 指定时间格式
-	//encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder // ，不需要的话取值zapcore.CapitalLevelEncoder就可以了
-	////encoderConfig.EncodeCaller = zapcore.FullCallerEncoder        // 显示完整文件路径
+	//encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder        // Use the specified time format
+	//encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder // Use zapcore.CapitalLevelEncoder if color is not needed
+	////encoderConfig.EncodeCaller = zapcore.FullCallerEncoder        // Show the full file path
 	encoderConfig := zapcore.EncoderConfig{
 		MessageKey:    "msg",
 		LevelKey:      "level",
@@ -51,7 +51,7 @@ func InitLogger() {
 		EncodeTime: func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 			enc.AppendString(t.Format("2006-01-02 15:04:05"))
 		},
-		//EncodeTime: zapcore.ISO8601TimeEncoder, // ISO8601 UTC 时间格式
+		//EncodeTime: zapcore.ISO8601TimeEncoder, // ISO8601 UTC time format
 		//EncodeDuration: func(d time.Duration, enc zapcore.PrimitiveArrayEncoder) {
 		//	enc.AppendInt64(int64(d) / 1000000)
 		//},
@@ -63,7 +63,7 @@ func InitLogger() {
 	}
 	encoder := zapcore.NewConsoleEncoder(encoderConfig)
 
-	// 日志级别
+	// Log level
 	highPriority := zap.LevelEnablerFunc(func(level zapcore.Level) bool {
 		return level >= zap.ErrorLevel
 	})
@@ -71,35 +71,35 @@ func InitLogger() {
 		return level < zap.ErrorLevel && level >= zap.DebugLevel
 	})
 
-	// 当yml配置中的等级大于Error时，lowPriority级别日志停止记录
+	// When the level in the YAML config is higher than Error, stop recording lowPriority logs
 	if config.Conf.Logs.Level >= 2 {
 		lowPriority = zap.LevelEnablerFunc(func(level zapcore.Level) bool {
 			return false
 		})
 	}
 
-	// info文件writeSyncer
+	// Info file writeSyncer
 	infoFileWriteSyncer := zapcore.AddSync(&lumberjack.Logger{
-		Filename:   infoLogFileName,             //日志文件存放目录，如果文件夹不存在会自动创建
-		MaxSize:    config.Conf.Logs.MaxSize,    //文件大小限制,单位MB
-		MaxAge:     config.Conf.Logs.MaxAge,     //日志文件保留天数
-		MaxBackups: config.Conf.Logs.MaxBackups, //最大保留日志文件数量
+		Filename:   infoLogFileName,             //Log file directory; create it if it does not exist
+		MaxSize:    config.Conf.Logs.MaxSize,    //File size limit, in MB
+		MaxAge:     config.Conf.Logs.MaxAge,     //Number of days to retain log files
+		MaxBackups: config.Conf.Logs.MaxBackups, //Maximum number of log files to retain
 		LocalTime:  false,
-		Compress:   config.Conf.Logs.Compress, //是否压缩处理
+		Compress:   config.Conf.Logs.Compress, //Whether to compress files
 	})
-	// 第三个及之后的参数为写入文件的日志级别,ErrorLevel模式只记录error级别的日志
+	// The third and following arguments are log levels written to the file; ErrorLevel mode records only error-level logs
 	infoFileCore := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(infoFileWriteSyncer, zapcore.AddSync(os.Stdout)), lowPriority)
 
-	// error文件writeSyncer
+	// Error file writeSyncer
 	errorFileWriteSyncer := zapcore.AddSync(&lumberjack.Logger{
-		Filename:   errorLogFileName,            //日志文件存放目录
-		MaxSize:    config.Conf.Logs.MaxSize,    //文件大小限制,单位MB
-		MaxAge:     config.Conf.Logs.MaxAge,     //日志文件保留天数
-		MaxBackups: config.Conf.Logs.MaxBackups, //最大保留日志文件数量
+		Filename:   errorLogFileName,            //Log file directory
+		MaxSize:    config.Conf.Logs.MaxSize,    //File size limit, in MB
+		MaxAge:     config.Conf.Logs.MaxAge,     //Number of days to retain log files
+		MaxBackups: config.Conf.Logs.MaxBackups, //Maximum number of log files to retain
 		LocalTime:  false,
-		Compress:   config.Conf.Logs.Compress, //是否压缩处理
+		Compress:   config.Conf.Logs.Compress, //Whether to compress files
 	})
-	// 第三个及之后的参数为写入文件的日志级别,ErrorLevel模式只记录error级别的日志
+	// The third and following arguments are log levels written to the file; ErrorLevel mode records only error-level logs
 	errorFileCore := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(errorFileWriteSyncer, zapcore.AddSync(os.Stdout)), highPriority)
 
 	coreArr = append(coreArr, infoFileCore)

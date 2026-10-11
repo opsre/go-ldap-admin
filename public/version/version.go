@@ -1,14 +1,14 @@
 package version
 
 var (
-	Version   string // 版本号（如v1.0.0）
-	GitCommit string // Git提交哈希（短格式）
-	BuildTime string // 构建时间
-	GoVersion string // Go编译器版本
-	Platform  string // 编译平台（如linux/amd64）
+	Version   string // Version (for example, v1.0.0)
+	GitCommit string // Git commit hash (short format)
+	BuildTime string // Build time
+	GoVersion string // Go compiler version
+	Platform  string // Build platform (for example, linux/amd64)
 )
 
-// GetVersion 获取版本信息
+// GetVersion gets version information
 func GetVersion() map[string]string {
 	return map[string]string{
 		"version":   Version,

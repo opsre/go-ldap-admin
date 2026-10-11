@@ -7,15 +7,15 @@ import (
 	"github.com/eryajf/go-ldap-admin/config"
 )
 
-// 密码加密 使用自适应hash算法, 不可逆
+// Password encryption uses an adaptive, irreversible hash algorithm
 // func GenPasswd(passwd string) string {
 // 	hashPasswd, _ := bcrypt.GenerateFromPassword([]byte(passwd), bcrypt.DefaultCost)
 // 	return string(hashPasswd)
 // }
 
-// 通过比较两个字符串hash判断是否出自同一个明文
-// hashPasswd 需要对比的密文
-// passwd 明文
+// Compare two string hashes to determine whether they came from the same plain text
+// hashPasswd is the hash to compare
+// passwd is the plain-text password
 // func ComparePasswd(hashPasswd string, passwd string) error {
 // 	// if err := bcrypt.CompareHashAndPassword([]byte(hashPasswd), []byte(passwd)); err != nil {
 // 	// 	return err
@@ -24,13 +24,13 @@ import (
 // 	return nil
 // }
 
-// 密码加密
+// Encrypt the password
 func NewGenPasswd(passwd string) string {
 	pass, _ := RSAEncrypt([]byte(passwd), config.Conf.System.RSAPublicBytes)
 	return string(pass)
 }
 
-// 密码解密
+// Decrypt the password
 func NewParPasswd(passwd string) string {
 	pass, _ := RSADecrypt([]byte(passwd), config.Conf.System.RSAPrivateBytes)
 	return string(pass)
@@ -42,7 +42,7 @@ const (
 	lettersLength  = len(letters)
 )
 
-// 生成随机密码
+// Generate a random password
 func GenerateRandomPassword() string {
 	password := make([]byte, passwordLength)
 

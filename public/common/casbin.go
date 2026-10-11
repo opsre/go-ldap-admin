@@ -8,10 +8,10 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 )
 
-// 全局CasbinEnforcer
+// Global CasbinEnforcer
 var CasbinEnforcer *casbin.Enforcer
 
-// 初始化casbin策略管理器
+// Initialize the Casbin policy manager
 func InitCasbinEnforcer() {
 	e, err := mysqlCasbin()
 	if err != nil {
