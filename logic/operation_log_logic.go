@@ -13,14 +13,14 @@ import (
 
 type OperationLogLogic struct{}
 
-// List 数据列表
+// List data
 func (l OperationLogLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.OperationLogListReq)
 	if !ok {
 		return nil, ReqAssertErr
 	}
 	_ = c
-	// 获取数据列表
+	// Get the data list
 	logs, err := isql.OperationLog.List(r)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("operation_log.list_failed", i18n.Args{"error": err.Error()})
@@ -40,7 +40,7 @@ func (l OperationLogLogic) List(c *gin.Context, req any) (data any, rspError any
 		Logs:  rets,
 	}, nil
 
-	// 获取
+	// Get
 	// logs, err := isql.OperationLog.List(&r)
 	// if err != nil {
 	// 	response.Fail(c, nil, "获取操作日志列表失败: "+err.Error())
@@ -49,7 +49,7 @@ func (l OperationLogLogic) List(c *gin.Context, req any) (data any, rspError any
 	// return nil, nil
 }
 
-// Delete 删除数据
+// Delete data
 func (l OperationLogLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.OperationLogDeleteReq)
 	if !ok {
@@ -63,7 +63,7 @@ func (l OperationLogLogic) Delete(c *gin.Context, req any) (data any, rspError a
 			return nil, tools.NewMySqlI18nError("operation_log.not_found", nil)
 		}
 	}
-	// 删除接口
+	// Delete the API
 	err := isql.OperationLog.Delete(r.OperationLogIds)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("operation_log.delete_failed", i18n.Args{"error": err.Error()})

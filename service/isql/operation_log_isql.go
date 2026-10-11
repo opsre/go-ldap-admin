@@ -16,12 +16,12 @@ import (
 
 type OperationLogService struct{}
 
-// var Logs []model.OperationLog //全局变量多个线程需要加锁，所以每个线程自己维护一个
-// 处理OperationLogChan将日志记录到数据库
+// var Logs []model.OperationLog // This global variable needs locking across threads, so each thread maintains its own
+// Process OperationLogChan and write logs to the database
 func (s OperationLogService) SaveOperationLogChannel(olc <-chan *model.OperationLog) {
-	// 只会在线程开启的时候执行一次
+	// Runs only once when the thread starts
 	Logs := make([]model.OperationLog, 0)
-	// 5s 自动同步一次
+	// Automatically sync every 5 seconds
 	duration := 5 * time.Second
 	timer := time.NewTimer(duration)
 	defer timer.Stop()
@@ -29,23 +29,23 @@ func (s OperationLogService) SaveOperationLogChannel(olc <-chan *model.Operation
 		select {
 		case log := <-olc:
 			Logs = append(Logs, *log)
-			// 每10条记录到数据库
+			// Write to the database every 10 records
 			if len(Logs) > 5 {
 				common.DB.Create(&Logs)
 				Logs = make([]model.OperationLog, 0)
-				timer.Reset(duration) // 入库重置定时器
+				timer.Reset(duration) // Reset the timer after writing to the database
 			}
-		case <-timer.C: // 5s 自动同步一次
+		case <-timer.C: // Automatically sync every 5 seconds
 			if len(Logs) > 0 {
 				common.DB.Create(&Logs)
 				Logs = make([]model.OperationLog, 0)
 			}
-			timer.Reset(duration) // 入库重置定时器
+			timer.Reset(duration) // Reset the timer after writing to the database
 		}
 	}
 }
 
-// List 获取数据列表
+// List gets the data list
 func (s OperationLogService) List(req *request.OperationLogListReq) ([]*model.OperationLog, error) {
 	var list []*model.OperationLog
 	db := common.DB.Model(&model.OperationLog{}).Order("id DESC")
@@ -77,30 +77,30 @@ func (s OperationLogService) List(req *request.OperationLogListReq) ([]*model.Op
 	return list, err
 }
 
-// Count 获取数据总数
+// Count gets the total number of records
 func (s OperationLogService) Count() (count int64, err error) {
 	err = common.DB.Model(&model.OperationLog{}).Count(&count).Error
 	return count, err
 }
 
-// 获取单个用户
+// Get a single user
 func (s OperationLogService) Find(filter map[string]any, data *model.OperationLog) error {
 	return common.DB.Where(filter).First(&data).Error
 }
 
-// Exist 判断资源是否存在
+// Exist checks whether the resource exists
 func (s OperationLogService) Exist(filter map[string]any) bool {
 	var dataObj model.OperationLog
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
 }
 
-// Delete 删除资源
+// Delete deletes a resource
 func (s OperationLogService) Delete(operationLogIds []uint) error {
 	return common.DB.Where("id IN (?)", operationLogIds).Unscoped().Delete(&model.OperationLog{}).Error
 }
 
-// Clean 清空日志
+// Clean clears the logs
 func (s OperationLogService) Clean() error {
 	return common.DB.Exec("DELETE FROM operation_logs").Error
 }

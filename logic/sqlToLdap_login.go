@@ -16,7 +16,7 @@ import (
 
 type SqlLogic struct{}
 
-// SyncSqlUsers 同步sql的用户信息到ldap
+// SyncSqlUsers syncs SQL user information to LDAP
 func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.SyncSqlUserReq)
 	if !ok {
@@ -25,7 +25,7 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req any) (data any, rspError any
 		return nil, ReqAssertErr
 	}
 	_ = c
-	// 1.获取所有用户
+	// 1. Get all users
 	for _, id := range r.UserIds {
 		filter := tools.H{"id": int(id)}
 		if !isql.User.Exist(filter) {
@@ -40,7 +40,7 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req any) (data any, rspError any
 		common.Log.Errorf("SyncSqlUsers: %s", errMsg)
 		return nil, tools.NewMySqlError(errors.New(errMsg))
 	}
-	// 2.再将用户添加到ldap
+	// 2. Then add the users to LDAP
 	for i, user := range users {
 		err = ildap.User.Add(&user)
 		if err != nil {
@@ -48,7 +48,7 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req any) (data any, rspError any
 			common.Log.Errorf("SyncSqlUsers: %s", errMsg)
 			return nil, tools.NewLdapError(errors.New(errMsg))
 		}
-		// 获取用户将要添加的分组
+		// Get the groups to add the user to
 		groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 		if err != nil {
 			errMsg := fmt.Sprintf("用户[%s]根据部门ID获取部门信息失败: %s", user.Username, err.Error())
@@ -56,7 +56,7 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req any) (data any, rspError any
 			return nil, tools.NewMySqlError(errors.New(errMsg))
 		}
 		for _, group := range groups {
-			//根据选择的部门，添加到部门内
+			//Add the user to the selected departments
 			err = ildap.Group.AddUserToGroup(group.GroupDN, user.UserDN)
 			if err != nil {
 				errMsg := fmt.Sprintf("向Ldap添加用户[%s]到分组[%s]失败：%s", user.Username, group.GroupName, err.Error())
@@ -77,7 +77,7 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req any) (data any, rspError any
 	return nil, nil
 }
 
-// SyncSqlGroups 同步sql中的分组信息到ldap
+// SyncSqlGroups syncs SQL group information to LDAP
 func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.SyncSqlGrooupsReq)
 	if !ok {
@@ -86,7 +86,7 @@ func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req any) (data any, rspError an
 		return nil, ReqAssertErr
 	}
 	_ = c
-	// 1.获取所有分组
+	// 1. Get all groups
 	for _, id := range r.GroupIds {
 		filter := tools.H{"id": int(id)}
 		if !isql.Group.Exist(filter) {
@@ -101,7 +101,7 @@ func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req any) (data any, rspError an
 		common.Log.Errorf("SyncSqlGroups: %s", errMsg)
 		return nil, tools.NewMySqlError(errors.New(errMsg))
 	}
-	// 2.再将分组添加到ldap
+	// 2. Then add the groups to LDAP
 	for _, group := range groups {
 		err = ildap.Group.Add(group)
 		if err != nil {
@@ -134,21 +134,21 @@ func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req any) (data any, rspError an
 	return nil, nil
 }
 
-// SearchGroupDiff 检索未同步到ldap中的分组
+// SearchGroupDiff finds groups not synced to LDAP
 func SearchGroupDiff() (err error) {
-	// 获取sql中的数据
+	// Get the data from SQL
 	var sqlGroupList []*model.Group
 	sqlGroupList, err = isql.Group.ListAll()
 	if err != nil {
 		return err
 	}
-	// 获取ldap中的数据
+	// Get the data from LDAP
 	var ldapGroupList []*model.Group
 	ldapGroupList, err = ildap.Group.ListGroupDN()
 	if err != nil {
 		return err
 	}
-	// 比对两个系统中的数据
+	// Compare the data in the two systems
 	groups := diffGroup(sqlGroupList, ldapGroupList)
 	for _, group := range groups {
 		if group.GroupDN == config.Conf.Ldap.BaseDN {
@@ -159,21 +159,21 @@ func SearchGroupDiff() (err error) {
 	return
 }
 
-// SearchUserDiff 检索未同步到ldap中的用户
+// SearchUserDiff finds users not synced to LDAP
 func SearchUserDiff() (err error) {
-	// 获取sql中的数据
+	// Get the data from SQL
 	var sqlUserList []*model.User
 	sqlUserList, err = isql.User.ListAll()
 	if err != nil {
 		return err
 	}
-	// 获取ldap中的数据
+	// Get the data from LDAP
 	var ldapUserList []*model.User
 	ldapUserList, err = ildap.User.ListUserDN()
 	if err != nil {
 		return err
 	}
-	// 比对两个系统中的数据
+	// Compare the data in the two systems
 	users := diffUser(sqlUserList, ldapUserList)
 	for _, user := range users {
 		if user.UserDN == config.Conf.Ldap.AdminDN {
@@ -184,7 +184,7 @@ func SearchUserDiff() (err error) {
 	return
 }
 
-// diffGroup 比较出sql中有但ldap中没有的group列表
+// diffGroup compares groups present in SQL but absent from LDAP
 func diffGroup(sqlGroup, ldapGroup []*model.Group) (rst []*model.Group) {
 	var tmp = make(map[string]struct{}, 0)
 
@@ -200,7 +200,7 @@ func diffGroup(sqlGroup, ldapGroup []*model.Group) (rst []*model.Group) {
 	return
 }
 
-// diffUser 比较出sql中有但ldap中没有的user列表
+// diffUser compares users present in SQL but absent from LDAP
 func diffUser(sqlUser, ldapUser []*model.User) (rst []*model.User) {
 	var tmp = make(map[string]struct{}, len(sqlUser))
 

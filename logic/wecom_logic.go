@@ -18,9 +18,9 @@ import (
 type WeComLogic struct {
 }
 
-// 通过企业微信获取部门信息
+// Get department information from WeCom
 func (d *WeComLogic) SyncWeComDepts(c *gin.Context, req any) (data any, rspError any) {
-	// 1.获取所有部门
+	// 1. Get all departments
 	deptSource, err := wechat.GetAllDepts()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取企业微信部门列表失败：%s", err.Error())
@@ -39,10 +39,10 @@ func (d *WeComLogic) SyncWeComDepts(c *gin.Context, req any) (data any, rspError
 		return nil, tools.NewOperationI18nError("sync.empty_depts", nil)
 	}
 
-	// 2.将远程数据转换成树
+	// 2. Convert remote data to a tree
 	deptTree := GroupListToTree(fmt.Sprintf("%s_1", config.Conf.WeCom.Flag), depts)
 
-	// 3.根据树进行创建
+	// 3. Create entries from the tree
 	err = d.addDepts(deptTree.Children)
 	if err != nil {
 		errMsg := fmt.Sprintf("创建企业微信部门失败：%s", err.Error())
@@ -54,7 +54,7 @@ func (d *WeComLogic) SyncWeComDepts(c *gin.Context, req any) (data any, rspError
 	return nil, err
 }
 
-// 添加部门
+// Add the department
 func (d WeComLogic) addDepts(depts []*model.Group) error {
 	for _, dept := range depts {
 		err := d.AddDepts(dept)
@@ -75,16 +75,16 @@ func (d WeComLogic) addDepts(depts []*model.Group) error {
 	return nil
 }
 
-// AddGroup 添加部门数据
+// Add department data
 func (d WeComLogic) AddDepts(group *model.Group) error {
-	// 判断部门名称是否存在
+	// Check whether the department name exists
 	parentGroup := new(model.Group)
 	err := isql.Group.Find(tools.H{"source_dept_id": group.SourceDeptParentId}, parentGroup)
 	if err != nil {
 		return tools.NewMySqlI18nError("sync.parent_dept_query_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 此时的 group 已经附带了Build后动态关联好的字段，接下来将一些确定性的其他字段值添加上，就可以创建这个分组了
+	// The group now includes fields linked dynamically by Build. Add the remaining known field values to create the group
 	group.Creator = "system"
 	group.GroupType = "cn"
 	group.ParentId = parentGroup.ID
@@ -100,9 +100,9 @@ func (d WeComLogic) AddDepts(group *model.Group) error {
 	return nil
 }
 
-// 根据现有数据库同步到的部门信息，开启用户同步
+// Start user synchronization based on department information already synced to the database
 func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError any) {
-	// 1.获取企业微信用户列表
+	// 1. Get the WeCom user list
 	staffSource, err := wechat.GetAllUsers()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取企业微信用户列表失败：%s", err.Error())
@@ -120,9 +120,9 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 		common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.empty_users", nil)
 	}
-	// 2.遍历用户，开始写入
+	// 2. Iterate over users and start writing them
 	for i, staff := range staffs {
-		// 入库
+		// Write to the database
 		err = d.AddUsers(staff)
 		if err != nil {
 			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Username, err.Error())
@@ -132,9 +132,9 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 		common.Log.Infof("SyncWeComUsers: synced user [%s] (%d/%d)", staff.Username, i+1, len(staffs))
 	}
 
-	// 3.获取企业微信已离职用户id列表
-	// 拿到MySQL所有用户数据(来源为 wecom的用户)，远程没有的，则说明被删除了
-	// 如果以后企业微信透出了已离职用户列表的接口，则这里可以进行改进
+	// 3. Get the IDs of departed WeCom users
+	// Get all MySQL users sourced from WeCom; those missing remotely have been deleted
+	// This can be improved if WeCom later provides an API for listing departed users
 	var res []*model.User
 	users, err := isql.User.ListAll()
 	if err != nil {
@@ -157,7 +157,7 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 			res = append(res, user)
 		}
 	}
-	// 4.遍历id，开始处理
+	// 4. Iterate over the IDs and process them
 	processedCount := 0
 	for _, userTmp := range res {
 		user := new(model.User)
@@ -167,14 +167,14 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 			return nil, tools.NewMySqlI18nError("sync.leave_user_query_failed", i18n.Args{"username": userTmp.Username, "error": err.Error()})
 		}
-		// 先从ldap删除用户
+		// First delete the user from LDAP
 		err = ildap.User.Delete(user.UserDN)
 		if err != nil {
 			errMsg := fmt.Sprintf("在LDAP删除离职用户[%s]失败: %s", user.Username, err.Error())
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 			return nil, tools.NewLdapI18nError("sync.leave_user_ldap_delete_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 		}
-		// 然后更新MySQL中用户状态
+		// Then update the user status in MySQL
 		err = isql.User.ChangeStatus(int(user.ID), 2)
 		if err != nil {
 			errMsg := fmt.Sprintf("在MySQL更新离职用户[%s]状态失败: %s", user.Username, err.Error())
@@ -189,9 +189,9 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 	return nil, nil
 }
 
-// AddUser 添加用户数据
+// Add user data
 func (d WeComLogic) AddUsers(user *model.User) error {
-	// 根据角色id获取角色
+	// Get the role by role ID
 	roles, err := isql.Role.GetRolesByIds([]uint{2})
 	if err != nil {
 		return tools.NewValidatorI18nError("sync.role_info_failed", i18n.Args{"error": err.Error()})
@@ -202,9 +202,9 @@ func (d WeComLogic) AddUsers(user *model.User) error {
 	user.Source = config.Conf.WeCom.Flag
 	user.UserDN = fmt.Sprintf("uid=%s,%s", user.Username, config.Conf.Ldap.UserDN)
 
-	// 根据 user_dn 查询用户,不存在则创建
+	// Find the user by user_dn; create it if it does not exist
 	if !isql.User.Exist(tools.H{"user_dn": user.UserDN}) {
-		// 获取用户将要添加的分组
+		// Get the groups to add the user to
 		groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 		if err != nil {
 			return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
@@ -215,21 +215,21 @@ func (d WeComLogic) AddUsers(user *model.User) error {
 		}
 		user.Departments = strings.TrimRight(deptTmp, ",")
 
-		// 创建用户
+		// Create the user
 		err = CommonAddUser(user, groups)
 		if err != nil {
 			return tools.NewOperationI18nError("sync.add_user_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 		}
 	} else {
-		// 此处逻辑未经实际验证，如在使用中有问题，请反馈
+		// This logic has not been tested in practice. Please report any issues
 		if config.Conf.WeCom.IsUpdateSyncd {
-			// 先获取用户信息
+			// First get the user information
 			oldData := new(model.User)
 			err = isql.User.Find(tools.H{"user_dn": user.UserDN}, oldData)
 			if err != nil {
 				return err
 			}
-			// 获取用户将要添加的分组
+			// Get the groups to add the user to
 			groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 			if err != nil {
 				return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
@@ -246,7 +246,7 @@ func (d WeComLogic) AddUsers(user *model.User) error {
 			user.UserDN = oldData.UserDN
 			user.Departments = strings.TrimRight(deptTmp, ",")
 
-			// 用户信息的预置处理
+			// Preprocess user information
 			if user.Nickname == "" {
 				user.Nickname = oldData.Nickname
 			}

@@ -15,7 +15,7 @@ import (
 
 type GroupService struct{}
 
-// List 获取数据列表
+// List gets the data list
 func (s GroupService) List(req *request.GroupListReq) ([]*model.Group, error) {
 	var list []*model.Group
 	db := common.DB.Model(&model.Group{}).Order("created_at DESC")
@@ -38,7 +38,7 @@ func (s GroupService) List(req *request.GroupListReq) ([]*model.Group, error) {
 	return list, err
 }
 
-// List 获取数据列表
+// List gets the data list
 func (s GroupService) ListTree(req *request.GroupListReq) ([]*model.Group, error) {
 	var list []*model.Group
 	db := common.DB.Model(&model.Group{}).Order("created_at DESC")
@@ -57,14 +57,14 @@ func (s GroupService) ListTree(req *request.GroupListReq) ([]*model.Group, error
 	return list, err
 }
 
-// List 获取数据列表
+// List gets the data list
 func (s GroupService) ListAll() (list []*model.Group, err error) {
 	err = common.DB.Model(&model.Group{}).Order("created_at DESC").Find(&list).Error
 
 	return list, err
 }
 
-// GenGroupTree 生成分组树
+// GenGroupTree generates the group tree
 func GenGroupTree(parentId uint, groups []*model.Group) []*model.Group {
 	tree := make([]*model.Group, 0)
 
@@ -78,62 +78,62 @@ func GenGroupTree(parentId uint, groups []*model.Group) []*model.Group {
 	return tree
 }
 
-// Count 获取数据总数
+// Count gets the total number of records
 func (s GroupService) Count() (int64, error) {
 	var count int64
 	err := common.DB.Model(&model.Group{}).Count(&count).Error
 	return count, err
 }
 
-// Add 添加资源
+// Add a resource
 func (s GroupService) Add(data *model.Group) error {
 	return common.DB.Create(data).Error
 }
 
-// Update 更新资源
+// Update a resource
 func (s GroupService) Update(dataObj *model.Group) error {
 	return common.DB.Model(dataObj).Where("id = ?", dataObj.ID).Updates(dataObj).Error
 }
 
-// ChangeSyncState 更新分组的同步状态
+// ChangeSyncState updates the group sync status
 func (s GroupService) ChangeSyncState(id, status int) error {
 	return common.DB.Model(&model.Group{}).Where("id = ?", id).Update("sync_state", status).Error
 }
 
-// Find 获取单个资源
+// Find a single resource
 func (s GroupService) Find(filter map[string]any, data *model.Group, args ...any) error {
 	return common.DB.Where(filter, args).Preload("Users").First(&data).Error
 }
 
-// Exist 判断资源是否存在
+// Exist checks whether the resource exists
 func (s GroupService) Exist(filter map[string]any) bool {
 	var dataObj model.Group
 	err := common.DB.Debug().Order("created_at DESC").Where(filter).First(&dataObj).Error
 	return !errors.Is(err, gorm.ErrRecordNotFound)
 }
 
-// Delete 批量删除
+// Delete multiple resources
 func (s GroupService) Delete(groups []*model.Group) error {
 	return common.DB.Debug().Select("Users").Unscoped().Delete(&groups).Error
 }
 
-// GetApisById 根据接口ID获取接口列表
+// GetApisById gets the API list by API ID
 func (s GroupService) GetGroupByIds(ids []uint) (datas []*model.Group, err error) {
 	err = common.DB.Where("id IN (?)", ids).Preload("Users").Find(&datas).Error
 	return datas, err
 }
 
-// AddUserToGroup 添加用户到分组
+// Add a user to a group
 func (s GroupService) AddUserToGroup(group *model.Group, users []model.User) error {
 	return common.DB.Model(&group).Association("Users").Append(users)
 }
 
-// RemoveUserFromGroup 将用户从分组移除
+// Remove a user from a group
 func (s GroupService) RemoveUserFromGroup(group *model.Group, users []model.User) error {
 	return common.DB.Model(&group).Association("Users").Delete(users)
 }
 
-// DeptIdsToGroupIds 将企业IM部门id转换为MySQL分组id
+// DeptIdsToGroupIds converts enterprise IM department IDs to MySQL group IDs
 func (s GroupService) DeptIdsToGroupIds(ids []string) (groupIds []uint, err error) {
 	var tempGroups []model.Group
 	err = common.DB.Model(&model.Group{}).Where("source_dept_id IN (?)", ids).Find(&tempGroups).Error

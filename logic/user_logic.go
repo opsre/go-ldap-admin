@@ -20,7 +20,7 @@ import (
 
 type UserLogic struct{}
 
-// Add 添加数据
+// Add data
 func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserAddReq)
 	if !ok {
@@ -41,8 +41,8 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewValidatorI18nError("user.mail_exists", nil)
 	}
 
-	// 密码通过RSA解密
-	// 密码不为空就解密
+	// Decrypt the password with RSA
+	// Decrypt the password if it is not empty
 	if r.Password != "" {
 		decodeData, err := tools.RSADecrypt([]byte(r.Password), config.Conf.System.RSAPrivateBytes)
 		if err != nil {
@@ -56,15 +56,15 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 		r.Password = config.Conf.Ldap.UserInitPassword
 	}
 
-	// 当前登陆用户角色排序最小值（最高等级角色）以及当前登陆的用户
+	// The currently logged-in user and their minimum role sort value (highest role level)
 	currentRoleSortMin, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
 		return nil, tools.NewValidatorI18nError("user.current_min_role_sort_failed", nil)
 	}
 
-	// 根据角色id获取角色
+	// Get the role by role ID
 	if len(r.RoleIds) == 0 {
-		r.RoleIds = []uint{2} // 默认添加为普通用户角色
+		r.RoleIds = []uint{2} // By default, assign the regular user role
 	}
 
 	roles, err := isql.Role.GetRolesByIds(r.RoleIds)
@@ -76,12 +76,12 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	for _, role := range roles {
 		reqRoleSorts = append(reqRoleSorts, int(role.Sort))
 	}
-	// 前端传来用户角色排序最小值（最高等级角色）
+	// The minimum role sort value (highest role level) sent by the frontend
 	reqRoleSortMin := uint(funk.MinInt(reqRoleSorts).(int))
 
-	// 如果登录用户的角色ID为1，亦即为管理员，则直接放行，保障管理员拥有最大权限
+	// If the logged-in user has role ID 1 (admin), allow the request so the admin retains full permissions
 	if currentRoleSortMin != 1 {
-		// 当前用户的角色排序最小值 需要小于 前端传来的角色排序最小值（用户不能创建比自己等级高的或者相同等级的用户）
+		// The current user minimum role sort value must be less than the value sent by the frontend (users cannot create users at or above their own level)
 		if currentRoleSortMin >= reqRoleSortMin {
 			return nil, tools.NewValidatorI18nError("user.cannot_create_higher_or_equal", nil)
 		}
@@ -111,7 +111,7 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 		user.Source = "platform"
 	}
 
-	// 获取用户将要添加的分组
+	// Get the groups to add the user to
 	groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
@@ -124,7 +124,7 @@ func (l UserLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// List 数据列表
+// List data
 func (l UserLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserListReq)
 	if !ok {
@@ -152,7 +152,7 @@ func (l UserLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	}, nil
 }
 
-// Update 更新数据
+// Update data
 func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserUpdateReq)
 	if !ok {
@@ -164,19 +164,19 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewMySqlI18nError("legacy.common.record_not_found", nil)
 	}
 
-	// 获取当前登陆用户
+	// Get the currently logged-in user
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
 	}
 
-	// 获取当前登陆用户角色ID集合
+	// Get the role IDs of the currently logged-in user
 	var currentRoleSorts []int
 	for _, role := range ctxUser.Roles {
 		currentRoleSorts = append(currentRoleSorts, int(role.Sort))
 	}
 
-	// 获取将要操作的用户角色ID集合
+	// Get the role IDs of the user to be operated on
 	var reqRoleSorts []int
 	roles, _ := isql.Role.GetRolesByIds(r.RoleIds)
 	if len(roles) == 0 {
@@ -186,24 +186,24 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		reqRoleSorts = append(reqRoleSorts, int(role.Sort))
 	}
 
-	// 当前登陆用户角色排序最小值（最高等级角色）
+	// The minimum role sort value (highest role level) of the currently logged-in user
 	currentRoleSortMin := funk.MinInt(currentRoleSorts).(int)
-	// 前端传来用户角色排序最小值（最高等级角色）
+	// The minimum role sort value (highest role level) sent by the frontend
 	reqRoleSortMin := funk.MinInt(reqRoleSorts).(int)
 
-	// 如果登录用户的角色ID为1，亦即为管理员，则直接放行，保障管理员拥有最大权限
+	// If the logged-in user has role ID 1 (admin), allow the request so the admin retains full permissions
 	if currentRoleSortMin != 1 {
-		// 判断是更新自己还是更新别人,如果操作的ID与登陆用户的ID一致，则说明操作的是自己
+		// Check whether updating self or another user; matching IDs means it is the current user
 		if int(r.ID) == int(ctxUser.ID) {
-			// 不能更改自己的角色
+			// Cannot change your own role
 			reqDiff, currentDiff := funk.Difference(reqRoleSorts, currentRoleSorts)
 			if len(reqDiff.([]int)) > 0 || len(currentDiff.([]int)) > 0 {
 				return nil, tools.NewValidatorI18nError("user.cannot_change_self_role", nil)
 			}
 		}
 
-		// 如果是更新别人，操作者不能更新比自己角色等级高的或者相同等级的用户
-		minRoleSorts, err := isql.User.GetUserMinRoleSortsByIds([]uint{uint(r.ID)}) // 根据userIdID获取用户角色排序最小值
+		// When updating another user, the operator cannot update a user at or above their own role level
+		minRoleSorts, err := isql.User.GetUserMinRoleSortsByIds([]uint{uint(r.ID)}) // Get the minimum role sort value for a user by userIdID
 		if err != nil || len(minRoleSorts) == 0 {
 			return nil, tools.NewValidatorI18nError("user.min_role_sort_by_id_failed", nil)
 		}
@@ -212,14 +212,14 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		}
 	}
 
-	// 先获取用户信息
+	// First get the user information
 	oldData := new(model.User)
 	err = isql.User.Find(tools.H{"id": r.ID}, oldData)
 	if err != nil {
 		return nil, tools.NewMySqlError(err)
 	}
 
-	// 过滤掉前端会选择到的 请选择部门信息 这个选项
+	// Filter out the frontend option "Please select department information"
 	var (
 		depts   string
 		deptids []uint
@@ -235,7 +235,7 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		}
 	}
 
-	// 拼装新的用户信息
+	// Assemble the new user information
 	user := model.User{
 		Model:         oldData.Model,
 		Username:      r.Username,
@@ -263,7 +263,7 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// Delete 删除数据
+// Delete data
 func (l UserLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserDeleteReq)
 	if !ok {
@@ -278,24 +278,24 @@ func (l UserLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 		}
 	}
 
-	// 根据用户ID获取用户角色排序最小值
+	// Get the minimum role sort value by user ID
 	roleMinSortList, err := isql.User.GetUserMinRoleSortsByIds(r.UserIds)
 	if err != nil || len(roleMinSortList) == 0 {
 		return nil, tools.NewValidatorI18nError("user.min_role_sort_by_id_failed", nil)
 	}
 
-	// 获取当前登陆用户角色排序最小值（最高等级角色）以及当前用户
+	// Get the current user and their minimum role sort value (highest role level)
 	minSort, ctxUser, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
 		return nil, tools.NewValidatorI18nError("user.current_min_role_sort_failed", nil)
 	}
 
-	// 不能删除自己
+	// Cannot delete yourself
 	if funk.Contains(r.UserIds, ctxUser.ID) {
 		return nil, tools.NewValidatorI18nError("user.cannot_delete_self", nil)
 	}
 
-	// 不能删除比自己(登陆用户)角色排序低(等级高)的用户
+	// Cannot delete users with a lower role sort value (higher role level) than yourself
 	for _, sort := range roleMinSortList {
 		if int(minSort) > sort {
 			return nil, tools.NewValidatorI18nError("user.cannot_delete_higher", nil)
@@ -307,7 +307,7 @@ func (l UserLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewMySqlI18nError("user.info_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 先将用户从ldap中删除
+	// First delete the user from LDAP
 	for _, user := range users {
 		err := ildap.User.Delete(user.UserDN)
 		if err != nil {
@@ -315,7 +315,7 @@ func (l UserLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 		}
 	}
 
-	// 再将用户从MySQL中删除
+	// Then delete the user from MySQL
 	err = isql.User.Delete(r.UserIds)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("user.mysql_delete_failed", i18n.Args{"error": err.Error()})
@@ -324,15 +324,15 @@ func (l UserLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// ChangePwd 修改密码
+// ChangePwd changes the password
 func (l UserLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserChangePwdReq)
 	if !ok {
 		return nil, ReqAssertErr
 	}
 	_ = c
-	// 前端传来的密码是rsa加密的,先解密
-	// 密码通过RSA解密
+	// The password from the frontend is RSA-encrypted; decrypt it first
+	// Decrypt the password with RSA
 	decodeOldPassword, err := tools.RSADecrypt([]byte(r.OldPassword), config.Conf.System.RSAPrivateBytes)
 	if err != nil {
 		return nil, tools.NewValidatorI18nError("legacy.user.old_password_parse_failed", nil)
@@ -343,25 +343,25 @@ func (l UserLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	}
 	r.OldPassword = string(decodeOldPassword)
 	r.NewPassword = string(decodeNewPassword)
-	// 获取当前用户
+	// Get the current user
 	user, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
 	}
-	// 获取用户的真实正确密码
+	// Get the user's actual password
 	// correctPasswd := user.Password
-	// 判断前端请求的密码是否等于真实密码
+	// Check whether the password in the frontend request matches the actual password
 	// err = tools.ComparePasswd(correctPasswd, r.OldPassword)
 	if tools.NewParPasswd(user.Password) != r.OldPassword {
 		return nil, tools.NewValidatorI18nError("legacy.user.old_password_incorrect", nil)
 	}
-	// ldap更新密码时可以直接指定用户DN和新密码即可更改成功
+	// To update an LDAP password, specify the user DN and new password
 	err = ildap.User.ChangePwd(user.UserDN, "", r.NewPassword)
 	if err != nil {
 		return nil, tools.NewLdapI18nError("user.ldap_password_update_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 更新密码
+	// Update the password
 	err = isql.User.ChangePwd(user.Username, tools.NewGenPasswd(r.NewPassword))
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("user.mysql_password_update_failed", i18n.Args{"error": err.Error()})
@@ -370,7 +370,7 @@ func (l UserLogic) ChangePwd(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// ResetPassword 重置用户密码
+// ResetPassword resets the user password
 func (l UserLogic) ResetPassword(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserResetPasswordReq)
 	if !ok {
@@ -378,34 +378,34 @@ func (l UserLogic) ResetPassword(c *gin.Context, req any) (data any, rspError an
 	}
 	_ = c
 
-	// 检查用户是否存在
+	// Check whether the user exists
 	if !isql.User.Exist(tools.H{"username": r.Username}) {
 		return nil, tools.NewValidatorI18nError("user.not_found", nil)
 	}
 
-	// 获取用户信息
+	// Get the user information
 	user := new(model.User)
 	err := isql.User.Find(tools.H{"username": r.Username}, user)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("user.info_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 生成随机密码
+	// Generate a random password
 	newPassword := tools.GenerateRandomPassword()
 
-	// 在LDAP中更新密码
+	// Update the password in LDAP
 	err = ildap.User.ChangePwd(user.UserDN, "", newPassword)
 	if err != nil {
 		return nil, tools.NewLdapI18nError("user.ldap_password_update_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 在MySQL中更新密码
+	// Update the password in MySQL
 	err = isql.User.ChangePwd(user.Username, tools.NewGenPasswd(newPassword))
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("user.mysql_password_update_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 发送密码重置通知邮件
+	// Send the password reset notification email
 	if err := tools.SendPasswordResetNotificationI18n(user.Username, user.Nickname, user.Mail, newPassword, i18n.LocaleFromContext(c)); err != nil {
 		common.Log.Warnf("Failed to send password reset notification email, user: %s, email: %s, error: %v", user.Username, user.Mail, err)
 	}
@@ -413,14 +413,14 @@ func (l UserLogic) ResetPassword(c *gin.Context, req any) (data any, rspError an
 	return map[string]string{"newPassword": newPassword}, nil
 }
 
-// ChangeUserStatus 修改用户状态
+// ChangeUserStatus changes the user status
 func (l UserLogic) ChangeUserStatus(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserChangeUserStatusReq)
 	if !ok {
 		return nil, ReqAssertErr
 	}
 	_ = c
-	// 校验工作
+	// Validation
 	filter := tools.H{"id": r.ID}
 	if !isql.User.Exist(filter) {
 		return nil, tools.NewValidatorI18nError("legacy.user.not_found", nil)
@@ -438,8 +438,8 @@ func (l UserLogic) ChangeUserStatus(c *gin.Context, req any) (data any, rspError
 		return nil, tools.NewValidatorI18nError("legacy.user.already_inactive", nil)
 	}
 
-	// 获取当前登录用户，只有管理员才能够将用户状态改变
-	// 获取当前登陆用户角色排序最小值（最高等级角色）以及当前用户
+	// Get the current user; only admins can change user status
+	// Get the current user and their minimum role sort value (highest role level)
 	minSort, _, err := isql.User.GetCurrentUserMinRoleSort(c)
 	if err != nil {
 		return nil, tools.NewValidatorI18nError("user.current_min_role_sort_failed", nil)
@@ -467,7 +467,7 @@ func (l UserLogic) ChangeUserStatus(c *gin.Context, req any) (data any, rspError
 	return nil, nil
 }
 
-// GetUserInfo 获取用户信息
+// GetUserInfo gets user information
 func (l UserLogic) GetUserInfo(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserGetUserInfoReq)
 	if !ok {

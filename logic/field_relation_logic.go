@@ -13,7 +13,7 @@ import (
 
 type FieldRelationLogic struct{}
 
-// Add 添加数据
+// Add data
 func (l FieldRelationLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.FieldRelationAddReq)
 	if !ok {
@@ -35,7 +35,7 @@ func (l FieldRelationLogic) Add(c *gin.Context, req any) (data any, rspError any
 		Attributes: datatypes.JSON(attr),
 	}
 
-	// 创建接口
+	// Create the API
 	err = isql.FieldRelation.Add(&frObj)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("field_relation.create_failed", i18n.Args{"error": err.Error()})
@@ -44,7 +44,7 @@ func (l FieldRelationLogic) Add(c *gin.Context, req any) (data any, rspError any
 	return nil, nil
 }
 
-// List 数据列表
+// List data
 func (l FieldRelationLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	_, ok := req.(*request.FieldRelationListReq)
 	if !ok {
@@ -52,7 +52,7 @@ func (l FieldRelationLogic) List(c *gin.Context, req any) (data any, rspError an
 	}
 	_ = c
 
-	// 获取数据列表
+	// Get the data list
 	frs, err := isql.FieldRelation.List()
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("field_relation.list_failed", i18n.Args{"error": err.Error()})
@@ -61,7 +61,7 @@ func (l FieldRelationLogic) List(c *gin.Context, req any) (data any, rspError an
 	return frs, nil
 }
 
-// Update 更新数据
+// Update data
 func (l FieldRelationLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.FieldRelationUpdateReq)
 	if !ok {
@@ -99,7 +99,7 @@ func (l FieldRelationLogic) Update(c *gin.Context, req any) (data any, rspError 
 	return nil, nil
 }
 
-// Delete 删除数据
+// Delete data
 func (l FieldRelationLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.FieldRelationDeleteReq)
 	if !ok {
@@ -113,7 +113,7 @@ func (l FieldRelationLogic) Delete(c *gin.Context, req any) (data any, rspError 
 			return nil, tools.NewMySqlI18nError("field_relation.not_found", nil)
 		}
 	}
-	// 删除
+	// Delete
 	err := isql.FieldRelation.Delete(r.FieldRelationIds)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("field_relation.delete_failed", i18n.Args{"error": err.Error()})

@@ -14,7 +14,7 @@ import (
 
 type ApiLogic struct{}
 
-// Add 添加数据
+// Add data
 func (l ApiLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiAddReq)
 	if !ok {
@@ -22,7 +22,7 @@ func (l ApiLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	}
 	_ = c
 
-	// 获取当前用户
+	// Get the current user
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
@@ -36,7 +36,7 @@ func (l ApiLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 		Creator:  ctxUser.Username,
 	}
 
-	// 创建接口
+	// Create the API
 	err = isql.Api.Add(&api)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("api.create_failed", i18n.Args{"error": err.Error()})
@@ -45,7 +45,7 @@ func (l ApiLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// List 数据列表
+// List data
 func (l ApiLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiListReq)
 	if !ok {
@@ -53,7 +53,7 @@ func (l ApiLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	}
 	_ = c
 
-	// 获取数据列表
+	// Get the data list
 	apis, err := isql.Api.List(r)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("api.list_failed", i18n.Args{"error": err.Error()})
@@ -75,7 +75,7 @@ func (l ApiLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	}, nil
 }
 
-// GetTree 数据树
+// Get the data tree
 func (l ApiLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiGetTreeReq)
 	if !ok {
@@ -90,12 +90,12 @@ func (l ApiLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	}
 	localizeApis(c, apis)
 
-	// 获取所有的分类
+	// Get all categories
 	var categoryList []string
 	for _, api := range apis {
 		categoryList = append(categoryList, api.Category)
 	}
-	// 获取去重后的分类
+	// Get deduplicated categories
 	categoryUniq := funk.UniqString(categoryList)
 
 	apiTree := make([]*response.ApiTreeRsp, len(categoryUniq))
@@ -119,7 +119,7 @@ func (l ApiLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	return apiTree, nil
 }
 
-// Update 更新数据
+// Update data
 func (l ApiLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiUpdateReq)
 	if !ok {
@@ -132,7 +132,7 @@ func (l ApiLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewMySqlI18nError("api.not_found", nil)
 	}
 
-	// 获取当前登陆用户
+	// Get the currently logged-in user
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
@@ -159,7 +159,7 @@ func (l ApiLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// Delete 删除数据
+// Delete data
 func (l ApiLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.ApiDeleteReq)
 	if !ok {
@@ -173,7 +173,7 @@ func (l ApiLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 			return nil, tools.NewMySqlI18nError("api.not_found", nil)
 		}
 	}
-	// 删除接口
+	// Delete the API
 	err := isql.Api.Delete(r.ApiIds)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("api.delete_failed", i18n.Args{"error": err.Error()})

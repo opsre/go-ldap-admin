@@ -13,7 +13,7 @@ import (
 
 type UserService struct{}
 
-// 创建资源
+// Create a resource
 func (x UserService) Add(user *model.User) error {
 	add := ldap.NewAddRequest(user.UserDN, nil)
 	add.Attribute("objectClass", []string{"inetOrgPerson"})
@@ -37,7 +37,7 @@ func (x UserService) Add(user *model.User) error {
 	}
 	add.Attribute("userPassword", []string{pass})
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -47,7 +47,7 @@ func (x UserService) Add(user *model.User) error {
 	return conn.Add(add)
 }
 
-// Update 更新资源
+// Update a resource
 func (x UserService) Update(oldusername string, user *model.User) error {
 	modify := ldap.NewModifyRequest(user.UserDN, nil)
 	modify.Replace("cn", []string{user.Username})
@@ -62,7 +62,7 @@ func (x UserService) Update(oldusername string, user *model.User) error {
 	modify.Replace("postalAddress", []string{user.PostalAddress})
 	modify.Replace("mobile", []string{user.Mobile})
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -95,7 +95,7 @@ func (x UserService) Exist(filter map[string]any) (bool, error) {
 		nil,
 	)
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -113,10 +113,10 @@ func (x UserService) Exist(filter map[string]any) (bool, error) {
 	return false, nil
 }
 
-// Delete 删除资源
+// Delete deletes a resource
 func (x UserService) Delete(udn string) error {
 	del := ldap.NewDelRequest(udn, nil)
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -125,14 +125,14 @@ func (x UserService) Delete(udn string) error {
 	return conn.Del(del)
 }
 
-// ChangePwd 修改用户密码，此处旧密码也可以为空，ldap可以直接通过用户DN加上新密码来进行修改
+// ChangePwd changes a user password. The old password may be empty; LDAP can update it using the user DN and new password
 func (x UserService) ChangePwd(udn, oldpasswd, newpasswd string) error {
 	if config.Conf.Ldap.UserPasswordEncryptionType == "clear" {
 		return updatePasswordClear(udn, newpasswd)
 	}
 	modifyPass := ldap.NewPasswordModifyRequest(udn, oldpasswd, newpasswd)
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -146,7 +146,7 @@ func (x UserService) ChangePwd(udn, oldpasswd, newpasswd string) error {
 	return nil
 }
 
-// NewPwd 新旧密码都是空，通过管理员可以修改成功并返回新的密码
+// If both old and new passwords are empty, an admin can still update the password and return the new one
 func (x UserService) NewPwd(username string) (string, error) {
 	udn := fmt.Sprintf("uid=%s,%s", username, config.Conf.Ldap.UserDN)
 	if username == "admin" {
@@ -161,7 +161,7 @@ func (x UserService) NewPwd(username string) (string, error) {
 	}
 	modifyPass := ldap.NewPasswordModifyRequest(udn, "", "")
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -179,7 +179,7 @@ func updatePasswordClear(udn, newpasswd string) error {
 	modify := ldap.NewModifyRequest(udn, nil)
 	modify.Replace("userPassword", []string{newpasswd})
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {
@@ -201,7 +201,7 @@ func (x UserService) ListUserDN() (users []*model.User, err error) {
 		nil,
 	)
 
-	// 获取 LDAP 连接
+	// Get an LDAP connection
 	conn, err := common.GetLDAPConn()
 	defer common.PutLADPConn(conn)
 	if err != nil {

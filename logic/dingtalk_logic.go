@@ -18,9 +18,9 @@ import (
 type DingTalkLogic struct {
 }
 
-// 通过钉钉获取部门信息
+// Get department information from DingTalk
 func (d *DingTalkLogic) SyncDingTalkDepts(c *gin.Context, req any) (data any, rspError any) {
-	// 1.获取所有部门
+	// 1. Get all departments
 	deptSource, err := dingtalk.GetAllDepts()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取钉钉部门列表失败：%s", err.Error())
@@ -39,10 +39,10 @@ func (d *DingTalkLogic) SyncDingTalkDepts(c *gin.Context, req any) (data any, rs
 		return nil, tools.NewOperationI18nError("sync.empty_depts", nil)
 	}
 
-	// 2.将远程数据转换成树
+	// 2. Convert remote data to a tree
 	deptTree := GroupListToTree(fmt.Sprintf("%s_1", config.Conf.DingTalk.Flag), depts)
 
-	// 3.根据树进行创建
+	// 3. Create entries from the tree
 	err = d.addDepts(deptTree.Children)
 	if err != nil {
 		errMsg := fmt.Sprintf("创建钉钉部门失败：%s", err.Error())
@@ -54,7 +54,7 @@ func (d *DingTalkLogic) SyncDingTalkDepts(c *gin.Context, req any) (data any, rs
 	return nil, err
 }
 
-// 添加部门
+// Add the department
 func (d DingTalkLogic) addDepts(depts []*model.Group) error {
 	for _, dept := range depts {
 		err := d.AddDepts(dept)
@@ -75,22 +75,22 @@ func (d DingTalkLogic) addDepts(depts []*model.Group) error {
 	return nil
 }
 
-// AddGroup 添加部门数据
+// Add department data
 func (d DingTalkLogic) AddDepts(group *model.Group) error {
 	parentGroup := new(model.Group)
-	err := isql.Group.Find(tools.H{"source_dept_id": group.SourceDeptParentId}, parentGroup) // 查询当前分组父ID在MySQL中的数据信息
+	err := isql.Group.Find(tools.H{"source_dept_id": group.SourceDeptParentId}, parentGroup) // Find the MySQL record for the current group parent ID
 	if err != nil {
 		return tools.NewMySqlI18nError("sync.parent_dept_query_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 此时的 group 已经附带了Build后动态关联好的字段，接下来将一些确定性的其他字段值添加上，就可以创建这个分组了
+	// The group now includes fields linked dynamically by Build. Add the remaining known field values to create the group
 	group.Creator = "system"
 	group.GroupType = "cn"
 	group.ParentId = parentGroup.ID
 	group.Source = config.Conf.DingTalk.Flag
 	group.GroupDN = fmt.Sprintf("cn=%s,%s", group.GroupName, parentGroup.GroupDN)
 
-	if !isql.Group.Exist(tools.H{"group_dn": group.GroupDN}) { // 判断当前部门是否已落库
+	if !isql.Group.Exist(tools.H{"group_dn": group.GroupDN}) { // Check whether the current department is in the database
 		err = CommonAddGroup(group)
 		if err != nil {
 			return tools.NewOperationI18nError("sync.add_dept_failed", i18n.Args{"dept": group.GroupName, "error": err.Error()})
@@ -99,9 +99,9 @@ func (d DingTalkLogic) AddDepts(group *model.Group) error {
 	return nil
 }
 
-// 根据现有数据库同步到的部门信息，开启用户同步
+// Start user synchronization based on department information already synced to the database
 func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rspError any) {
-	// 1.获取钉钉用户列表
+	// 1. Get the DingTalk user list
 	staffSource, err := dingtalk.GetAllUsers()
 	if err != nil {
 		errMsg := fmt.Sprintf("获取钉钉用户列表失败：%s", err.Error())
@@ -119,9 +119,9 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rsp
 		common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
 		return nil, tools.NewOperationI18nError("sync.empty_users", nil)
 	}
-	// 2.遍历用户，开始写入
+	// 2. Iterate over users and start writing them
 	for i, staff := range staffs {
-		// 入库
+		// Write to the database
 		err = d.AddUsers(staff)
 		if err != nil {
 			errMsg := fmt.Sprintf("写入用户[%s]失败：%s", staff.Username, err.Error())
@@ -131,8 +131,8 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rsp
 		common.Log.Infof("SyncDingTalkUsers: synced user [%s] (%d/%d)", staff.Username, i+1, len(staffs))
 	}
 
-	// 3.获取钉钉已离职用户id列表
-	// 根据配置判断是查全部离职用户还是只查指定时间范围内的离职用户
+	// 3. Get the IDs of departed DingTalk users
+	// Use the configuration to choose whether to query all departed users or only those in a specified time range
 	var userIds []string
 	if config.Conf.DingTalk.ULeaveRange == 0 {
 		userIds, err = dingtalk.GetLeaveUserIds()
@@ -145,13 +145,13 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rsp
 		return nil, tools.NewOperationI18nError("sync.leave_user_list_failed", i18n.Args{"provider": "DingTalk", "error": err.Error()})
 	}
 
-	// 4.遍历id，开始处理
+	// 4. Iterate over the IDs and process them
 	processedCount := 0
 	for _, uid := range userIds {
 		if isql.User.Exist(
 			tools.H{
 				"source_user_id": fmt.Sprintf("%s_%s", config.Conf.DingTalk.Flag, uid),
-				"status":         1, //只处理1在职的
+				"status":         1, //Only process users with status 1 (active)
 			}) {
 			user := new(model.User)
 			err = isql.User.Find(tools.H{"source_user_id": fmt.Sprintf("%s_%s", config.Conf.DingTalk.Flag, uid)}, user)
@@ -160,14 +160,14 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rsp
 				common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
 				return nil, tools.NewMySqlI18nError("sync.leave_user_query_failed", i18n.Args{"username": uid, "error": err.Error()})
 			}
-			// 先从ldap删除用户
+			// First delete the user from LDAP
 			err = ildap.User.Delete(user.UserDN)
 			if err != nil {
 				errMsg := fmt.Sprintf("在LDAP删除离职用户[%s]失败: %s", user.Username, err.Error())
 				common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
 				return nil, tools.NewLdapI18nError("sync.leave_user_ldap_delete_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 			}
-			// 然后更新MySQL中用户状态
+			// Then update the user status in MySQL
 			err = isql.User.ChangeStatus(int(user.ID), 2)
 			if err != nil {
 				errMsg := fmt.Sprintf("在MySQL更新离职用户[%s]状态失败: %s", user.Username, err.Error())
@@ -183,10 +183,10 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rsp
 	return nil, nil
 }
 
-// AddUser 添加用户数据
+// Add user data
 func (d DingTalkLogic) AddUsers(user *model.User) error {
-	// 根据角色id获取角色
-	roles, err := isql.Role.GetRolesByIds([]uint{2}) // 默认添加为普通用户角色
+	// Get the role by role ID
+	roles, err := isql.Role.GetRolesByIds([]uint{2}) // By default, assign the regular user role
 	if err != nil {
 		return tools.NewValidatorI18nError("sync.role_info_failed", i18n.Args{"error": err.Error()})
 	}
@@ -196,9 +196,9 @@ func (d DingTalkLogic) AddUsers(user *model.User) error {
 	user.Password = config.Conf.Ldap.UserInitPassword
 	user.UserDN = fmt.Sprintf("uid=%s,%s", user.Username, config.Conf.Ldap.UserDN)
 
-	// 根据 user_dn 查询用户,不存在则创建
+	// Find the user by user_dn; create it if it does not exist
 	if !isql.User.Exist(tools.H{"user_dn": user.UserDN}) {
-		// 获取用户将要添加的分组
+		// Get the groups to add the user to
 		groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 		if err != nil {
 			return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
@@ -209,20 +209,20 @@ func (d DingTalkLogic) AddUsers(user *model.User) error {
 		}
 		user.Departments = strings.TrimRight(deptTmp, ",")
 
-		// 新增用户
+		// Add the user
 		err = CommonAddUser(user, groups)
 		if err != nil {
 			return tools.NewOperationI18nError("sync.add_user_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 		}
 	} else {
 		if config.Conf.DingTalk.IsUpdateSyncd {
-			// 先获取用户信息
+			// First get the user information
 			oldData := new(model.User)
 			err = isql.User.Find(tools.H{"user_dn": user.UserDN}, oldData)
 			if err != nil {
 				return err
 			}
-			// 获取用户将要添加的分组
+			// Get the groups to add the user to
 			groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 			if err != nil {
 				return tools.NewMySqlI18nError("user.department_info_failed", i18n.Args{"error": err.Error()})
@@ -239,7 +239,7 @@ func (d DingTalkLogic) AddUsers(user *model.User) error {
 			user.UserDN = oldData.UserDN
 			user.Departments = strings.TrimRight(deptTmp, ",")
 
-			// 用户信息的预置处理
+			// Preprocess user information
 			if user.Nickname == "" {
 				user.Nickname = oldData.Nickname
 			}

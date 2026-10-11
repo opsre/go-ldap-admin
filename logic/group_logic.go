@@ -20,7 +20,7 @@ import (
 
 type GroupLogic struct{}
 
-// Add 添加数据
+// Add data
 func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupAddReq)
 	if !ok {
@@ -28,7 +28,7 @@ func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	}
 	_ = c
 
-	// 获取当前用户
+	// Get the current user
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
@@ -40,7 +40,7 @@ func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 		GroupName: r.GroupName,
 		Remark:    r.Remark,
 		Creator:   ctxUser.Username,
-		Source:    "platform", //默认是平台添加
+		Source:    "platform", //By default, the platform adds it
 	}
 
 	if r.ParentId == 0 {
@@ -58,24 +58,24 @@ func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 		group.GroupDN = fmt.Sprintf("%s=%s,%s", r.GroupType, r.GroupName, parentGroup.GroupDN)
 	}
 
-	// 根据 group_dn 判断分组是否已存在
+	// Check whether the group exists by group_dn
 	if isql.Group.Exist(tools.H{"group_dn": group.GroupDN}) {
 		return nil, tools.NewValidatorI18nError("group.dn_exists", nil)
 	}
 
-	// 先在ldap中创建组
+	// First create the group in LDAP
 	err = ildap.Group.Add(&group)
 	if err != nil {
 		return nil, tools.NewLdapI18nError("group.ldap_create_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 然后在数据库中创建组
+	// Then create the group in the database
 	err = isql.Group.Add(&group)
 	if err != nil {
 		return nil, tools.NewLdapI18nError("group.mysql_create_failed", nil)
 	}
 
-	// 默认创建分组之后，需要将admin添加到分组中
+	// By default, add admin to the group after creating it
 	adminInfo := new(model.User)
 	err = isql.User.Find(tools.H{"id": 1}, adminInfo)
 	if err != nil {
@@ -90,7 +90,7 @@ func (l GroupLogic) Add(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// List 数据列表
+// List data
 func (l GroupLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupListReq)
 	if !ok {
@@ -98,7 +98,7 @@ func (l GroupLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	}
 	_ = c
 
-	// 获取数据列表
+	// Get the data list
 	groups, err := isql.Group.List(r)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("group.list_failed", i18n.Args{"error": err.Error()})
@@ -120,7 +120,7 @@ func (l GroupLogic) List(c *gin.Context, req any) (data any, rspError any) {
 	}, nil
 }
 
-// GetTree 数据树
+// Get the data tree
 func (l GroupLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupListReq)
 	if !ok {
@@ -140,7 +140,7 @@ func (l GroupLogic) GetTree(c *gin.Context, req any) (data any, rspError any) {
 	return tree, nil
 }
 
-// Update 更新数据
+// Update data
 func (l GroupLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupUpdateReq)
 	if !ok {
@@ -153,7 +153,7 @@ func (l GroupLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewMySqlI18nError("group.not_found", nil)
 	}
 
-	// 获取当前登陆用户
+	// Get the currently logged-in user
 	ctxUser, err := isql.User.GetCurrentLoginUser(c)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("legacy.common.current_user_failed", nil)
@@ -173,7 +173,7 @@ func (l GroupLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		GroupType: oldGroup.GroupType,
 	}
 
-	//若配置了不允许修改分组名称，则不更新分组名称
+	//If group name changes are disabled in the configuration, do not update the group name
 	if !config.Conf.Ldap.GroupNameModify {
 		newGroup.GroupName = oldGroup.GroupName
 	}
@@ -189,7 +189,7 @@ func (l GroupLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// Delete 删除数据
+// Delete data
 func (l GroupLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupDeleteReq)
 	if !ok {
@@ -210,20 +210,20 @@ func (l GroupLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	}
 
 	for _, group := range groups {
-		// 判断存在子分组，不允许删除
+		// Check for child groups; deletion is not allowed if any exist
 		filter := tools.H{"parent_id": int(group.ID)}
 		if isql.Group.Exist(filter) {
 			return nil, tools.NewMySqlI18nError("group.has_children", nil)
 		}
 
-		// 删除的时候先从ldap进行删除
+		// Delete from LDAP first
 		err = ildap.Group.Delete(group.GroupDN)
 		if err != nil {
 			return nil, tools.NewLdapI18nError("group.ldap_delete_failed", i18n.Args{"error": err.Error()})
 		}
 	}
 
-	// 从MySQL中删除
+	// Delete from MySQL
 	err = isql.Group.Delete(groups)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("group.delete_failed", i18n.Args{"error": err.Error()})
@@ -232,7 +232,7 @@ func (l GroupLogic) Delete(c *gin.Context, req any) (data any, rspError any) {
 	return nil, nil
 }
 
-// AddUser 添加用户到分组
+// Add a user to a group
 func (l GroupLogic) AddUser(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupAddUserReq)
 	if !ok {
@@ -261,13 +261,13 @@ func (l GroupLogic) AddUser(c *gin.Context, req any) (data any, rspError any) {
 		return nil, tools.NewMySqlI18nError("group.ou_cannot_add_user", nil)
 	}
 
-	// 先添加到MySQL
+	// First add it to MySQL
 	err = isql.Group.AddUserToGroup(group, users)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("group.add_user_failed", i18n.Args{"error": err.Error()})
 	}
 
-	// 再往ldap添加
+	// Then add it to LDAP
 	for _, user := range users {
 		err = ildap.Group.AddUserToGroup(group.GroupDN, user.UserDN)
 		if err != nil {
@@ -282,7 +282,7 @@ func (l GroupLogic) AddUser(c *gin.Context, req any) (data any, rspError any) {
 			return nil, tools.NewMySqlError(err)
 		}
 		newData := oldData
-		// 添加新增的分组ID与部门
+		// Add the new group IDs and departments
 		newData.DepartmentId = oldData.DepartmentId + "," + strconv.Itoa(int(r.GroupID))
 		newData.Departments = oldData.Departments + "," + group.GroupName
 		err = l.updataUser(newData)
@@ -302,7 +302,7 @@ func (l GroupLogic) updataUser(newUser *model.User) error {
 	return nil
 }
 
-// RemoveUser 移除用户
+// Remove a user
 func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.GroupRemoveUserReq)
 	if !ok {
@@ -331,7 +331,7 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any)
 		return nil, tools.NewMySqlI18nError("group.ou_has_no_user", nil)
 	}
 
-	// 先操作ldap
+	// First update LDAP
 	for _, user := range users {
 		err := ildap.Group.RemoveUserFromGroup(group.GroupDN, user.UserDN)
 		if err != nil {
@@ -339,7 +339,7 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any)
 		}
 	}
 
-	// 再操作MySQL
+	// Then update MySQL
 	err = isql.Group.RemoveUserFromGroup(group, users)
 	if err != nil {
 		return nil, tools.NewMySqlI18nError("group.mysql_remove_user_failed", i18n.Args{"error": err.Error()})
@@ -355,13 +355,13 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any)
 
 		var newDepts []string
 		var newDeptIds []string
-		// 删掉移除的分组名字
+		// Remove the names of removed groups
 		for _, v := range strings.Split(oldData.Departments, ",") {
 			if v != group.GroupName {
 				newDepts = append(newDepts, v)
 			}
 		}
-		// 删掉移除的分组id
+		// Remove the IDs of removed groups
 		for _, v := range strings.Split(oldData.DepartmentId, ",") {
 			if v != strconv.Itoa(int(r.GroupID)) {
 				newDeptIds = append(newDeptIds, v)
@@ -379,7 +379,7 @@ func (l GroupLogic) RemoveUser(c *gin.Context, req any) (data any, rspError any)
 	return nil, nil
 }
 
-// UserInGroup 在分组内的用户
+// UserInGroup lists users in the group
 func (l GroupLogic) UserInGroup(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserInGroupReq)
 	if !ok {
@@ -424,7 +424,7 @@ func (l GroupLogic) UserInGroup(c *gin.Context, req any) (data any, rspError any
 	}, nil
 }
 
-// UserNoInGroup 不在分组内的用户
+// UserNoInGroup lists users outside the group
 func (l GroupLogic) UserNoInGroup(c *gin.Context, req any) (data any, rspError any) {
 	r, ok := req.(*request.UserNoInGroupReq)
 	if !ok {
