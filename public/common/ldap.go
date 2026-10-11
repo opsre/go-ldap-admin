@@ -30,13 +30,13 @@ func InitLDAP() {
 	// Dail有两个参数 network,  address, 返回 (*Conn,  error)
 	ldapConn, err := ldap.DialURL(config.Conf.Ldap.Url, ldap.DialWithDialer(&net.Dialer{Timeout: 5 * time.Second}))
 	if err != nil {
-		Log.Panicf("初始化ldap连接异常: %v", err)
-		panic(fmt.Errorf("初始化ldap连接异常: %v", err))
+		Log.Panicf("LDAP connection initialization error: %v", err)
+		panic(fmt.Errorf("LDAP connection initialization error: %v", err))
 	}
 	err = ldapConn.Bind(config.Conf.Ldap.AdminDN, config.Conf.Ldap.AdminPass)
 	if err != nil {
-		Log.Panicf("绑定admin账号异常: %v", err)
-		panic(fmt.Errorf("绑定admin账号异常: %v", err))
+		Log.Panicf("admin account bind error: %v", err)
+		panic(fmt.Errorf("admin account bind error: %v", err))
 	}
 
 	// 全局变量赋值
@@ -55,7 +55,7 @@ func InitLDAP() {
 		config.Conf.Ldap.Url,
 	)
 
-	Log.Info("初始化ldap完成! dsn: ", showDsn)
+	Log.Info("LDAP initialized, DSN: ", showDsn)
 }
 
 // GetLDAPConn 获取 LDAP 连接
@@ -113,7 +113,7 @@ func (lcp *LdapConnPool) GetConnection() (*ldap.Conn, error) {
 }
 
 func (lcp *LdapConnPool) PutConnection(conn *ldap.Conn) {
-	log.Println("放回了一个 LDAP 连接")
+	log.Println("Returned an LDAP connection")
 	lcp.mu.Lock()
 	defer lcp.mu.Unlock()
 

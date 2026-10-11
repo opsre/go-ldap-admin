@@ -54,8 +54,8 @@ func InitRoutes() *gin.Engine {
 	// 初始化JWT认证中间件
 	authMiddleware, err := middleware.InitAuth()
 	if err != nil {
-		common.Log.Panicf("初始化JWT中间件失败：%v", err)
-		panic(fmt.Sprintf("初始化JWT中间件失败：%v", err))
+		common.Log.Panicf("failed to initialize JWT middleware：%v", err)
+		panic(fmt.Sprintf("failed to initialize JWT middleware：%v", err))
 	}
 	// swag
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -71,6 +71,6 @@ func InitRoutes() *gin.Engine {
 	InitOperationLogRoutes(apiGroup, authMiddleware)  // 注册操作日志路由, jwt认证中间件,casbin鉴权中间件
 	InitFieldRelationRoutes(apiGroup, authMiddleware) // 注册操作日志路由, jwt认证中间件,casbin鉴权中间件
 
-	common.Log.Info("初始化路由完成！")
+	common.Log.Info("routes initialized")
 	return r
 }

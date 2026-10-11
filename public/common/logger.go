@@ -107,5 +107,5 @@ func InitLogger() {
 
 	logger := zap.New(zapcore.NewTee(coreArr...), zap.AddCaller())
 	Log = logger.Sugar()
-	Log.Info("初始化zap日志完成!")
+	Log.Info("zap logger initialized")
 }

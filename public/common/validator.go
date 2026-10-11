@@ -50,7 +50,7 @@ func InitValidate() {
 
 	Trans = TransByLocale["zh"]
 	_ = Validate.RegisterValidation("checkMobile", checkMobile)
-	Log.Infof("初始化validator.v10数据校验器完成")
+	Log.Infof("validator.v10 validator initialized")
 }
 
 func TranslatorForLocale(locale string) ut.Translator {

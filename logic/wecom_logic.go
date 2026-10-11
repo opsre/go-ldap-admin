@@ -50,7 +50,7 @@ func (d *WeComLogic) SyncWeComDepts(c *gin.Context, req any) (data any, rspError
 		return nil, err
 	}
 
-	common.Log.Infof("SyncWeComDepts: 企业微信部门同步成功")
+	common.Log.Infof("SyncWeComDepts: WeCom department sync succeeded")
 	return nil, err
 }
 
@@ -129,7 +129,7 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 			common.Log.Errorf("SyncWeComUsers: %s", errMsg)
 			return nil, tools.NewOperationI18nError("sync.user_write_failed", i18n.Args{"username": staff.Username, "error": err.Error()})
 		}
-		common.Log.Infof("SyncWeComUsers: 成功同步用户[%s] (%d/%d)", staff.Username, i+1, len(staffs))
+		common.Log.Infof("SyncWeComUsers: synced user [%s] (%d/%d)", staff.Username, i+1, len(staffs))
 	}
 
 	// 3.获取企业微信已离职用户id列表
@@ -182,10 +182,10 @@ func (d WeComLogic) SyncWeComUsers(c *gin.Context, req any) (data any, rspError 
 			return nil, tools.NewMySqlI18nError("sync.leave_user_status_update_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 		}
 		processedCount++
-		common.Log.Infof("SyncWeComUsers: 成功处理离职用户[%s]", user.Username)
+		common.Log.Infof("SyncWeComUsers: processed departed user [%s]", user.Username)
 	}
 
-	common.Log.Infof("SyncWeComUsers: 企业微信用户同步完成，共同步%d个在职用户，处理%d个离职用户", len(staffs), processedCount)
+	common.Log.Infof("SyncWeComUsers: WeCom user sync complete, synced %d active users and processed %d departed users", len(staffs), processedCount)
 	return nil, nil
 }
 

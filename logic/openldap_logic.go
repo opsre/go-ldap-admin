@@ -51,7 +51,7 @@ func (d *OpenLdapLogic) SyncOpenLdapDepts(c *gin.Context, req any) (data any, rs
 		return nil, err
 	}
 
-	common.Log.Infof("SyncOpenLdapDepts: OpenLDAP部门同步成功")
+	common.Log.Infof("SyncOpenLdapDepts: OpenLDAP department sync succeeded")
 	return nil, err
 }
 
@@ -170,10 +170,10 @@ func (d OpenLdapLogic) SyncOpenLdapUsers(c *gin.Context, req any) (data any, rsp
 			common.Log.Errorf("SyncOpenLdapUsers: %s", errMsg)
 			return nil, tools.NewOperationI18nError("sync.user_write_failed", i18n.Args{"username": staff.Name, "error": err.Error()})
 		}
-		common.Log.Infof("SyncOpenLdapUsers: 成功同步用户[%s] (%d/%d)", staff.Name, i+1, len(staffs))
+		common.Log.Infof("SyncOpenLdapUsers: synced user [%s] (%d/%d)", staff.Name, i+1, len(staffs))
 	}
 
-	common.Log.Infof("SyncOpenLdapUsers: OpenLDAP用户同步完成，共同步%d个用户", len(staffs))
+	common.Log.Infof("SyncOpenLdapUsers: OpenLDAP user sync complete, synced %d users", len(staffs))
 	return nil, nil
 }
 

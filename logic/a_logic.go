@@ -127,7 +127,7 @@ func CommonAddUser(user *model.User, groups []*model.Group, locale ...string) er
 
 	// 发送用户创建成功通知邮件
 	if err := tools.SendUserCreationNotificationI18n(user.Username, user.Nickname, user.Mail, tools.NewParPasswd(user.Password), firstLocale(locale)); err != nil {
-		common.Log.Warnf("发送用户创建通知邮件失败，用户: %s, 邮箱: %s, 错误: %v", user.Username, user.Mail, err)
+		common.Log.Warnf("Failed to send user creation notification email, user: %s, email: %s, error: %v", user.Username, user.Mail, err)
 	}
 	// 再将用户添加到ldap
 	err = ildap.User.Add(user)
@@ -277,7 +277,7 @@ func BuildUserData(flag string, remoteData map[string]any) (*model.User, error) 
 	// 校验username是否为空，username为必填项
 	name := gjson.Get(string(output), fieldRelation["username"]).String()
 	if len(name) == 0 {
-		common.Log.Warnf("%s 该用户未填写username", output)
+		common.Log.Warnf("%s user has no username", output)
 		return nil, nil
 	}
 
@@ -353,14 +353,14 @@ func InitCron() {
 			DingTalk.SyncDingTalkDepts(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步部门的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start department sync schedule: %v", err)
 		}
 		//每天凌晨1点执行一次
 		_, err = c.AddFunc(config.Conf.DingTalk.UserSyncTime, func() {
 			DingTalk.SyncDingTalkUsers(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步用户的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start user sync schedule: %v", err)
 		}
 	}
 	if config.Conf.WeCom.EnableSync {
@@ -368,14 +368,14 @@ func InitCron() {
 			WeCom.SyncWeComDepts(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步部门的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start department sync schedule: %v", err)
 		}
 		//每天凌晨1点执行一次
 		_, err = c.AddFunc(config.Conf.WeCom.UserSyncTime, func() {
 			WeCom.SyncWeComUsers(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步用户的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start user sync schedule: %v", err)
 		}
 	}
 	if config.Conf.FeiShu.EnableSync {
@@ -383,14 +383,14 @@ func InitCron() {
 			FeiShu.SyncFeiShuDepts(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步部门的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start department sync schedule: %v", err)
 		}
 		//每天凌晨1点执行一次
 		_, err = c.AddFunc(config.Conf.FeiShu.UserSyncTime, func() {
 			FeiShu.SyncFeiShuUsers(nil, nil)
 		})
 		if err != nil {
-			common.Log.Errorf("启动同步用户的定时任务失败: %v", err)
+			common.Log.Errorf("Failed to start user sync schedule: %v", err)
 		}
 	}
 
@@ -402,7 +402,7 @@ func InitCron() {
 		_ = SearchUserDiff()
 	})
 	if err != nil {
-		common.Log.Errorf("启动同步任务状态检查任务失败: %v", err)
+		common.Log.Errorf("Failed to start sync status check schedule: %v", err)
 	}
 	c.Start()
 }

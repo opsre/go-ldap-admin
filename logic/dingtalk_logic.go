@@ -50,7 +50,7 @@ func (d *DingTalkLogic) SyncDingTalkDepts(c *gin.Context, req any) (data any, rs
 		return nil, err
 	}
 
-	common.Log.Infof("SyncDingTalkDepts: 钉钉部门同步成功")
+	common.Log.Infof("SyncDingTalkDepts: DingTalk department sync succeeded")
 	return nil, err
 }
 
@@ -128,7 +128,7 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rsp
 			common.Log.Errorf("SyncDingTalkUsers: %s", errMsg)
 			return nil, tools.NewOperationI18nError("sync.user_write_failed", i18n.Args{"username": staff.Username, "error": err.Error()})
 		}
-		common.Log.Infof("SyncDingTalkUsers: 成功同步用户[%s] (%d/%d)", staff.Username, i+1, len(staffs))
+		common.Log.Infof("SyncDingTalkUsers: synced user [%s] (%d/%d)", staff.Username, i+1, len(staffs))
 	}
 
 	// 3.获取钉钉已离职用户id列表
@@ -175,11 +175,11 @@ func (d DingTalkLogic) SyncDingTalkUsers(c *gin.Context, req any) (data any, rsp
 				return nil, tools.NewMySqlI18nError("sync.leave_user_status_update_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 			}
 			processedCount++
-			common.Log.Infof("SyncDingTalkUsers: 成功处理离职用户[%s]", user.Username)
+			common.Log.Infof("SyncDingTalkUsers: processed departed user [%s]", user.Username)
 		}
 	}
 
-	common.Log.Infof("SyncDingTalkUsers: 钉钉用户同步完成，共同步%d个在职用户，处理%d个离职用户", len(staffs), processedCount)
+	common.Log.Infof("SyncDingTalkUsers: DingTalk user sync complete, synced %d active users and processed %d departed users", len(staffs), processedCount)
 	return nil, nil
 }
 

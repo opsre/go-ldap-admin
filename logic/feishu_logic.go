@@ -50,7 +50,7 @@ func (d *FeiShuLogic) SyncFeiShuDepts(c *gin.Context, req any) (data any, rspErr
 		return nil, err
 	}
 
-	common.Log.Infof("SyncFeiShuDepts: 飞书部门同步成功")
+	common.Log.Infof("SyncFeiShuDepts: Feishu department sync succeeded")
 	return nil, err
 }
 
@@ -77,7 +77,7 @@ func (d FeiShuLogic) addDepts(depts []*model.Group) error {
 
 // AddGroup 添加部门数据
 func (d FeiShuLogic) AddDepts(group *model.Group) error {
-	// 查询当前分组父ID在MySQL中的数据信息
+	// Query the current group parent ID in MySQL
 	parentGroup := new(model.Group)
 	err := isql.Group.Find(tools.H{"source_dept_id": group.SourceDeptParentId}, parentGroup)
 	if err != nil {
@@ -129,7 +129,7 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req any) (data any, rspErro
 			common.Log.Errorf("SyncFeiShuUsers: %s", errMsg)
 			return nil, tools.NewOperationI18nError("sync.user_write_failed", i18n.Args{"username": staff.Username, "error": err.Error()})
 		}
-		common.Log.Infof("SyncFeiShuUsers: 成功同步用户[%s] (%d/%d)", staff.Username, i+1, len(staffs))
+		common.Log.Infof("SyncFeiShuUsers: synced user [%s] (%d/%d)", staff.Username, i+1, len(staffs))
 	}
 
 	// 3.获取飞书已离职用户id列表
@@ -169,11 +169,11 @@ func (d FeiShuLogic) SyncFeiShuUsers(c *gin.Context, req any) (data any, rspErro
 				return nil, tools.NewMySqlI18nError("sync.leave_user_status_update_failed", i18n.Args{"username": user.Username, "error": err.Error()})
 			}
 			processedCount++
-			common.Log.Infof("SyncFeiShuUsers: 成功处理离职用户[%s]", user.Username)
+			common.Log.Infof("SyncFeiShuUsers: processed departed user [%s]", user.Username)
 		}
 	}
 
-	common.Log.Infof("SyncFeiShuUsers: 飞书用户同步完成，共同步%d个在职用户，处理%d个离职用户", len(staffs), processedCount)
+	common.Log.Infof("SyncFeiShuUsers: Feishu user sync complete, synced %d active users and processed %d departed users", len(staffs), processedCount)
 	return nil, nil
 }
 

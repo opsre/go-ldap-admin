@@ -38,7 +38,7 @@ func main() {
 	config.InitConfig()
 
 	if err := i18n.Init(config.Conf.I18n.DefaultLocale, config.Conf.I18n.SupportedLocales); err != nil {
-		panic(fmt.Errorf("初始化i18n失败:%s", err))
+		panic(fmt.Errorf("i18n initialization failed:%s", err))
 	}
 
 	// 初始化日志

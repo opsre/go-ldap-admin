@@ -109,7 +109,7 @@ func authorizator(data any, c *gin.Context) bool {
 
 // 用户登录校验失败处理
 func unauthorized(c *gin.Context, code int, message string) {
-	common.Log.Debugf("JWT认证失败, 错误码: %d, 错误信息: %s", code, message)
+	common.Log.Debugf("JWT authentication failed, code: %d, message: %s", code, message)
 	message = localizeAuthFailure(c, message)
 	response.Response(c, code, code, nil, i18n.TC(c, "auth.jwt_failed", i18n.Args{
 		"code":    code,

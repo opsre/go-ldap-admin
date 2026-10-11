@@ -70,10 +70,10 @@ func (d *SqlLogic) SyncSqlUsers(c *gin.Context, req any) (data any, rspError any
 			common.Log.Errorf("SyncSqlUsers: %s", errMsg)
 			return nil, tools.NewLdapError(errors.New(errMsg))
 		}
-		common.Log.Infof("SyncSqlUsers: 成功同步用户[%s] (%d/%d)", user.Username, i+1, len(users))
+		common.Log.Infof("SyncSqlUsers: synced user [%s] (%d/%d)", user.Username, i+1, len(users))
 	}
 
-	common.Log.Infof("SyncSqlUsers: SQL用户同步成功，共同步%d个用户", len(users))
+	common.Log.Infof("SyncSqlUsers: SQL user sync succeeded, synced %d users", len(users))
 	return nil, nil
 }
 
@@ -130,7 +130,7 @@ func (d *SqlLogic) SyncSqlGroups(c *gin.Context, req any) (data any, rspError an
 		}
 	}
 
-	common.Log.Infof("SyncSqlGroups: SQL分组同步成功，共同步%d个分组", len(groups))
+	common.Log.Infof("SyncSqlGroups: SQL group sync succeeded, synced %d groups", len(groups))
 	return nil, nil
 }
 

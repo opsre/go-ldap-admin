@@ -407,7 +407,7 @@ func (l UserLogic) ResetPassword(c *gin.Context, req any) (data any, rspError an
 
 	// 发送密码重置通知邮件
 	if err := tools.SendPasswordResetNotificationI18n(user.Username, user.Nickname, user.Mail, newPassword, i18n.LocaleFromContext(c)); err != nil {
-		common.Log.Warnf("发送密码重置通知邮件失败，用户: %s, 邮箱: %s, 错误: %v", user.Username, user.Mail, err)
+		common.Log.Warnf("Failed to send password reset notification email, user: %s, email: %s, error: %v", user.Username, user.Mail, err)
 	}
 
 	return map[string]string{"newPassword": newPassword}, nil
