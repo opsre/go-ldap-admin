@@ -46,7 +46,7 @@
 
 > In addition to OpenLDAP administration, the project supports integration with `DingTalk`, `WeCom`, and `Lark`. Users can manually or automatically synchronize organization structures and employee information into the platform, making `go-ldap-admin` a bridge between enterprise IM systems and internal enterprise applications.
 
-UI and API messages support `zh-CN` (default), `en-US`, `ja-JP`, `es-ES`, and `ko-KR`. Backend locale files are in `locales/`, and frontend locale files are in `src/lang/`. The UI language selector stores the selected locale and sends it in the `X-Locale` request header; the backend reads that header and falls back to `Accept-Language`.
+UI and API messages support `en-US` (default), `zh-CN`, `ja-JP`, `es-ES`, and `ko-KR`. Backend locale files are in `locales/`, and frontend locale files are in `src/lang/`. The UI language selector stores the selected locale and sends it in the `X-Locale` request header; the backend reads that header and falls back to `Accept-Language`.
 
 ## Sponsors
 
