@@ -225,7 +225,7 @@ func (l UserLogic) Update(c *gin.Context, req any) (data any, rspError any) {
 		deptids []uint
 	)
 	for _, v := range strings.Split(r.Departments, ",") {
-		if v != "请选择部门信息" {
+		if v != "" {
 			depts += v + ","
 		}
 	}
