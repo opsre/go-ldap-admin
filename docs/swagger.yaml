@@ -19,9 +19,9 @@ definitions:
         minLength: 0
         type: string
     required:
-      - category
-      - method
-      - path
+    - category
+    - method
+    - path
     type: object
   request.ApiDeleteReq:
     properties:
@@ -30,7 +30,7 @@ definitions:
           type: integer
         type: array
     required:
-      - apiIds
+    - apiIds
     type: object
   request.ApiUpdateReq:
     properties:
@@ -53,7 +53,7 @@ definitions:
         minLength: 0
         type: string
     required:
-      - id
+    - id
     type: object
   request.BaseChangePwdReq:
     properties:
@@ -87,8 +87,8 @@ definitions:
         minLength: 1
         type: string
     required:
-      - attributes
-      - flag
+    - attributes
+    - flag
     type: object
   request.FieldRelationDeleteReq:
     properties:
@@ -97,7 +97,7 @@ definitions:
           type: integer
         type: array
     required:
-      - fieldRelationIds
+    - fieldRelationIds
     type: object
   request.FieldRelationUpdateReq:
     properties:
@@ -112,9 +112,9 @@ definitions:
       id:
         type: integer
     required:
-      - attributes
-      - flag
-      - id
+    - attributes
+    - flag
+    - id
     type: object
   request.GroupAddReq:
     properties:
@@ -127,11 +127,11 @@ definitions:
         minLength: 1
         type: string
       parentId:
-        description: 父级Id 大于等于0 必填
+        description: Parent ID is required and must be greater than or equal to 0
         minimum: 0
         type: integer
       remark:
-        description: 分组的中文描述
+        description: Chinese description of the group
         maxLength: 128
         minLength: 0
         type: string
@@ -181,7 +181,7 @@ definitions:
       id:
         type: integer
       remark:
-        description: 分组的中文描述
+        description: Chinese description of the group
         maxLength: 128
         minLength: 0
         type: string
@@ -197,13 +197,13 @@ definitions:
         type: string
       alwaysShow:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       breadcrumb:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       component:
         maxLength: 100
@@ -211,8 +211,8 @@ definitions:
         type: string
       hidden:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       icon:
         maxLength: 50
@@ -224,8 +224,8 @@ definitions:
         type: string
       noCache:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       parentId:
         type: integer
@@ -243,18 +243,18 @@ definitions:
         type: integer
       status:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       title:
         maxLength: 50
         minLength: 1
         type: string
     required:
-      - component
-      - name
-      - path
-      - title
+    - component
+    - name
+    - path
+    - title
     type: object
   request.MenuDeleteReq:
     properties:
@@ -263,7 +263,7 @@ definitions:
           type: integer
         type: array
     required:
-      - menuIds
+    - menuIds
     type: object
   request.MenuUpdateReq:
     properties:
@@ -273,13 +273,13 @@ definitions:
         type: string
       alwaysShow:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       breadcrumb:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       component:
         maxLength: 100
@@ -287,8 +287,8 @@ definitions:
         type: string
       hidden:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       icon:
         maxLength: 50
@@ -302,8 +302,8 @@ definitions:
         type: string
       noCache:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       parentId:
         minimum: 0
@@ -322,18 +322,18 @@ definitions:
         type: integer
       status:
         enum:
-          - 1
-          - 2
+        - 1
+        - 2
         type: integer
       title:
         maxLength: 50
         minLength: 1
         type: string
     required:
-      - id
-      - name
-      - path
-      - title
+    - id
+    - name
+    - path
+    - title
     type: object
   request.OperationLogDeleteReq:
     properties:
@@ -342,7 +342,7 @@ definitions:
           type: integer
         type: array
     required:
-      - operationLogIds
+    - operationLogIds
     type: object
   request.RegisterAndLoginReq:
     properties:
@@ -562,6 +562,13 @@ definitions:
     required:
     - userIds
     type: object
+  request.UserResetPasswordReq:
+    properties:
+      username:
+        type: string
+    required:
+    - username
+    type: object
   request.UserUpdateReq:
     properties:
       avatar:
@@ -636,9 +643,9 @@ host: 127.0.0.1:8888
 info:
   contact:
     email: https://github.com/eryajf/go-ldap-admin
-    name: 项目作者：二丫讲梵 、 swagger作者：南宫乘风
+    name: 'Project author: Er Ya Jiang Fan; Swagger author: Nangong Chengfeng'
     url: https://github.com/eryajf/go-ldap-admin
-  description: 基于Go+Vue实现的openLDAP后台管理项目
+  description: OpenLDAP admin system built with Go and Vue
   termsOfService: https://github.com/eryajf/go-ldap-admin
   title: Go Ldap Admin
   version: "1.0"
@@ -646,111 +653,111 @@ paths:
   /api/add:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 新建API
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.ApiAddReq'
+      - description: New API
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ApiAddReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 新建API接口
+      - ApiKeyAuth: []
+      summary: Create an API
       tags:
-        - 接口管理
+      - API management
   /api/delete:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 删除API
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.ApiDeleteReq'
+      - description: Delete API
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ApiDeleteReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 删除API接口
+      - ApiKeyAuth: []
+      summary: Delete the API
       tags:
-        - 接口管理
+      - API management
   /api/list:
     get:
       consumes:
-        - application/json
+      - application/json
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 获取API接口列表
+      - ApiKeyAuth: []
+      summary: Get the API list
       tags:
-        - 接口管理
+      - API management
   /api/tree:
     get:
       consumes:
-        - application/json
+      - application/json
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 获取API接口树
+      - ApiKeyAuth: []
+      summary: Get the API tree
       tags:
-        - 接口管理
+      - API management
   /api/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 更新API
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.ApiUpdateReq'
+      - description: Update API
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ApiUpdateReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 更新API接口
+      - ApiKeyAuth: []
+      summary: Update the API
       tags:
-        - 接口管理
+      - API management
   /base/changePwd:
     post:
       consumes:
       - application/json
-      description: 使用邮箱验证码修改密码
+      description: Change the password using an email verification code
       parameters:
-      - description: 发送验证码请求数据
+      - description: Verification code request data
         in: body
         name: data
         required: true
@@ -763,14 +770,30 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
-      summary: 用户通过邮箱修改密码
+      summary: Change password by email
       tags:
-      - 基础管理
+      - Basic management
+  /base/config:
+    get:
+      consumes:
+      - application/json
+      description: Get system configuration so the frontend can determine whether
+        to show the sync button
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseBody'
+      summary: Get the system configuration
+      tags:
+      - Basic management
   /base/dashboard:
     get:
       consumes:
       - application/json
-      description: 获取系统仪表盘概览数据
+      description: Get an overview of the system dashboard
       produces:
       - application/json
       responses:
@@ -778,16 +801,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
-      summary: 获取仪表盘数据
+      summary: Get dashboard data
       tags:
-      - 基础管理
+      - Basic management
   /base/decryptpwd:
     get:
       consumes:
       - application/json
-      description: 将加密后的密码解密为明文
+      description: Decrypt the encrypted password to plain text
       parameters:
-      - description: 需要解密的加密密码
+      - description: Encrypted password to decrypt
         in: query
         name: passwd
         required: true
@@ -799,16 +822,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
-      summary: 密码解密
+      summary: Decrypt the password
       tags:
-      - 基础管理
+      - Basic management
   /base/encryptpwd:
     get:
       consumes:
       - application/json
-      description: 将明文密码加密
+      description: Encrypt the plain-text password
       parameters:
-      - description: 需要加密的明文密码
+      - description: Plain-text password to encrypt
         in: query
         name: passwd
         required: true
@@ -820,16 +843,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
-      summary: 密码加密
+      summary: Encrypt the password
       tags:
-      - 基础管理
+      - Basic management
   /base/login:
     post:
       consumes:
       - application/json
-      description: 用户登录
+      description: User login
       parameters:
-      - description: 用户登录信息账号和密码
+      - description: 'User login information: account and password'
         in: body
         name: data
         required: true
@@ -842,14 +865,15 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
-      summary: '登录接口 (手动加上: Bearer + token(密码加密接口))'
+      summary: 'Login endpoint (manually add: Bearer + token (password encryption
+        endpoint))'
       tags:
-      - 基础管理
+      - Basic management
   /base/logout:
     post:
       consumes:
       - application/json
-      description: 用户退出登录
+      description: User logout
       produces:
       - application/json
       responses:
@@ -857,12 +881,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
-      summary: 退出登录
+      summary: Log out
       tags:
-      - 基础管理
+      - Basic management
   /base/ping:
     get:
-      description: 健康检测
+      description: Health check
       produces:
       - application/json
       responses:
@@ -870,16 +894,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
-      summary: 健康检测
+      summary: Health check
       tags:
-      - 基础管理
+      - Basic management
   /base/refreshToken:
     post:
       consumes:
       - application/json
-      description: 使用旧的 Token 获取新的 Token
+      description: Get a new token using the old token
       parameters:
-      - description: Bearer 旧的 Token
+      - description: Bearer old token
         in: header
         name: Authorization
         required: true
@@ -891,16 +915,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
-      summary: 刷新 Token
+      summary: Refresh token
       tags:
-      - 基础管理
+      - Basic management
   /base/sendcode:
     post:
       consumes:
       - application/json
-      description: 向指定邮箱发送验证码
+      description: Send a verification code to the specified email
       parameters:
-      - description: 发送验证码请求数据
+      - description: Verification code request data
         in: body
         name: data
         required: true
@@ -913,101 +937,116 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
-      summary: 发送验证码
+      summary: Send a verification code
       tags:
-      - 基础管理
+      - Basic management
+  /base/version:
+    get:
+      consumes:
+      - application/json
+      description: Get the system version, Git commit hash, and build time
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseBody'
+      summary: Get version information
+      tags:
+      - Basic management
   /fieldrelation/add:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 新建字段关系管理记录
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.FieldRelationAddReq'
+      - description: Create a field relation record
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.FieldRelationAddReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 新建字段关系管理记录
+      - ApiKeyAuth: []
+      summary: Create a field relation record
       tags:
-        - 字段关系管理
+      - Field relation management
   /fieldrelation/delete:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 删除字段关系管理记录
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.FieldRelationDeleteReq'
+      - description: Delete a field relation record
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.FieldRelationDeleteReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 删除字段关系管理记录
+      - ApiKeyAuth: []
+      summary: Delete a field relation record
       tags:
-        - 字段关系管理
+      - Field relation management
   /fieldrelation/list:
     get:
       consumes:
-        - application/json
+      - application/json
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 获字段关系管理列表
+      - ApiKeyAuth: []
+      summary: Get the field relation management list
       tags:
-        - 字段关系管理
+      - Field relation management
   /fieldrelation/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 更新字段关系管理记录
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.FieldRelationUpdateReq'
+      - description: Update a field relation record
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.FieldRelationUpdateReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 更新字段关系管理记录
+      - ApiKeyAuth: []
+      summary: Update a field relation record
       tags:
-        - 字段关系管理
+      - Field relation management
   /group/add:
     post:
       consumes:
       - application/json
-      description: 添加分组记录
+      description: Add a group record
       parameters:
-      - description: 添加用户记录的结构体
+      - description: User record request structure
         in: body
         name: data
         required: true
@@ -1022,16 +1061,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 添加分组记录
+      summary: Add a group record
       tags:
-      - 分组管理
+      - Group management
   /group/adduser:
     post:
       consumes:
       - application/json
-      description: 添加用户
+      description: Add a user
       parameters:
-      - description: 添加用户记录的结构体
+      - description: User record request structure
         in: body
         name: data
         required: true
@@ -1046,16 +1085,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 添加用户
+      summary: Add a user
       tags:
-      - 分组管理
+      - Group management
   /group/delete:
     post:
       consumes:
       - application/json
-      description: 删除分组记录
+      description: Delete a group record
       parameters:
-      - description: 删除用户记录的结构体
+      - description: User record deletion structure
         in: body
         name: data
         required: true
@@ -1070,14 +1109,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 删除分组记录
+      summary: Delete a group record
       tags:
-      - 分组管理
+      - Group management
   /group/list:
     get:
       consumes:
       - application/json
-      description: 获取分组记录列表
+      description: Get the group list
       produces:
       - application/json
       responses:
@@ -1087,16 +1126,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 获取分组记录列表
+      summary: Get the group list
       tags:
-      - 分组管理
+      - Group management
   /group/removeuser:
     post:
       consumes:
       - application/json
-      description: 移除用户
+      description: Remove a user
       parameters:
-      - description: 移除用户记录的结构体
+      - description: User removal request structure
         in: body
         name: data
         required: true
@@ -1111,14 +1150,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 移除用户
+      summary: Remove a user
       tags:
-      - 分组管理
+      - Group management
   /group/syncDingTalkDepts:
     post:
       consumes:
       - application/json
-      description: 同步钉钉部门信息
+      description: Sync DingTalk department information
       produces:
       - application/json
       responses:
@@ -1128,14 +1167,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步钉钉部门信息
+      summary: Sync DingTalk department information
       tags:
-      - 分组管理
+      - Group management
   /group/syncFeiShuDepts:
     post:
       consumes:
       - application/json
-      description: 同步飞书部门信息
+      description: Sync Feishu department information
       produces:
       - application/json
       responses:
@@ -1145,14 +1184,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步飞书部门信息
+      summary: Sync Feishu department information
       tags:
-      - 分组管理
+      - Group management
   /group/syncOpenLdapDepts:
     post:
       consumes:
       - application/json
-      description: 同步原ldap部门信息
+      description: Sync existing LDAP department information
       produces:
       - application/json
       responses:
@@ -1162,14 +1201,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步原ldap部门信息
+      summary: Sync existing LDAP department information
       tags:
-      - 分组管理
+      - Group management
   /group/syncSqlGroups:
     post:
       consumes:
       - application/json
-      description: 同步Sql中的分组信息到ldap
+      description: Sync SQL group information to LDAP
       produces:
       - application/json
       responses:
@@ -1179,14 +1218,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步Sql中的分组信息到ldap
+      summary: Sync SQL group information to LDAP
       tags:
-      - 分组管理
+      - Group management
   /group/syncWeComDepts:
     post:
       consumes:
       - application/json
-      description: 同步企业微信部门信息
+      description: Sync WeCom department information
       produces:
       - application/json
       responses:
@@ -1196,14 +1235,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步企业微信部门信息
+      summary: Sync WeCom department information
       tags:
-      - 分组管理
+      - Group management
   /group/tree:
     get:
       consumes:
       - application/json
-      description: 获取分组接口树
+      description: Get the group API tree
       produces:
       - application/json
       responses:
@@ -1213,16 +1252,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 获取分组接口树
+      summary: Get the group API tree
       tags:
-      - 分组管理
+      - Group management
   /group/update:
     post:
       consumes:
       - application/json
-      description: 更新分组记录
+      description: Update a group record
       parameters:
-      - description: 更新用户记录的结构体
+      - description: User record update structure
         in: body
         name: data
         required: true
@@ -1237,21 +1276,21 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 更新分组记录
+      summary: Update a group record
       tags:
-      - 分组管理
+      - Group management
   /group/useringroup:
     get:
       consumes:
       - application/json
-      description: 获取分组内用户
+      description: Get users in the group
       parameters:
-      - description: 分组ID
+      - description: Group ID
         in: query
         name: groupId
         required: true
         type: integer
-      - description: 昵称
+      - description: Nickname
         in: query
         name: nickname
         type: string
@@ -1264,21 +1303,21 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 获取分组内用户
+      summary: Get users in the group
       tags:
-      - 分组管理
+      - Group management
   /group/usernoingroup:
     get:
       consumes:
       - application/json
-      description: 不在分组的用户
+      description: Users outside the group
       parameters:
-      - description: 分组ID
+      - description: Group ID
         in: query
         name: groupId
         required: true
         type: integer
-      - description: 昵称
+      - description: Nickname
         in: query
         name: nickname
         type: string
@@ -1291,207 +1330,207 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 不在分组的用户
+      summary: Users outside the group
       tags:
-      - 分组管理
+      - Group management
   /log/operation/clean:
     delete:
       consumes:
-        - application/json
+      - application/json
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 清空操作日志记录
+      - ApiKeyAuth: []
+      summary: Clear operation log records
       tags:
-        - 操作日志管理
+      - Operation log management
   /log/operation/delete:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 删除日志的ID
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.OperationLogDeleteReq'
+      - description: IDs of the logs to delete
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.OperationLogDeleteReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 删除操作日志记录
+      - ApiKeyAuth: []
+      summary: Delete operation log records
       tags:
-        - 操作日志管理
+      - Operation log management
   /log/operation/list:
     get:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 用户名
-          in: query
-          name: username
-          type: string
-        - description: IP地址
-          in: query
-          name: ip
-          type: string
-        - description: 路径
-          in: query
-          name: path
-          type: string
-        - description: 方法
-          in: query
-          name: method
-          type: string
-        - description: 状态码
-          in: query
-          name: status
-          type: integer
-        - description: 页码
-          in: query
-          name: pageNum
-          type: integer
-        - description: 每页数量
-          in: query
-          name: pageSize
-          type: integer
+      - description: Username
+        in: query
+        name: username
+        type: string
+      - description: IP address
+        in: query
+        name: ip
+        type: string
+      - description: Path
+        in: query
+        name: path
+        type: string
+      - description: Method
+        in: query
+        name: method
+        type: string
+      - description: Status code
+        in: query
+        name: status
+        type: integer
+      - description: Page number
+        in: query
+        name: pageNum
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 获取操作日志记录列表
+      - ApiKeyAuth: []
+      summary: Get the operation log list
       tags:
-        - 操作日志管理
+      - Operation log management
   /menu/access/tree:
     get:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 分组ID
-          in: query
-          name: id
-          required: true
-          type: integer
+      - description: Group ID
+        in: query
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 获取用户菜单树
+      - ApiKeyAuth: []
+      summary: Get the user menu tree
       tags:
-        - 菜单管理
+      - Menu management
   /menu/add:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 新建菜单
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.MenuAddReq'
+      - description: Create a menu
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.MenuAddReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 新建菜单
+      - ApiKeyAuth: []
+      summary: Create a menu
       tags:
-        - 菜单管理
+      - Menu management
   /menu/delete:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 删除菜单
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.MenuDeleteReq'
+      - description: Delete the menu
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.MenuDeleteReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 删除菜单
+      - ApiKeyAuth: []
+      summary: Delete the menu
       tags:
-        - 菜单管理
+      - Menu management
   /menu/tree:
     get:
       consumes:
-        - application/json
+      - application/json
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 获取菜单树
+      - ApiKeyAuth: []
+      summary: Get the menu tree
       tags:
-        - 菜单管理
+      - Menu management
   /menu/update:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: 更新菜单
-          in: body
-          name: data
-          required: true
-          schema:
-            $ref: '#/definitions/request.MenuUpdateReq'
+      - description: Update the menu
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.MenuUpdateReq'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/response.ResponseBody'
       security:
-        - ApiKeyAuth: [ ]
-      summary: 更新菜单
+      - ApiKeyAuth: []
+      summary: Update the menu
       tags:
-        - 菜单管理
+      - Menu management
   /role/add:
     post:
       consumes:
       - application/json
-      description: 新建角色记录
+      description: Create a role record
       parameters:
-      - description: 添加角色记录的结构体
+      - description: Role creation request structure
         in: body
         name: data
         required: true
@@ -1506,16 +1545,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 新建角色记录
+      summary: Create a role record
       tags:
-      - 角色管理
+      - Role management
   /role/delete:
     post:
       consumes:
       - application/json
-      description: 删除角色记录
+      description: Delete role records
       parameters:
-      - description: 删除角色记录的结构体
+      - description: Role deletion request structure
         in: body
         name: data
         required: true
@@ -1530,16 +1569,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 删除角色记录
+      summary: Delete role records
       tags:
-      - 角色管理
+      - Role management
   /role/getapilist:
     get:
       consumes:
       - application/json
-      description: 获取接口列表
+      description: Get the API list
       parameters:
-      - description: 角色ID
+      - description: Role ID
         in: query
         name: roleId
         required: true
@@ -1553,16 +1592,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 获取接口列表
+      summary: Get the API list
       tags:
-      - 角色管理
+      - Role management
   /role/getmenulist:
     get:
       consumes:
       - application/json
-      description: 获取菜单列表
+      description: Get the menu list
       parameters:
-      - description: 角色ID
+      - description: Role ID
         in: query
         name: roleId
         required: true
@@ -1576,14 +1615,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 获取菜单列表
+      summary: Get the menu list
       tags:
-      - 角色管理
+      - Role management
   /role/list:
     get:
       consumes:
       - application/json
-      description: 获取角色记录列表
+      description: Get the role list
       produces:
       - application/json
       responses:
@@ -1593,16 +1632,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 获取角色记录列表
+      summary: Get the role list
       tags:
-      - 角色管理
+      - Role management
   /role/update:
     post:
       consumes:
       - application/json
-      description: 更新角色记录
+      description: Update a role record
       parameters:
-      - description: 更新角色记录的结构体
+      - description: Role update request structure
         in: body
         name: data
         required: true
@@ -1617,16 +1656,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 更新角色记录
+      summary: Update a role record
       tags:
-      - 角色管理
+      - Role management
   /role/updateapis:
     post:
       consumes:
       - application/json
-      description: 更新接口
+      description: Update APIs
       parameters:
-      - description: 更新接口的结构体
+      - description: API update request structure
         in: body
         name: data
         required: true
@@ -1641,16 +1680,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 更新接口
+      summary: Update APIs
       tags:
-      - 角色管理
+      - Role management
   /role/updatemenus:
     post:
       consumes:
       - application/json
-      description: 更新菜单
+      description: Update the menu
       parameters:
-      - description: 更新菜单的结构体
+      - description: Menu update request structure
         in: body
         name: data
         required: true
@@ -1665,16 +1704,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 更新菜单
+      summary: Update the menu
       tags:
-      - 角色管理
+      - Role management
   /user/add:
     post:
       consumes:
       - application/json
-      description: 添加用户记录
+      description: Add a user record
       parameters:
-      - description: 添加用户记录的结构体
+      - description: User record request structure
         in: body
         name: data
         required: true
@@ -1689,16 +1728,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 添加用户记录
+      summary: Add a user record
       tags:
-      - 用户管理
+      - User management
   /user/changePwd:
     post:
       consumes:
       - application/json
-      description: 更新密码
+      description: Update the password
       parameters:
-      - description: 更改用户密码的结构体
+      - description: User password change request structure
         in: body
         name: data
         required: true
@@ -1713,16 +1752,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 更新密码
+      summary: Update the password
       tags:
-      - 用户管理
+      - User management
   /user/changeUserStatus:
     post:
       consumes:
       - application/json
-      description: 更改用户状态
+      description: Change the user status
       parameters:
-      - description: 更改用户状态的结构体
+      - description: User status change request structure
         in: body
         name: data
         required: true
@@ -1737,16 +1776,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 更改用户状态
+      summary: Change the user status
       tags:
-      - 用户管理
+      - User management
   /user/delete:
     post:
       consumes:
       - application/json
-      description: 删除用户记录
+      description: Delete user records
       parameters:
-      - description: 删除用户记录的结构体ID
+      - description: IDs in the user deletion request structure
         in: body
         name: data
         required: true
@@ -1761,14 +1800,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 删除用户记录
+      summary: Delete user records
       tags:
-      - 用户管理
+      - User management
   /user/info:
     get:
       consumes:
       - application/json
-      description: 获取当前登录用户信息
+      description: Get the current logged-in user information
       produces:
       - application/json
       responses:
@@ -1778,14 +1817,14 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 获取当前登录用户信息
+      summary: Get the current logged-in user information
       tags:
-      - 用户管理
+      - User management
   /user/list:
     get:
       consumes:
       - application/json
-      description: 获取所有用户记录列表
+      description: Get the list of all user records
       produces:
       - application/json
       responses:
@@ -1795,16 +1834,40 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 获取所有用户记录列表
+      summary: Get the list of all user records
       tags:
-      - 用户管理
+      - User management
+  /user/resetPassword:
+    post:
+      consumes:
+      - application/json
+      description: Reset the user password to a random value and send an email notification
+      parameters:
+      - description: User password reset request structure
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.UserResetPasswordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseBody'
+      security:
+      - ApiKeyAuth: []
+      summary: Reset the user password
+      tags:
+      - User management
   /user/syncDingTalkUsers:
     post:
       consumes:
       - application/json
-      description: 同步钉钉用户信息
+      description: Sync DingTalk user information
       parameters:
-      - description: 同步钉钉用户信息
+      - description: Sync DingTalk user information
         in: body
         name: data
         required: true
@@ -1819,16 +1882,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步钉钉用户信息
+      summary: Sync DingTalk user information
       tags:
-      - 用户管理
+      - User management
   /user/syncFeiShuUsers:
     post:
       consumes:
       - application/json
-      description: 同步飞书用户信息
+      description: Sync Feishu user information
       parameters:
-      - description: 同步飞书用户信息
+      - description: Sync Feishu user information
         in: body
         name: data
         required: true
@@ -1843,16 +1906,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步飞书用户信息
+      summary: Sync Feishu user information
       tags:
-      - 用户管理
+      - User management
   /user/syncOpenLdapUsers:
     post:
       consumes:
       - application/json
-      description: 同步ldap用户信息
+      description: Sync LDAP user information
       parameters:
-      - description: 同步ldap用户信息
+      - description: Sync LDAP user information
         in: body
         name: data
         required: true
@@ -1867,16 +1930,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步ldap用户信息
+      summary: Sync LDAP user information
       tags:
-      - 用户管理
+      - User management
   /user/syncSqlUsers:
     post:
       consumes:
       - application/json
-      description: 同步sql用户信息到ldap
+      description: Sync SQL user information to LDAP
       parameters:
-      - description: 更改用户状态的结构体
+      - description: User status change request structure
         in: body
         name: data
         required: true
@@ -1891,16 +1954,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步sql用户信息到ldap
+      summary: Sync SQL user information to LDAP
       tags:
-      - 用户管理
+      - User management
   /user/syncWeComUsers:
     post:
       consumes:
       - application/json
-      description: 同步企业微信用户信息
+      description: Sync WeCom user information
       parameters:
-      - description: 同步企业微信用户信息
+      - description: Sync WeCom user information
         in: body
         name: data
         required: true
@@ -1915,16 +1978,16 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 同步企业微信用户信息
+      summary: Sync WeCom user information
       tags:
-      - 用户管理
+      - User management
   /user/update:
     post:
       consumes:
       - application/json
-      description: 添加用户记录
+      description: Add a user record
       parameters:
-      - description: 更改用户记录的结构体
+      - description: User update request structure
         in: body
         name: data
         required: true
@@ -1939,9 +2002,9 @@ paths:
             $ref: '#/definitions/response.ResponseBody'
       security:
       - ApiKeyAuth: []
-      summary: 更新用户记录
+      summary: Update a user record
       tags:
-      - 用户管理
+      - User management
 securityDefinitions:
   ApiKeyAuth:
     in: header
