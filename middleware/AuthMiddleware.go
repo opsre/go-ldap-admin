@@ -119,13 +119,13 @@ func unauthorized(c *gin.Context, code int, message string) {
 
 func localizeAuthFailure(c *gin.Context, message string) string {
 	switch message {
-	case "用户未登录":
+	case isql.ErrUserNotLoggedIn.Error():
 		return i18n.TC(c, "auth.not_logged_in", nil)
-	case "用户不存在":
+	case isql.ErrUserNotFound.Error():
 		return i18n.TC(c, "auth.user_not_found", nil)
-	case "用户被禁用":
+	case isql.ErrUserDisabled.Error():
 		return i18n.TC(c, "auth.user_disabled", nil)
-	case "密码错误":
+	case isql.ErrPasswordIncorrect.Error():
 		return i18n.TC(c, "auth.password_incorrect", nil)
 	default:
 		return message

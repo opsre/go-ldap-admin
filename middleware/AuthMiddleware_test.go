@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/eryajf/go-ldap-admin/public/i18n"
+	"github.com/eryajf/go-ldap-admin/service/isql"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,13 +29,13 @@ func TestLocalizeAuthFailure(t *testing.T) {
 	})
 
 	c, _ := gin.CreateTestContext(nil)
-	i18n.SetLocale(c, "en-US")
+	i18n.SetLocale(c, "zh-CN")
 
 	tests := map[string]string{
-		"用户未登录": "user is not logged in",
-		"用户不存在": "user does not exist",
-		"用户被禁用": "the current user has been disabled",
-		"密码错误":  "incorrect password",
+		isql.ErrUserNotLoggedIn.Error():   "用户未登录",
+		isql.ErrUserNotFound.Error():      "用户不存在",
+		isql.ErrUserDisabled.Error():      "当前用户已被禁用",
+		isql.ErrPasswordIncorrect.Error(): "密码错误",
 	}
 	for raw, want := range tests {
 		if got := localizeAuthFailure(c, raw); got != want {

@@ -19,6 +19,13 @@ import (
 
 type UserService struct{}
 
+var (
+	ErrUserNotLoggedIn   = errors.New("user is not logged in")
+	ErrUserNotFound      = errors.New("user does not exist")
+	ErrUserDisabled      = errors.New("user is disabled")
+	ErrPasswordIncorrect = errors.New("incorrect password")
+)
+
 // Cache current user information to avoid frequent database reads
 var userInfoCache = cache.New(24*time.Hour, 48*time.Hour)
 
@@ -280,7 +287,7 @@ func (s UserService) GetCurrentLoginUser(c *gin.Context) (model.User, error) {
 	var newUser model.User
 	ctxUser, exist := c.Get("user")
 	if !exist {
-		return newUser, errors.New("用户未登录")
+		return newUser, ErrUserNotLoggedIn
 	}
 	u, _ := ctxUser.(model.User)
 
@@ -314,12 +321,12 @@ func (s UserService) Login(user *model.User) (*model.User, error) {
 	// 	First(&firstUser).Error
 	err := s.Find(tools.H{"username": user.Username}, &firstUser)
 	if err != nil {
-		return nil, errors.New("用户不存在")
+		return nil, ErrUserNotFound
 	}
 	// Check the user status
 	userStatus := firstUser.Status
 	if userStatus != 1 {
-		return nil, errors.New("用户被禁用")
+		return nil, ErrUserDisabled
 	}
 
 	// Check the status of all user roles; login is denied if all roles are disabled
@@ -334,7 +341,7 @@ func (s UserService) Login(user *model.User) (*model.User, error) {
 	// }
 
 	if tools.NewParPasswd(firstUser.Password) != user.Password {
-		return nil, errors.New("密码错误")
+		return nil, ErrPasswordIncorrect
 	}
 
 	return &firstUser, nil
