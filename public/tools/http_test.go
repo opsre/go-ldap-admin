@@ -13,7 +13,7 @@ import (
 
 func TestErrKeepsRawErrorCompatibility(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	i18n.SetSupportedLocales([]string{"zh-CN", "en-US"}, "zh-CN")
+	i18n.SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
 	i18n.SetMessages(map[string]map[string]string{
 		"zh-CN": {"common.success": "success"},
 		"en-US": {"common.success": "success"},
@@ -21,6 +21,7 @@ func TestErrKeepsRawErrorCompatibility(t *testing.T) {
 
 	r := gin.New()
 	r.GET("/err", func(c *gin.Context) {
+		i18n.SetLocale(c, "zh-CN")
 		Err(c, NewValidatorError(fmt.Errorf("用户名已存在")), nil)
 	})
 
@@ -39,9 +40,63 @@ func TestErrKeepsRawErrorCompatibility(t *testing.T) {
 	}
 }
 
-func TestErrLocalizesUnmappedChineseErrorForNonDefaultLocale(t *testing.T) {
+func TestErrUsesEnglishDefaultAndKeepsChineseRawError(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	i18n.SetSupportedLocales([]string{"zh-CN", "en-US"}, "zh-CN")
+	i18n.SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
+	i18n.SetMessages(map[string]map[string]string{
+		"zh-CN": {"error.validator": "参数校验失败"},
+		"en-US": {"error.validator": "validation failed"},
+	})
+
+	const rawMessage = "对应平台的动态字段关系已存在，请勿重复添加"
+	r := gin.New()
+	r.GET("/zh", func(c *gin.Context) {
+		i18n.SetLocale(c, "zh-CN")
+		Err(c, NewValidatorError(fmt.Errorf(rawMessage)), nil)
+	})
+	r.GET("/en", func(c *gin.Context) {
+		i18n.SetLocale(c, "en-US")
+		Err(c, NewValidatorError(fmt.Errorf(rawMessage)), nil)
+	})
+	r.GET("/default", func(c *gin.Context) {
+		Err(c, NewValidatorError(fmt.Errorf(rawMessage)), nil)
+	})
+
+	tests := []struct {
+		path       string
+		wantMsg    string
+		wantMsgKey string
+	}{
+		{path: "/zh", wantMsg: rawMessage},
+		{path: "/en", wantMsg: "validation failed", wantMsgKey: "error.validator"},
+		{path: "/default", wantMsg: "validation failed", wantMsgKey: "error.validator"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			r.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, tt.path, nil))
+
+			var body map[string]any
+			if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+				t.Fatal(err)
+			}
+			if body["msg"] != tt.wantMsg {
+				t.Fatalf("msg = %#v, want %q", body["msg"], tt.wantMsg)
+			}
+			if tt.wantMsgKey == "" {
+				if _, ok := body["msgKey"]; ok {
+					t.Fatalf("raw zh-CN error should not include msgKey: %#v", body)
+				}
+			} else if body["msgKey"] != tt.wantMsgKey {
+				t.Fatalf("msgKey = %#v, want %q", body["msgKey"], tt.wantMsgKey)
+			}
+		})
+	}
+}
+
+func TestErrLocalizesUnmappedChineseErrorForEnglishLocale(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	i18n.SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
 	i18n.SetMessages(map[string]map[string]string{
 		"zh-CN": {
 			"error.validator": "参数校验失败",
@@ -74,7 +129,7 @@ func TestErrLocalizesUnmappedChineseErrorForNonDefaultLocale(t *testing.T) {
 
 func TestErrLocalizesI18nError(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	i18n.SetSupportedLocales([]string{"zh-CN", "en-US"}, "zh-CN")
+	i18n.SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
 	i18n.SetMessages(map[string]map[string]string{
 		"zh-CN": {"user.username_exists": "用户名已存在"},
 		"en-US": {"user.username_exists": "username already exists"},
@@ -103,7 +158,7 @@ func TestErrLocalizesI18nError(t *testing.T) {
 
 func TestErrLocalizesFieldRelationI18nError(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	i18n.SetSupportedLocales([]string{"zh-CN", "en-US"}, "zh-CN")
+	i18n.SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
 	i18n.SetMessages(map[string]map[string]string{
 		"zh-CN": {"field_relation.exists": "对应平台的动态字段关系已存在，请勿重复添加"},
 		"en-US": {"field_relation.exists": "the dynamic field relation for this platform already exists"},
@@ -132,7 +187,7 @@ func TestErrLocalizesFieldRelationI18nError(t *testing.T) {
 
 func TestErrLocalizesLegacyRawError(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	i18n.SetSupportedLocales([]string{"zh-CN", "en-US"}, "zh-CN")
+	i18n.SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
 	i18n.SetMessages(map[string]map[string]string{
 		"zh-CN": {
 			"legacy.common.current_user_failed": "获取当前登陆用户信息失败",

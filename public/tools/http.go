@@ -216,7 +216,7 @@ func Err(c *gin.Context, err *RspError, data any) {
 	if msgKey == "" {
 		msgKey, args = lookupLegacyErrorKey(err.Error())
 	}
-	if msgKey == "" && i18n.LocaleFromContext(c) != i18n.NormalizeLocale("") && containsCJK(err.Error()) {
+	if msgKey == "" && i18n.LocaleFromContext(c) != "zh-CN" && containsCJK(err.Error()) {
 		msgKey = fallbackErrorKey(err.Code())
 	}
 	if msgKey != "" {

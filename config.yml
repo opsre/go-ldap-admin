@@ -71,11 +71,11 @@ rate-limit:
 
 i18n:
   # Default language
-  default-locale: zh-CN
+  default-locale: en-US
   # Supported locales
   supported-locales:
-    - zh-CN
     - en-US
+    - zh-CN
     - ja-JP
     - es-ES
     - ko-KR

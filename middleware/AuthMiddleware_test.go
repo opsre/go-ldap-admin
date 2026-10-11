@@ -10,7 +10,7 @@ import (
 
 func TestLocalizeAuthFailure(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	i18n.SetSupportedLocales([]string{"zh-CN", "en-US"}, "zh-CN")
+	i18n.SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
 	i18n.SetMessages(map[string]map[string]string{
 		"zh-CN": {
 			"auth.not_logged_in":      "用户未登录",

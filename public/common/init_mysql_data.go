@@ -62,7 +62,7 @@ func InitData() {
 	if len(newRoles) > 0 {
 		err := DB.Create(&newRoles).Error
 		if err != nil {
-			Log.Errorf("写入系统角色数据失败：%v", err)
+			Log.Errorf("Failed to write system role data: %v", err)
 		}
 	}
 
@@ -220,7 +220,7 @@ func InitData() {
 	if len(newMenus) > 0 {
 		err := DB.Create(&newMenus).Error
 		if err != nil {
-			Log.Errorf("写入系统菜单数据失败：%v", err)
+			Log.Errorf("Failed to write system menu data: %v", err)
 		}
 	}
 
@@ -258,7 +258,7 @@ func InitData() {
 	if len(newUsers) > 0 {
 		err := DB.Create(&newUsers).Error
 		if err != nil {
-			Log.Errorf("写入用户数据失败：%v", err)
+			Log.Errorf("Failed to write user data: %v", err)
 		}
 	}
 
@@ -749,7 +749,7 @@ func InitData() {
 
 	if len(newApi) > 0 {
 		if err := DB.Create(&newApi).Error; err != nil {
-			Log.Errorf("写入api数据失败：%v", err)
+			Log.Errorf("Failed to write API data: %v", err)
 		}
 	}
 
@@ -762,7 +762,7 @@ func InitData() {
 		}
 		isAdd, err := CasbinEnforcer.AddPolicies(rules)
 		if !isAdd {
-			Log.Errorf("写入casbin数据失败：%v", err)
+			Log.Errorf("Failed to write Casbin data: %v", err)
 		}
 	}
 
@@ -840,7 +840,7 @@ func InitData() {
 	if len(newGroups) > 0 {
 		err := DB.Create(&newGroups).Error
 		if err != nil {
-			Log.Errorf("写入分组数据失败：%v", err)
+			Log.Errorf("Failed to write group data: %v", err)
 		}
 	}
 
@@ -883,7 +883,7 @@ func InitData() {
 
 	if len(newFieldRelations) > 0 {
 		if err := DB.Create(&newFieldRelations).Error; err != nil {
-			Log.Errorf("写入关系数据失败：%v", err)
+			Log.Errorf("Failed to write field relation data: %v", err)
 		}
 	}
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func TestNormalizeLocale(t *testing.T) {
-	SetSupportedLocales([]string{"zh-CN", "en-US", "ja-JP", "es-ES", "ko-KR"}, "zh-CN")
+	SetSupportedLocales([]string{"en-US", "zh-CN", "ja-JP", "es-ES", "ko-KR"}, "en-US")
 
 	tests := []struct {
 		name string
@@ -18,8 +18,8 @@ func TestNormalizeLocale(t *testing.T) {
 		{name: "language family", in: "en-GB", want: "en-US"},
 		{name: "language only", in: "ja", want: "ja-JP"},
 		{name: "accept language", in: "es-MX,es;q=0.9,en;q=0.8", want: "es-ES"},
-		{name: "unknown", in: "it-IT", want: "zh-CN"},
-		{name: "empty", in: "", want: "zh-CN"},
+		{name: "unknown", in: "it-IT", want: "en-US"},
+		{name: "empty", in: "", want: "en-US"},
 	}
 
 	for _, tt := range tests {
@@ -32,7 +32,7 @@ func TestNormalizeLocale(t *testing.T) {
 }
 
 func TestTranslateWithArgsAndFallback(t *testing.T) {
-	SetSupportedLocales([]string{"zh-CN", "en-US"}, "zh-CN")
+	SetSupportedLocales([]string{"en-US", "zh-CN"}, "en-US")
 	SetMessages(map[string]map[string]string{
 		"zh-CN": {
 			"common.success":     "成功",
@@ -59,7 +59,7 @@ func TestTranslateWithArgsAndFallback(t *testing.T) {
 }
 
 func TestEmailTemplatesLoadForAllLocales(t *testing.T) {
-	if err := Init("zh-CN", []string{"zh-CN", "en-US", "ja-JP", "es-ES", "ko-KR"}); err != nil {
+	if err := Init("en-US", []string{"en-US", "zh-CN", "ja-JP", "es-ES", "ko-KR"}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -83,7 +83,7 @@ func TestEmailTemplatesLoadForAllLocales(t *testing.T) {
 }
 
 func TestSyncErrorChineseMessagesPreserveOriginalText(t *testing.T) {
-	if err := Init("zh-CN", []string{"zh-CN", "en-US", "ja-JP", "es-ES", "ko-KR"}); err != nil {
+	if err := Init("en-US", []string{"en-US", "zh-CN", "ja-JP", "es-ES", "ko-KR"}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -131,7 +131,7 @@ func TestInitLoadsLocalesWhenWorkingDirectoryHasNoLocaleFiles(t *testing.T) {
 	if err := os.Chdir(t.TempDir()); err != nil {
 		t.Fatal(err)
 	}
-	if err := Init("zh-CN", []string{"zh-CN"}); err != nil {
+	if err := Init("en-US", []string{"en-US", "zh-CN"}); err != nil {
 		t.Fatal(err)
 	}
 	if got := T("zh-CN", "common.success", nil); got != "成功" {

@@ -35,7 +35,7 @@ func OperationLogMiddleware() gin.HandlerFunc {
 		ctxUser, _ := c.Get("user")
 		user, ok := ctxUser.(model.User)
 		if !ok {
-			username = "未登录"
+			username = "anonymous"
 		} else {
 			username = user.Username
 		}

@@ -142,10 +142,10 @@ func normalizeConfig() {
 		Conf.I18n = &I18nConfig{}
 	}
 	if Conf.I18n.DefaultLocale == "" {
-		Conf.I18n.DefaultLocale = "zh-CN"
+		Conf.I18n.DefaultLocale = "en-US"
 	}
 	if len(Conf.I18n.SupportedLocales) == 0 {
-		Conf.I18n.SupportedLocales = []string{"zh-CN", "en-US", "ja-JP", "es-ES", "ko-KR"}
+		Conf.I18n.SupportedLocales = []string{"en-US", "zh-CN", "ja-JP", "es-ES", "ko-KR"}
 	}
 }
 

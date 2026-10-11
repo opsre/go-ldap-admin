@@ -34,7 +34,7 @@ func InitValidate() {
 	english := en.New()
 	japanese := ja.New()
 	spanish := es.New()
-	uni := ut.New(chinese, chinese, english, japanese, spanish)
+	uni := ut.New(english, english, chinese, japanese, spanish)
 
 	register := func(locale string, registerFn func(*validator.Validate, ut.Translator) error) {
 		trans, _ := uni.GetTranslator(locale)
@@ -48,7 +48,7 @@ func InitValidate() {
 	register("es", es_translations.RegisterDefaultTranslations)
 	TransByLocale["ko"] = TransByLocale["en"]
 
-	Trans = TransByLocale["zh"]
+	Trans = TransByLocale["en"]
 	_ = Validate.RegisterValidation("checkMobile", checkMobile)
 	Log.Infof("validator.v10 validator initialized")
 }

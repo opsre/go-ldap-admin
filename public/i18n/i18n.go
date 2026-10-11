@@ -15,7 +15,7 @@ import (
 
 const (
 	ContextLocaleKey = "locale"
-	defaultLocale    = "zh-CN"
+	defaultLocale    = "en-US"
 )
 
 type Args map[string]any
@@ -23,7 +23,7 @@ type Args map[string]any
 var (
 	mu               sync.RWMutex
 	activeDefault    = defaultLocale
-	supportedLocales = []string{"zh-CN", "en-US", "ja-JP", "es-ES", "ko-KR"}
+	supportedLocales = []string{"en-US", "zh-CN", "ja-JP", "es-ES", "ko-KR"}
 	messages         = map[string]map[string]string{}
 )
 
