@@ -409,3 +409,20 @@ builtin:
         feishuroot: Departamento raíz de Feishu
       platform:
         group: Grupo predeterminado
+
+sqlsync:
+  user_id_not_found: "El ID de usuario [{id}] no existe"
+  user_info_failed: "No se pudo obtener la información del usuario: {error}"
+  user_ldap_sync_failed: "No se pudo sincronizar el usuario [{username}] con LDAP: {error}"
+  user_department_info_failed: "No se pudo obtener la información del departamento por su ID para el usuario [{username}]: {error}"
+  user_add_group_failed: "No se pudo agregar el usuario [{username}] al grupo LDAP [{group}]: {error}"
+  user_status_update_failed: "No se pudo actualizar el estado después de sincronizar el usuario [{username}]: {error}"
+  group_id_not_found: "El ID de grupo [{id}] no existe"
+  group_info_failed: "No se pudo obtener la información del grupo: {error}"
+  group_ldap_sync_failed: "No se pudo sincronizar el grupo [{group}] con LDAP: {error}"
+  group_user_sync_failed: "No se pudo procesar el usuario [{username}] del grupo [{group}] después de sincronizar el grupo: {error}"
+  group_status_update_failed: "No se pudo actualizar el estado después de sincronizar el grupo [{group}]: {error}"
+openldap_sync:
+  user_mysql_create_failed: "No se pudo crear el usuario en MySQL: {error}"
+  user_department_info_failed: "No se pudo obtener la información del departamento por su ID: {error}"
+  user_mysql_group_relation_failed: "No se pudo agregar la relación usuario-grupo en MySQL: {error}"

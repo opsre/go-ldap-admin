@@ -409,3 +409,20 @@ builtin:
         feishuroot: Feishu root department
       platform:
         group: Default group
+
+sqlsync:
+  user_id_not_found: "User ID [{id}] does not exist"
+  user_info_failed: "Failed to get user information: {error}"
+  user_ldap_sync_failed: "Failed to sync user [{username}] to LDAP: {error}"
+  user_department_info_failed: "Failed to get department information by department ID for user [{username}]: {error}"
+  user_add_group_failed: "Failed to add user [{username}] to LDAP group [{group}]: {error}"
+  user_status_update_failed: "Failed to update status after syncing user [{username}]: {error}"
+  group_id_not_found: "Group ID [{id}] does not exist"
+  group_info_failed: "Failed to get group information: {error}"
+  group_ldap_sync_failed: "Failed to sync group [{group}] to LDAP: {error}"
+  group_user_sync_failed: "Failed to process user [{username}] in group [{group}] after syncing the group: {error}"
+  group_status_update_failed: "Failed to update status after syncing group [{group}]: {error}"
+openldap_sync:
+  user_mysql_create_failed: "Failed to create user in MySQL: {error}"
+  user_department_info_failed: "Failed to get department information by department ID: {error}"
+  user_mysql_group_relation_failed: "Failed to add user-group relation in MySQL: {error}"

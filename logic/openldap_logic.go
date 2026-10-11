@@ -202,13 +202,15 @@ func (d OpenLdapLogic) AddUsers(user *model.User) error {
 		// First add the user to MySQL
 		err := isql.User.Add(user)
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("%s", "向MySQL创建用户失败："+err.Error()))
+			common.Log.Errorf("AddUsers: failed to create user in MySQL: %s", err.Error())
+			return tools.NewMySqlI18nError("openldap_sync.user_mysql_create_failed", i18n.Args{"error": err.Error()})
 		}
 
 		// Get the groups to add the user to
 		groups, err := isql.Group.GetGroupByIds(tools.StringToSlice(user.DepartmentId, ","))
 		if err != nil {
-			return tools.NewMySqlError(fmt.Errorf("%s", "根据部门ID获取部门信息失败"+err.Error()))
+			common.Log.Errorf("AddUsers: failed to get department information by department ID: %s", err.Error())
+			return tools.NewMySqlI18nError("openldap_sync.user_department_info_failed", i18n.Args{"error": err.Error()})
 		}
 		for _, group := range groups {
 			if group.GroupDN[:3] == "ou=" {
@@ -217,7 +219,8 @@ func (d OpenLdapLogic) AddUsers(user *model.User) error {
 			// First save the user and department information in MySQL
 			err := isql.Group.AddUserToGroup(group, []model.User{*user})
 			if err != nil {
-				return tools.NewMySqlError(fmt.Errorf("%s", "向MySQL添加用户到分组关系失败："+err.Error()))
+				common.Log.Errorf("AddUsers: failed to add user-group relation in MySQL: %s", err.Error())
+				return tools.NewMySqlI18nError("openldap_sync.user_mysql_group_relation_failed", i18n.Args{"error": err.Error()})
 			}
 		}
 		return nil

@@ -409,3 +409,20 @@ builtin:
         feishuroot: 飞书根部门
       platform:
         group: 默认分组
+
+sqlsync:
+  user_id_not_found: "用户ID[{id}]不存在"
+  user_info_failed: "获取用户信息失败: {error}"
+  user_ldap_sync_failed: "向LDAP同步用户[{username}]失败：{error}"
+  user_department_info_failed: "用户[{username}]根据部门ID获取部门信息失败: {error}"
+  user_add_group_failed: "向Ldap添加用户[{username}]到分组[{group}]失败：{error}"
+  user_status_update_failed: "用户[{username}]同步完毕之后更新状态失败：{error}"
+  group_id_not_found: "分组ID[{id}]不存在"
+  group_info_failed: "获取分组信息失败: {error}"
+  group_ldap_sync_failed: "向LDAP同步分组[{group}]失败：{error}"
+  group_user_sync_failed: "同步分组[{group}]之后处理分组内的用户[{username}]失败：{error}"
+  group_status_update_failed: "分组[{group}]同步完毕之后更新状态失败：{error}"
+openldap_sync:
+  user_mysql_create_failed: "向MySQL创建用户失败：{error}"
+  user_department_info_failed: "根据部门ID获取部门信息失败{error}"
+  user_mysql_group_relation_failed: "向MySQL添加用户到分组关系失败：{error}"
